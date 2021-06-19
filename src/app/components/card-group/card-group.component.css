@@ -1,0 +1,11 @@
+.card{
+    border-radius: 5px;
+    box-shadow: 0 1px 2.94px 0.06px rgb(4 26 55 / 16%);
+    /* color: #fff; */
+    /* border: none; */
+    margin: 3rem 0px 10px 0px;
+    /* background: linear-gradient( 230deg, #759bff, #843cf6) !important; */
+}
+.card-title{
+    font-size: 15px;
+}
