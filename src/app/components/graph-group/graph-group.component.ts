@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import * as ApexCharts from "apexcharts";
 
 @Component({
@@ -6,8 +6,11 @@ import * as ApexCharts from "apexcharts";
     templateUrl: "./graph-group.component.html",
     styleUrls: ["./graph-group.component.css"],
 })
-export class GraphGroupComponent implements OnInit {
-    optionsChart1 = {
+export class GraphGroupComponent implements OnInit, OnDestroy {
+    chart1!: ApexCharts;
+    chart2!: ApexCharts;
+
+    optionsChart = {
         chart: {
             type: "line",
         },
@@ -28,12 +31,27 @@ export class GraphGroupComponent implements OnInit {
         this.initChart();
     }
 
-    initChart() {
-        let chart1 = new ApexCharts(
-            document.querySelector("#chart1"),
-            this.optionsChart1
-        );
+    ngOnDestroy(): void {
+        if (this.chart1) {
+            this.chart1.destroy();
+        }
 
-        chart1.render();
+        if (this.chart2) {
+            this.chart2.destroy();
+        }
+    }
+
+    initChart() {
+        this.chart1 = new ApexCharts(
+            document.querySelector("#chart1"),
+            this.optionsChart
+        );
+        this.chart1.render();
+
+        this.chart2 = new ApexCharts(
+            document.querySelector("#chart2"),
+            this.optionsChart
+        );
+        this.chart2.render();
     }
 }
