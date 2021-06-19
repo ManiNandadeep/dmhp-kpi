@@ -8,9 +8,10 @@ import { MaterialDesignModule } from "./material-design/material-design.module";
 
 import { NavbarTopComponent } from "./components/navbar-top/navbar-top.component";
 import { CardGroupComponent } from "./components/card-group/card-group.component";
+import { GraphGroupComponent } from './components/graph-group/graph-group.component';
 
 @NgModule({
-    declarations: [AppComponent, NavbarTopComponent, CardGroupComponent],
+    declarations: [AppComponent, NavbarTopComponent, CardGroupComponent, GraphGroupComponent],
     imports: [
         BrowserModule,
         AppRoutingModule,
