@@ -15,30 +15,29 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     chart6!: ApexCharts;
 
     optionsRadar = {
-        chart:{
-            type: 'radar'
+        chart: {
+            type: "radar",
         },
         series: [
-          {
-            name: "Radar Series 1",
-            data: [45, 52, 38, 24, 33, 10]
-          },
-          {
-            name: "Radar Series 2",
-            data: [26, 21, 20, 6, 8, 15]
-          }
+            {
+                name: "Radar Series 1",
+                data: [45, 52, 38, 24, 33, 10],
+            },
+            {
+                name: "Radar Series 2",
+                data: [26, 21, 20, 6, 8, 15],
+            },
         ],
-        labels: ['April', 'May', 'June', 'July', 'August', 'September']
-      }
+        labels: ["April", "May", "June", "July", "August", "September"],
+    };
 
     optionsDonut = {
         chart: {
-          type: 'donut'
+            type: "donut",
         },
         series: [44, 55, 13, 33],
-        labels: ['Apple', 'Mango', 'Orange', 'Watermelon']
-
-    }
+        labels: ["Apple", "Mango", "Orange", "Watermelon"],
+    };
     optionsChart = {
         chart: {
             type: "line",
@@ -90,18 +89,17 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
             this.optionsChart
         );
         this.chart2.render();
-        
-        this.chart3=new ApexCharts(
+
+        this.chart3 = new ApexCharts(
             document.querySelector("#chart3"),
             this.optionsDonut
         );
         this.chart3.render();
 
-        this.chart4=new ApexCharts(
+        this.chart4 = new ApexCharts(
             document.querySelector("#chart4"),
             this.optionsRadar
         );
         this.chart4.render();
-
     }
 }

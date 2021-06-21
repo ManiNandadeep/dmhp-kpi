@@ -1,25 +1,24 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { NavbarTopComponent } from './navbar-top.component';
+import { NavbarTopComponent } from "./navbar-top.component";
 
-describe('NavbarTopComponent', () => {
-  let component: NavbarTopComponent;
-  let fixture: ComponentFixture<NavbarTopComponent>;
+describe("NavbarTopComponent", () => {
+    let component: NavbarTopComponent;
+    let fixture: ComponentFixture<NavbarTopComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ NavbarTopComponent ]
-    })
-    .compileComponents();
-  });
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            declarations: [NavbarTopComponent],
+        }).compileComponents();
+    });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(NavbarTopComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(NavbarTopComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it("should create", () => {
+        expect(component).toBeTruthy();
+    });
 });
