@@ -1,20 +1,46 @@
-.card {
-    border-radius: 5px;
-    box-shadow: 0 1px 2.94px 0.06px rgb(4 26 55 / 16%);
-    margin: 2rem 0px 1rem 0px;
-}
-
-.card-title {
-    font-size: 15px;
-}
-
 ::ng-deep .new-card {
     border-radius: 5px !important;
     box-shadow: 0 1px 2.94px 0.06px rgb(4 26 55 / 16%) !important;
     margin: 3rem 0px 10px 0px !important;
 }
 
+/* Overall Card Styling */
+.card {
+    border-radius: 5px;
+    box-shadow: 0 1px 2.94px 0.06px rgb(4 26 55 / 16%);
+    margin: 2rem 0px 1rem 0px;
+    padding: 3%;
+}
+
 h2.card-title {
-    font-size: 20px;
-    margin-bottom: 10px;
+    font-size: 22px;
+}
+
+h2 mat-icon {
+    padding-top: 4px;
+}
+
+span.card-heading {
+    font-family: "Roboto", sans-serif;
+}
+
+div.card-text h4 {
+    margin: 1%;
+}
+
+/* Card Specifity */
+.consultation-card {
+    background-color: #b16ee6;
+}
+
+.training-card {
+    background-color: #76cafa;
+}
+
+.budget-card {
+    background-color: #69fabe;
+}
+
+.extra-card {
+    background-color: #5fe372;
 }

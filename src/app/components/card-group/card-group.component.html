@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-3">
-            <div class="card shadow-md">
+            <div class="card consultation-card shadow-md">
                 <div class="card-body">
                     <h5 class="card-title">Card title</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
@@ -13,19 +13,23 @@
             </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-3">
-            <div class="card shadow-md">
+            <div class="card training-card shadow-md">
                 <div class="card-body">
-                    <h2 class="card-title">Training Events</h2>
+                    <h2 class="card-title">
+                        <mat-icon aria-hidden="false" aria-label="Event Icon">event</mat-icon> Training Events
+                    </h2>
                     <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
                     <div class="card-text">
-                        <p>Total trainings: {{ totalTrainings }}</p>
-                        <p>No of people trained in the last year: {{ totalTrainingPaxLastYear }}</p>
+                        <h4><span class="card-heading">Total trainings:</span> {{ totalTrainings }}</h4>
+                        <h4><span class="card-heading">No of people trained:</span>
+                            {{ totalTrainingPaxLastYear }}</h4>
+                        <h4><span class="card-heading">Total people trained:</span> {{ totalTrainingPax }}</h4>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-3">
-            <div class="card shadow-sm">
+            <div class="card budget-card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">Card title</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
@@ -37,7 +41,7 @@
             </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-3">
-            <div class="card shadow-sm">
+            <div class="card extra-card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">Card title</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>

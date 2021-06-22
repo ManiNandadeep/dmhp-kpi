@@ -7,8 +7,10 @@ import { BackendConnectorService } from "src/app/services/backend-connector.serv
     styleUrls: ["./card-group.component.css"],
 })
 export class CardGroupComponent implements OnInit {
+    // training variables
     totalTrainings!: number;
     totalTrainingPaxLastYear!: number;
+    totalTrainingPax!: number;
 
     constructor(public backendConnectorService: BackendConnectorService) {}
 
@@ -18,6 +20,7 @@ export class CardGroupComponent implements OnInit {
             .subscribe((trainingList: any) => {
                 this.totalTrainings = trainingList.length;
                 this.totalTrainingPaxLastYear = 0;
+                this.totalTrainingPax = 0;
                 console.log(typeof trainingList[1].eventFrom);
                 console.log(typeof trainingList[1].eventTo);
                 let eventFrom = new Date(trainingList[1].eventFrom);
@@ -35,8 +38,7 @@ export class CardGroupComponent implements OnInit {
                         this.totalTrainingPaxLastYear +=
                             trainingList[i].noOfPatients;
                     }
-                    // this.totalTrainingPaxLastYear +=
-                    //     trainingList[i].noOfPatients;
+                    this.totalTrainingPax += trainingList[i].noOfPatients;
                 }
             });
     }
