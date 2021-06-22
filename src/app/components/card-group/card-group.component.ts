@@ -7,7 +7,37 @@ import { BackendConnectorService } from "src/app/services/backend-connector.serv
     styleUrls: ["./card-group.component.css"],
 })
 export class CardGroupComponent implements OnInit {
+    totalTrainings!: number;
+    totalTrainingPaxLastYear!: number;
+
     constructor(public backendConnectorService: BackendConnectorService) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.backendConnectorService
+            .getTrainingTable()
+            .subscribe((trainingList: any) => {
+                this.totalTrainings = trainingList.length;
+                this.totalTrainingPaxLastYear = 0;
+                console.log(typeof trainingList[1].eventFrom);
+                console.log(typeof trainingList[1].eventTo);
+                let eventFrom = new Date(trainingList[1].eventFrom);
+                console.log(eventFrom);
+                console.log(typeof trainingList[1].eventFrom);
+                console.log(typeof trainingList[1].eventTo);
+                console.log(eventFrom.getFullYear());
+
+                for (let i = 0; i < trainingList.length; ++i) {
+                    trainingList[i].eventFrom = new Date(
+                        trainingList[i].eventFrom
+                    );
+                    trainingList[i].eventTo = new Date(trainingList[i].eventTo);
+                    if (trainingList[i].eventFrom.getFullYear() >= 2020) {
+                        this.totalTrainingPaxLastYear +=
+                            trainingList[i].noOfPatients;
+                    }
+                    // this.totalTrainingPaxLastYear +=
+                    //     trainingList[i].noOfPatients;
+                }
+            });
+    }
 }
