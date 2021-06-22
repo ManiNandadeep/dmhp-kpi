@@ -19,19 +19,28 @@ export class BackendConnectorService {
         return this.http.get(talukaConfigUrl);
     }
 
+    // method to get event mapping from tbl_bindevents
     getbindEventsList() {
         const eventBindListUrl: string = "http://localhost:8082/bindevent/";
         return this.http.get(eventBindListUrl);
     }
 
+    // method to get targeted groups mapping from tbl_targetgroup
     getbindTargetGroupList() {
         const targetGroupListUrl: string =
             "http://localhost:8082/bindtargetgroup/";
         return this.http.get(targetGroupListUrl);
     }
 
+    // method to get all facilities from tbl_facility
     getFacility() {
         const facilityUrl: string = "http://localhost:8082/facility/";
         return this.http.get(facilityUrl);
+    }
+
+    // method to get all training objects from tbl_training
+    getTrainingTable() {
+        const trainingUrl: string = "http://localhost:8082/training/";
+        return this.http.get(trainingUrl);
     }
 }
