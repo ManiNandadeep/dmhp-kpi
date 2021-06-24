@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import * as ApexCharts from "apexcharts";
+import { BackendConnectorService } from "src/app/services/backend-connector.service";
 
 @Component({
     selector: "app-graph-group",
@@ -7,99 +8,94 @@ import * as ApexCharts from "apexcharts";
     styleUrls: ["./graph-group.component.css"],
 })
 export class GraphGroupComponent implements OnInit, OnDestroy {
-    chart1!: ApexCharts;
-    chart2!: ApexCharts;
-    chart3!: ApexCharts;
-    chart4!: ApexCharts;
-    chart5!: ApexCharts;
-    chart6!: ApexCharts;
+    // Must contain 2 graphs ->
+    // 1.) Training corresponding to districts
+    // 2.) training corresponding to time series,i.e, last 12 months
 
-    optionsRadar = {
-        chart: {
-            type: "radar",
-        },
-        series: [
-            {
-                name: "Radar Series 1",
-                data: [45, 52, 38, 24, 33, 10],
-            },
-            {
-                name: "Radar Series 2",
-                data: [26, 21, 20, 6, 8, 15],
-            },
-        ],
-        labels: ["April", "May", "June", "July", "August", "September"],
-    };
+    trainingDistrictchart!: ApexCharts;
 
-    optionsDonut = {
-        chart: {
-            type: "donut",
-        },
-        series: [44, 55, 13, 33],
-        labels: ["Apple", "Mango", "Orange", "Watermelon"],
-    };
-    optionsChart = {
-        chart: {
-            type: "line",
-        },
-        series: [
-            {
-                name: "sales",
-                data: [30, 40, 35, 50, 49, 60, 70, 91, 125],
-            },
-        ],
-        xaxis: {
-            categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
-        },
-    };
+    districts: number[] = [];
+    numberOfPatientsPerDistrict: number[] = [];
 
-    constructor() {}
+    constructor(public backendConnectorService: BackendConnectorService) {}
 
     ngOnInit(): void {
-        this.initChart();
+        this.backendConnectorService
+            .getTrainingTable()
+            .subscribe((trainingList: any) => {
+                // delete later after confirming
+                console.log(
+                    `The length of the training list is ${trainingList.length}`
+                );
+
+                // convert into hashmap -> if you get time
+                for (let i = 0; i < trainingList.length; ++i) {
+                    if (!this.districts.includes(trainingList[i].districtId)) {
+                        this.districts.push(trainingList[i].districtId);
+                        this.numberOfPatientsPerDistrict[
+                            this.districts.indexOf(trainingList[i].districtId)
+                        ] = trainingList[i].noOfPatients;
+                    } else {
+                        this.numberOfPatientsPerDistrict[
+                            this.districts.indexOf(trainingList[i].districtId)
+                        ] += trainingList[i].noOfPatients;
+                    }
+                }
+
+                // check statements
+                console.log(this.districts);
+                console.log(this.numberOfPatientsPerDistrict);
+
+                // put this in testing module
+                let checkSum = 0;
+                for (
+                    let i = 0;
+                    i < this.numberOfPatientsPerDistrict.length;
+                    ++i
+                ) {
+                    checkSum += this.numberOfPatientsPerDistrict[i];
+                }
+                console.log(checkSum);
+
+                // training per district chart options
+                const trainingDistrictOptions = {
+                    chart: {
+                        type: "bar",
+                        height: 400,
+                    },
+                    series: [
+                        {
+                            name: "Number Of Patients",
+                            data: this.numberOfPatientsPerDistrict,
+                        },
+                    ],
+                    xaxis: {
+                        categories: this.districts,
+                    },
+                    dataLabels: {
+                        enabled: false,
+                    },
+                    title: {
+                        text: "Number of participants per district for training events",
+                        align: "center",
+                    },
+                };
+
+                this.initTrainingChart(trainingDistrictOptions);
+            });
     }
 
     ngOnDestroy(): void {
-        if (this.chart1) {
-            this.chart1.destroy();
-        }
-        if (this.chart2) {
-            this.chart2.destroy();
-        }
-        if (this.chart3) {
-            this.chart3.destroy();
-        }
-        if (this.chart3) {
-            this.chart3.destroy();
-        }
-        if (this.chart4) {
-            this.chart4.destroy();
+        if (this.trainingDistrictchart) {
+            this.trainingDistrictchart.destroy();
         }
     }
 
-    initChart() {
-        this.chart1 = new ApexCharts(
-            document.querySelector("#chart1"),
-            this.optionsChart
+    initTrainingChart(trainingDistrictOptions: any): void {
+        this.trainingDistrictchart = new ApexCharts(
+            document.querySelector("#training1"),
+            trainingDistrictOptions
         );
-        this.chart1.render();
-
-        this.chart2 = new ApexCharts(
-            document.querySelector("#chart2"),
-            this.optionsChart
-        );
-        this.chart2.render();
-
-        this.chart3 = new ApexCharts(
-            document.querySelector("#chart3"),
-            this.optionsDonut
-        );
-        this.chart3.render();
-
-        this.chart4 = new ApexCharts(
-            document.querySelector("#chart4"),
-            this.optionsRadar
-        );
-        this.chart4.render();
+        this.trainingDistrictchart.render();
     }
 }
