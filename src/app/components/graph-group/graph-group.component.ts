@@ -23,19 +23,17 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         this.backendConnectorService
         .getDistricts()
         .subscribe((something: any)=>{
-            console.log(`${something.length}`);
+            // console.log(`${something.length}`);
             for(let j=0;j<something.length;j++){
                 this.districtMapping.set(something[j].districtId,something[j].district);
             }
-            console.log(this.districtMapping);
+            // console.log(this.districtMapping);
         });
         this.backendConnectorService
             .getTrainingTable()
             .subscribe((trainingList: any) => {
                 // delete later after confirming
-                console.log(
-                    `The length of the training list is ${trainingList.length}`
-                );
+                // console.log(`The length of the training list is ${trainingList.length}`);
                 // convert into hashmap -> if you get time
                 for (let i = 0; i < trainingList.length; ++i) {
                     if (!this.districts.includes(trainingList[i].districtId)) {
@@ -49,7 +47,8 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                         ] += trainingList[i].noOfPatients;
                     }
                 }
-
+                this.numberOfPatientsPerDistrict=this.numberOfPatientsPerDistrict.slice(1);
+                this.districts=this.districts.slice(1);
                 // check statements
                 console.log(this.districts);
                 console.log(this.numberOfPatientsPerDistrict);
@@ -63,7 +62,7 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                 ) {
                     checkSum += this.numberOfPatientsPerDistrict[i];
                 }
-                console.log(checkSum);
+                // console.log(checkSum);
 
                 // training per district chart options
                 const trainingDistrictOptions = {

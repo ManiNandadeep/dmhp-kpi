@@ -12,6 +12,8 @@ export class CardGroupComponent implements OnInit {
     totalTrainingPaxLastYear!: number;
     totalTrainingPax!: number;
 
+    totalBudget:number =0;
+
     constructor(public backendConnectorService: BackendConnectorService) {}
 
     ngOnInit(): void {
@@ -41,5 +43,13 @@ export class CardGroupComponent implements OnInit {
                     this.totalTrainingPax += trainingList[i].noOfPatients;
                 }
             });
+        this.backendConnectorService
+        .getBudgetAllocation()
+        .subscribe((budgetList: any)=>{
+            for(let i=0;i<budgetList.length;i++){
+                this.totalBudget+=parseInt(budgetList[i].totalBudgetAllocated);
+            }
+            console.log(`hello ${this.totalBudget}`);
+        });
     }
 }

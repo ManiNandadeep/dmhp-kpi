@@ -44,4 +44,9 @@ export class BackendConnectorService {
         const trainingUrl: string = "http://localhost:8082/training/";
         return this.http.get(trainingUrl);
     }
+    //method to get all budgetAllocation objects from tbl_budgetallocation
+    getBudgetAllocation(){
+        const budgetAllocationUrl: string="http://localhost:8082/budgetallocation/";
+        return this.http.get(budgetAllocationUrl);
+    }
 }
