@@ -11,15 +11,24 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     // Must contain 2 graphs ->
     // 1.) Training corresponding to districts
     // 2.) training corresponding to time series,i.e, last 12 months
-
     trainingDistrictchart!: ApexCharts;
 
     districts: number[] = [];
+    districtMapping=new Map();
     numberOfPatientsPerDistrict: number[] = [];
 
     constructor(public backendConnectorService: BackendConnectorService) {}
 
     ngOnInit(): void {
+        this.backendConnectorService
+        .getDistricts()
+        .subscribe((something: any)=>{
+            console.log(`${something.length}`);
+            for(let j=0;j<something.length;j++){
+                this.districtMapping.set(something[j].districtId,something[j].district);
+            }
+            console.log(this.districtMapping);
+        });
         this.backendConnectorService
             .getTrainingTable()
             .subscribe((trainingList: any) => {
@@ -27,7 +36,6 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                 console.log(
                     `The length of the training list is ${trainingList.length}`
                 );
-
                 // convert into hashmap -> if you get time
                 for (let i = 0; i < trainingList.length; ++i) {
                     if (!this.districts.includes(trainingList[i].districtId)) {
@@ -70,7 +78,8 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                         },
                     ],
                     xaxis: {
-                        categories: this.districts,
+                        //add district name array.
+                        categories: Array.from(this.districtMapping.values()).slice(0,-1),
                     },
                     dataLabels: {
                         enabled: false,
@@ -83,6 +92,7 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
 
                 this.initTrainingChart(trainingDistrictOptions);
             });
+        
     }
 
     ngOnDestroy(): void {
