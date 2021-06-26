@@ -12,30 +12,60 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     // 1.) Training corresponding to districts
     // 2.) training corresponding to time series,i.e, last 12 months
     trainingDistrictchart!: ApexCharts;
+    trainingLastYearChart!: ApexCharts;
 
+    // training corresponding to districts
     districts: number[] = [];
-    districtMapping=new Map();
+    districtMapping = new Map();
     numberOfPatientsPerDistrict: number[] = [];
 
-    constructor(public backendConnectorService: BackendConnectorService) {}
+    // training corresponding to time series
+    currentDate: Date = new Date();
+    currentYear: number = this.currentDate.getFullYear();
+    currentMonth: number = this.currentDate.getMonth();
+    timeMapping: Date[] = [];
+    monthMapping: number[] = [];
+    numberOfPatientsPerMonth: number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+    constructor(public backendConnectorService: BackendConnectorService) {
+        console.log(this.currentDate);
+        console.log(this.currentYear);
+        console.log(this.currentMonth);
+
+        // adding values to timeMapping array
+        for (let i = 0; i > -12; --i) {
+            let paddingMonth = this.currentMonth + i;
+            this.timeMapping.push(new Date(2021, paddingMonth));
+            let monthMap = paddingMonth < 0 ? 12 + paddingMonth : paddingMonth;
+            this.monthMapping.push(monthMap);
+        }
+
+        console.log(this.monthMapping);
+        console.log(this.timeMapping);
+    }
 
     ngOnInit(): void {
         this.backendConnectorService
-        .getDistricts()
-        .subscribe((something: any)=>{
-            // console.log(`${something.length}`);
-            for(let j=0;j<something.length;j++){
-                this.districtMapping.set(something[j].districtId,something[j].district);
-            }
-            // console.log(this.districtMapping);
-        });
+            .getDistricts()
+            .subscribe((something: any) => {
+                for (let j = 0; j < something.length; j++) {
+                    this.districtMapping.set(
+                        something[j].districtId,
+                        something[j].district
+                    );
+                }
+            });
+
         this.backendConnectorService
             .getTrainingTable()
             .subscribe((trainingList: any) => {
-                // delete later after confirming
-                // console.log(`The length of the training list is ${trainingList.length}`);
-                // convert into hashmap -> if you get time
                 for (let i = 0; i < trainingList.length; ++i) {
+                    // trainingDistrict For loop body
+                    trainingList[i].eventFrom = new Date(
+                        trainingList[i].eventFrom
+                    );
+
+                    trainingList[i].eventTo = new Date(trainingList[i].eventTo);
                     if (!this.districts.includes(trainingList[i].districtId)) {
                         this.districts.push(trainingList[i].districtId);
                         this.numberOfPatientsPerDistrict[
@@ -46,9 +76,28 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                             this.districts.indexOf(trainingList[i].districtId)
                         ] += trainingList[i].noOfPatients;
                     }
+
+                    // training timeMapping for loop body
+                    if (
+                        trainingList[i].eventFrom.getFullYear() ===
+                            this.currentYear ||
+                        trainingList[i].eventFrom.getFullYear() ===
+                            this.currentYear - 1
+                    ) {
+                        this.numberOfPatientsPerMonth[
+                            this.monthMapping.indexOf(
+                                trainingList[i].eventFrom.getMonth()
+                            )
+                        ] += trainingList[i].noOfPatients;
+                    }
                 }
-                this.numberOfPatientsPerDistrict=this.numberOfPatientsPerDistrict.slice(1);
-                this.districts=this.districts.slice(1);
+
+                console.log(this.numberOfPatientsPerMonth);
+
+                this.numberOfPatientsPerDistrict =
+                    this.numberOfPatientsPerDistrict.slice(1);
+                this.districts = this.districts.slice(1);
+
                 // check statements
                 console.log(this.districts);
                 console.log(this.numberOfPatientsPerDistrict);
@@ -62,7 +111,12 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                 ) {
                     checkSum += this.numberOfPatientsPerDistrict[i];
                 }
-                // console.log(checkSum);
+
+                checkSum = 0;
+                for (let i = 0; i < this.numberOfPatientsPerMonth.length; ++i) {
+                    checkSum += this.numberOfPatientsPerMonth[i];
+                }
+                console.log(checkSum);
 
                 // training per district chart options
                 const trainingDistrictOptions = {
@@ -78,7 +132,9 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                     ],
                     xaxis: {
                         //add district name array.
-                        categories: Array.from(this.districtMapping.values()).slice(0,-1),
+                        categories: Array.from(
+                            this.districtMapping.values()
+                        ).slice(0, -1),
                     },
                     dataLabels: {
                         enabled: false,
@@ -89,22 +145,61 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                     },
                 };
 
-                this.initTrainingChart(trainingDistrictOptions);
+                const trainingTimeMappingOptions = {
+                    chart: {
+                        type: "bar",
+                        height: 400,
+                    },
+                    series: [
+                        {
+                            name: "Number Of Patients",
+                            data: this.numberOfPatientsPerMonth,
+                        },
+                    ],
+                    xaxis: {
+                        //add district name array.
+                        categories: this.timeMapping,
+                    },
+                    dataLabels: {
+                        enabled: false,
+                    },
+                    title: {
+                        text: "Number of participants per month for training events for last 12 months",
+                        align: "center",
+                    },
+                };
+
+                this.initTrainingChart(
+                    trainingDistrictOptions,
+                    trainingTimeMappingOptions
+                );
             });
-        
     }
 
     ngOnDestroy(): void {
         if (this.trainingDistrictchart) {
             this.trainingDistrictchart.destroy();
         }
+
+        if (this.trainingLastYearChart) {
+            this.trainingLastYearChart.destroy();
+        }
     }
 
-    initTrainingChart(trainingDistrictOptions: any): void {
+    initTrainingChart(
+        trainingDistrictOptions: any,
+        trainingTimeMappingOptions: any
+    ): void {
         this.trainingDistrictchart = new ApexCharts(
             document.querySelector("#training1"),
             trainingDistrictOptions
         );
         this.trainingDistrictchart.render();
+
+        this.trainingLastYearChart = new ApexCharts(
+            document.querySelector("#training2"),
+            trainingTimeMappingOptions
+        );
+        this.trainingLastYearChart.render();
     }
 }

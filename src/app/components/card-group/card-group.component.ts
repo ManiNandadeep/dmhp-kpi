@@ -12,7 +12,8 @@ export class CardGroupComponent implements OnInit {
     totalTrainingPaxLastYear!: number;
     totalTrainingPax!: number;
 
-    totalBudget:number =0;
+    // budget and expense variables
+    totalBudget!: number;
 
     constructor(public backendConnectorService: BackendConnectorService) {}
 
@@ -43,13 +44,17 @@ export class CardGroupComponent implements OnInit {
                     this.totalTrainingPax += trainingList[i].noOfPatients;
                 }
             });
+
         this.backendConnectorService
-        .getBudgetAllocation()
-        .subscribe((budgetList: any)=>{
-            for(let i=0;i<budgetList.length;i++){
-                this.totalBudget+=parseInt(budgetList[i].totalBudgetAllocated);
-            }
-            console.log(`hello ${this.totalBudget}`);
-        });
+            .getBudgetAllocation()
+            .subscribe((budgetList: any) => {
+                this.totalBudget = 0;
+                for (let i = 0; i < budgetList.length; i++) {
+                    this.totalBudget += parseInt(
+                        budgetList[i].quaterlyReleasedAmt
+                    );
+                }
+                console.log(`hello ${this.totalBudget}`);
+            });
     }
 }
