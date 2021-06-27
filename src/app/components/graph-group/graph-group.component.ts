@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import * as ApexCharts from "apexcharts";
 import { BackendConnectorService } from "src/app/services/backend-connector.service";
+import { DistrictControllerService } from "src/app/services/district-controller.service";
 
 @Component({
     selector: "app-graph-group",
@@ -16,7 +17,7 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
 
     // training corresponding to districts
     districts: number[] = [];
-    districtMapping = new Map();
+    districtMapping: Map<number, string> = new Map();
     numberOfPatientsPerDistrict: number[] = [];
 
     // training corresponding to time series
@@ -27,7 +28,10 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     monthMapping: number[] = [];
     numberOfPatientsPerMonth: number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-    constructor(public backendConnectorService: BackendConnectorService) {
+    constructor(
+        public backendConnectorService: BackendConnectorService,
+        public districtControllerService: DistrictControllerService
+    ) {
         console.log(this.currentDate);
         console.log(this.currentYear);
         console.log(this.currentMonth);
@@ -45,16 +49,14 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.backendConnectorService
-            .getDistricts()
-            .subscribe((something: any) => {
-                for (let j = 0; j < something.length; j++) {
-                    this.districtMapping.set(
-                        something[j].districtId,
-                        something[j].district
-                    );
-                }
-            });
+        this.districtMapping =
+            this.districtControllerService.getDistrictMapping();
+
+        let districtList = this.districtControllerService.getDistrictList();
+        console.log(districtList);
+        // this.districtMapping.set(3000, "test string");
+        // console.log(this.districtMapping);
+        // console.log(this.districtControllerService.getDistrictMapping());
 
         this.backendConnectorService
             .getTrainingTable()
