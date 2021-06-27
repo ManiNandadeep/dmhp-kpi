@@ -12,7 +12,7 @@ export class DistrictControllerService {
         this.backendConnectorService
             .getDistricts()
             .subscribe((districtList: any) => {
-                this.districtList = districtList;
+                this.districtList = [...districtList];
                 for (let i = 0; i < this.districtList.length; ++i) {
                     this.districtMap.set(
                         this.districtList[i].districtId,
@@ -45,6 +45,7 @@ export class DistrictControllerService {
     }
 
     public getDistrictList() {
-        return this.districtList;
+        console.log(this.districtList);
+        return this.districtList.splice();
     }
 }
