@@ -48,7 +48,7 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         console.log(this.timeMapping);
     }
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.districtMapping =
             this.districtControllerService.getDistrictMapping();
 

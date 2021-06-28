@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { map } from "rxjs/operators";
 import { BackendConnectorService } from "./backend-connector.service";
 
 @Injectable({
@@ -13,39 +14,31 @@ export class DistrictControllerService {
             .getDistricts()
             .subscribe((districtList: any) => {
                 this.districtList = [...districtList];
-                for (let i = 0; i < this.districtList.length; ++i) {
-                    this.districtMap.set(
-                        this.districtList[i].districtId,
-                        this.districtList[i].district
-                    );
-                }
+                this.districtMap = this.mapDistricts();
+                console.log(this.districtList);
+                console.log(this.districtMap);
             });
-
-        // this.mapDistricts();
     }
 
-    private mapDistricts() {
+    private mapDistricts(): Map<number, string> {
+        const districtMap: Map<number, string> = new Map();
         for (let i = 0; i < this.districtList.length; ++i) {
-            this.districtMap.set(
+            districtMap.set(
                 this.districtList[i].districtId,
                 this.districtList[i].district
             );
         }
+        return districtMap;
     }
 
     public getDistrictMapping() {
         // use deep clone from lodash or see other methods to deep clone and then return it
-        let returnDistrictMap = Object.assign({}, this.districtMap);
         console.log(this.districtMap);
-        returnDistrictMap = new Map(this.districtMap);
-        console.log(returnDistrictMap);
-        // console.log(this.districtMap);
-        // return returnDistrictMap;
         return this.districtMap;
     }
 
     public getDistrictList() {
         console.log(this.districtList);
-        return this.districtList.splice();
+        return this.districtList;
     }
 }
