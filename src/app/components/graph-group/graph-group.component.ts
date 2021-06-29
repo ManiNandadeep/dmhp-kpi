@@ -8,7 +8,7 @@ import { DistrictControllerService } from "src/app/services/district-controller.
     templateUrl: "./graph-group.component.html",
     styleUrls: ["./graph-group.component.css"],
 })
-export class GraphGroupComponent implements OnInit, OnDestroy, AfterViewInit {
+export class GraphGroupComponent implements OnInit, OnDestroy {
     // Must contain 2 graphs ->
     // 1.) Training corresponding to districts
     // 2.) training corresponding to time series,i.e, last 12 months
@@ -46,6 +46,7 @@ export class GraphGroupComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log(this.districtControllerService.getDistrictList());
 
         this.districtMapping = this.districtControllerService.getDistrictMap();
+
         // const districtListPromise =
         //     this.districtControllerService.getDistrictList();
         // const districtList = await districtListPromise.then((result) => {
@@ -171,11 +172,6 @@ export class GraphGroupComponent implements OnInit, OnDestroy, AfterViewInit {
                     trainingTimeMappingOptions
                 );
             });
-    }
-
-    ngAfterViewInit(): void {
-        const districtList = this.districtControllerService.getDistrictList();
-        console.log(JSON.stringify(districtList));
     }
 
     ngOnDestroy(): void {

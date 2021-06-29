@@ -51,4 +51,11 @@ export class BackendConnectorService {
             "http://localhost:8082/budgetallocation/";
         return this.http.get(budgetAllocationUrl);
     }
+
+    // method to get all district expense objects from tbl_districtexpense
+    getDistrictExpense() {
+        const districtExpenseUrl: string =
+            "http://localhost:8082/districtexpense/";
+        return this.http.get(districtExpenseUrl);
+    }
 }
