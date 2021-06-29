@@ -23,7 +23,7 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     numberOfPatientsPerDistrict: Map<string, number | undefined> = new Map();
 
     // training corresponding to time series
-    numberOfPatientsPerMonth: number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    numberOfPatientsPerMonth: Map<string, number | undefined> = new Map();
 
     constructor(
         public backendConnectorService: BackendConnectorService,
@@ -42,7 +42,8 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         this.numberOfPatientsPerDistrictId =
             this.trainingControllerService.getNumberOfPatientsPerDistrict();
 
-        this.trainingControllerService.getNumberOfPatientsPerMonth();
+        this.numberOfPatientsPerMonth =
+            this.trainingControllerService.getNumberOfPatientsPerMonth();
 
         // console.log(this.districtMapping);
         // console.log(this.numberOfPatientsPerDistrictId);
@@ -82,7 +83,34 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
             },
         };
 
-        this.initTrainingChart(trainingDistrictOptions);
+        const trainingTimeMappingOptions = {
+            chart: {
+                type: "bar",
+                height: 400,
+            },
+            series: [
+                {
+                    name: "Number Of Patients",
+                    data: [...this.numberOfPatientsPerMonth.values()],
+                },
+            ],
+            xaxis: {
+                //add district name array.
+                categories: [...this.numberOfPatientsPerMonth.keys()],
+            },
+            dataLabels: {
+                enabled: false,
+            },
+            title: {
+                text: "Number of participants per month for training events for last 12 months",
+                align: "center",
+            },
+        };
+
+        this.initTrainingChart(
+            trainingDistrictOptions,
+            trainingTimeMappingOptions
+        );
     }
 
     ngOnDestroy(): void {
@@ -105,10 +133,10 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         );
         this.trainingDistrictchart.render();
 
-        // this.trainingLastYearChart = new ApexCharts(
-        //     document.querySelector("#training2"),
-        //     trainingTimeMappingOptions
-        // );
-        // this.trainingLastYearChart.render();
+        this.trainingLastYearChart = new ApexCharts(
+            document.querySelector("#training2"),
+            trainingTimeMappingOptions
+        );
+        this.trainingLastYearChart.render();
     }
 }

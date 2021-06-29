@@ -8,6 +8,8 @@ export class TrainingControllerService {
     private trainingList: any = [];
     private currentMonth: number = new Date().getMonth();
     private currentYear: number = new Date().getFullYear();
+    private numberOfPatientsPerMonth: Map<string, number | undefined> =
+        new Map();
 
     constructor(private backendConnectorService: BackendConnectorService) {
         // console.log(this.currentMonth, this.currentYear);
@@ -54,23 +56,37 @@ export class TrainingControllerService {
     }
 
     public getNumberOfPatientsPerMonth() {
+        const monthNames = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ];
+
         const patientsPerMonth: Map<string, number | undefined> = new Map();
         for (let i = 0; i > -12; --i) {
             let paddingMonth = this.currentMonth + i;
             patientsPerMonth.set(
-                `${new Date(
-                    this.currentYear,
-                    paddingMonth
-                ).getMonth()},${new Date(
-                    this.currentYear,
-                    paddingMonth
-                ).getFullYear()}`,
+                `${
+                    monthNames[
+                        new Date(this.currentYear, paddingMonth).getMonth()
+                    ]
+                },${new Date(this.currentYear, paddingMonth).getFullYear()}`,
                 0
             );
         }
         for (let i = 0; i < this.trainingList.length; ++i) {
             // console.log("In for loop");
-            const eventMonth = this.trainingList[i].eventFrom.getMonth();
+            const eventMonth =
+                monthNames[this.trainingList[i].eventFrom.getMonth()];
             const eventYear = this.trainingList[i].eventFrom.getFullYear();
             if (patientsPerMonth.has(`${eventMonth},${eventYear}`)) {
                 patientsPerMonth.set(
@@ -80,7 +96,7 @@ export class TrainingControllerService {
                 );
             }
         }
-        console.log(patientsPerMonth);
+        this.numberOfPatientsPerMonth = patientsPerMonth;
         return patientsPerMonth;
     }
 }
