@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { AfterViewInit, Component, OnDestroy, OnInit } from "@angular/core";
 import * as ApexCharts from "apexcharts";
 import { BackendConnectorService } from "src/app/services/backend-connector.service";
 import { DistrictControllerService } from "src/app/services/district-controller.service";
@@ -8,7 +8,7 @@ import { DistrictControllerService } from "src/app/services/district-controller.
     templateUrl: "./graph-group.component.html",
     styleUrls: ["./graph-group.component.css"],
 })
-export class GraphGroupComponent implements OnInit, OnDestroy {
+export class GraphGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     // Must contain 2 graphs ->
     // 1.) Training corresponding to districts
     // 2.) training corresponding to time series,i.e, last 12 months
@@ -32,10 +32,6 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         public backendConnectorService: BackendConnectorService,
         public districtControllerService: DistrictControllerService
     ) {
-        console.log(this.currentDate);
-        console.log(this.currentYear);
-        console.log(this.currentMonth);
-
         // adding values to timeMapping array
         for (let i = 0; i > -12; --i) {
             let paddingMonth = this.currentMonth + i;
@@ -43,20 +39,15 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
             let monthMap = paddingMonth < 0 ? 12 + paddingMonth : paddingMonth;
             this.monthMapping.push(monthMap);
         }
-
-        console.log(this.monthMapping);
-        console.log(this.timeMapping);
     }
 
-    ngOnInit() {
-        this.districtMapping =
-            this.districtControllerService.getDistrictMapping();
-
-        let districtList = this.districtControllerService.getDistrictList();
-        console.log(districtList);
-        // this.districtMapping.set(3000, "test string");
-        // console.log(this.districtMapping);
-        // console.log(this.districtControllerService.getDistrictMapping());
+    async ngOnInit() {
+        const districtListPromise =
+            this.districtControllerService.getDistrictList();
+        const districtList = await districtListPromise.then((result) => {
+            return result;
+        });
+        console.log(JSON.stringify(districtList));
 
         this.backendConnectorService
             .getTrainingTable()
@@ -176,6 +167,11 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                     trainingTimeMappingOptions
                 );
             });
+    }
+
+    ngAfterViewInit(): void {
+        const districtList = this.districtControllerService.getDistrictList();
+        console.log(JSON.stringify(districtList));
     }
 
     ngOnDestroy(): void {
