@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from "@angular/core";
 import * as ApexCharts from "apexcharts";
 import { BackendConnectorService } from "src/app/services/backend-connector.service";
 import { DistrictControllerService } from "src/app/services/district-controller.service";
+import { TrainingControllerService } from "src/app/services/training-controller.service";
 
 @Component({
     selector: "app-graph-group",
@@ -30,7 +31,8 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
 
     constructor(
         public backendConnectorService: BackendConnectorService,
-        public districtControllerService: DistrictControllerService
+        public districtControllerService: DistrictControllerService,
+        public trainingControllerService: TrainingControllerService
     ) {
         // adding values to timeMapping array
         for (let i = 0; i > -12; --i) {
@@ -43,7 +45,10 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
 
     async ngOnInit() {
         await this.districtControllerService.initializeDistricts();
+        await this.trainingControllerService.initializeTraining();
+
         console.log(this.districtControllerService.getDistrictList());
+        console.log(this.trainingControllerService.getTrainingList());
 
         this.districtMapping = this.districtControllerService.getDistrictMap();
 

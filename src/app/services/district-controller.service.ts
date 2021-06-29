@@ -18,7 +18,6 @@ export class DistrictControllerService {
     public async initializeDistricts() {
         const districtListPromise = this.DistrictListPromise();
         this.districtList = await districtListPromise.then((result) => {
-            console.log(result);
             return result;
         });
         this.mapDistricts();
