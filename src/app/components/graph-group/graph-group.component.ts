@@ -42,12 +42,16 @@ export class GraphGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     async ngOnInit() {
-        const districtListPromise =
-            this.districtControllerService.getDistrictList();
-        const districtList = await districtListPromise.then((result) => {
-            return result;
-        });
-        console.log(JSON.stringify(districtList));
+        await this.districtControllerService.initializeDistricts();
+        console.log(this.districtControllerService.getDistrictList());
+
+        this.districtMapping = this.districtControllerService.getDistrictMap();
+        // const districtListPromise =
+        //     this.districtControllerService.getDistrictList();
+        // const districtList = await districtListPromise.then((result) => {
+        //     return result;
+        // });
+        // console.log(JSON.stringify(districtList));
 
         this.backendConnectorService
             .getTrainingTable()

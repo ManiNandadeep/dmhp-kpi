@@ -11,7 +11,34 @@ export class DistrictControllerService {
 
     constructor(public backendConnectorService: BackendConnectorService) {}
 
-    public getDistrictList() {
+    private DistrictListPromise() {
         return this.backendConnectorService.getDistricts().toPromise();
+    }
+
+    public async initializeDistricts() {
+        const districtListPromise = this.DistrictListPromise();
+        this.districtList = await districtListPromise.then((result) => {
+            console.log(result);
+            return result;
+        });
+        this.mapDistricts();
+        console.log(this.districtMap);
+    }
+
+    private mapDistricts() {
+        for (let i = 0; i < this.districtList.length; ++i) {
+            this.districtMap.set(
+                this.districtList[i].districtId,
+                this.districtList[i].district
+            );
+        }
+    }
+
+    public getDistrictList() {
+        return this.districtList;
+    }
+
+    public getDistrictMap() {
+        return this.districtMap;
     }
 }
