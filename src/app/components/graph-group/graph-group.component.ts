@@ -104,7 +104,7 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                 enabled: false,
             },
             title: {
-                text: "Number of participants per month for training events for last 12 months",
+                text: "Number of participants per month for training events for last year",
                 align: "center",
             },
         };

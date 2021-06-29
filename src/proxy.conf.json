@@ -1,0 +1,6 @@
+{
+    "/district": {
+        "target": "http://localhost:8082/district/",
+        "secure": false
+    }
+}

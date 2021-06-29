@@ -25,6 +25,7 @@ export class CardGroupComponent implements OnInit {
         if (this.trainingControllerService.getTrainingListLength() == 0) {
             await this.trainingControllerService.initializeTraining();
         }
+
         this.totalTrainings =
             this.trainingControllerService.getTrainingListLength();
         this.totalTrainingPax =
