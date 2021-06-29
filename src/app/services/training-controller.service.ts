@@ -6,8 +6,12 @@ import { BackendConnectorService } from "./backend-connector.service";
 })
 export class TrainingControllerService {
     private trainingList: any = [];
+    private currentMonth: number = new Date().getMonth();
+    private currentYear: number = new Date().getFullYear();
 
-    constructor(private backendConnectorService: BackendConnectorService) {}
+    constructor(private backendConnectorService: BackendConnectorService) {
+        // console.log(this.currentMonth, this.currentYear);
+    }
 
     private TrainingListPromise() {
         return this.backendConnectorService.getTrainingTable().toPromise();
@@ -15,12 +19,68 @@ export class TrainingControllerService {
 
     public async initializeTraining() {
         const trainingListPromise = this.TrainingListPromise();
-        this.trainingList = await trainingListPromise.then((result) => {
+        this.trainingList = await trainingListPromise.then((result: any) => {
+            for (let i = 0; i < result.length; ++i) {
+                result[i].eventFrom = new Date(result[i].eventFrom);
+                result[i].eventTo = new Date(result[i].eventTo);
+            }
             return result;
         });
     }
 
     public getTrainingList() {
         return this.trainingList;
+    }
+
+    public getNumberOfPatientsPerDistrict() {
+        const patientsPerDistrict: Map<number, number> = new Map();
+        for (let i = 0; i < this.trainingList.length; ++i) {
+            if (patientsPerDistrict.has(this.trainingList[i].districtId)) {
+                patientsPerDistrict.set(
+                    this.trainingList[i].districtId,
+                    patientsPerDistrict.get(this.trainingList[i].districtId) +
+                        this.trainingList[i].noOfPatients
+                );
+            } else {
+                patientsPerDistrict.set(
+                    this.trainingList[i].districtId,
+                    this.trainingList[i].noOfPatients
+                );
+            }
+        }
+        patientsPerDistrict.delete(0);
+        console.log(patientsPerDistrict);
+        return patientsPerDistrict;
+    }
+
+    public getNumberOfPatientsPerMonth() {
+        const patientsPerMonth: Map<string, number | undefined> = new Map();
+        for (let i = 0; i > -12; --i) {
+            let paddingMonth = this.currentMonth + i;
+            patientsPerMonth.set(
+                `${new Date(
+                    this.currentYear,
+                    paddingMonth
+                ).getMonth()},${new Date(
+                    this.currentYear,
+                    paddingMonth
+                ).getFullYear()}`,
+                0
+            );
+        }
+        for (let i = 0; i < this.trainingList.length; ++i) {
+            // console.log("In for loop");
+            const eventMonth = this.trainingList[i].eventFrom.getMonth();
+            const eventYear = this.trainingList[i].eventFrom.getFullYear();
+            if (patientsPerMonth.has(`${eventMonth},${eventYear}`)) {
+                patientsPerMonth.set(
+                    `${eventMonth},${eventYear}`,
+                    patientsPerMonth.get(`${eventMonth},${eventYear}`) +
+                        this.trainingList[i].noOfPatients
+                );
+            }
+        }
+        console.log(patientsPerMonth);
+        return patientsPerMonth;
     }
 }

@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from "@angular/core";
 import * as ApexCharts from "apexcharts";
+import { from } from "rxjs";
 import { BackendConnectorService } from "src/app/services/backend-connector.service";
 import { DistrictControllerService } from "src/app/services/district-controller.service";
 import { TrainingControllerService } from "src/app/services/training-controller.service";
@@ -17,166 +18,71 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     trainingLastYearChart!: ApexCharts;
 
     // training corresponding to districts
-    districts: number[] = [];
     districtMapping: Map<number, string> = new Map();
-    numberOfPatientsPerDistrict: number[] = [];
+    numberOfPatientsPerDistrictId: Map<number, number> = new Map();
+    numberOfPatientsPerDistrict: Map<string, number | undefined> = new Map();
 
     // training corresponding to time series
-    currentDate: Date = new Date();
-    currentYear: number = this.currentDate.getFullYear();
-    currentMonth: number = this.currentDate.getMonth();
-    timeMapping: Date[] = [];
-    monthMapping: number[] = [];
     numberOfPatientsPerMonth: number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     constructor(
         public backendConnectorService: BackendConnectorService,
         public districtControllerService: DistrictControllerService,
         public trainingControllerService: TrainingControllerService
-    ) {
-        // adding values to timeMapping array
-        for (let i = 0; i > -12; --i) {
-            let paddingMonth = this.currentMonth + i;
-            this.timeMapping.push(new Date(2021, paddingMonth));
-            let monthMap = paddingMonth < 0 ? 12 + paddingMonth : paddingMonth;
-            this.monthMapping.push(monthMap);
-        }
-    }
+    ) {}
 
     async ngOnInit() {
         await this.districtControllerService.initializeDistricts();
         await this.trainingControllerService.initializeTraining();
 
-        console.log(this.districtControllerService.getDistrictList());
-        console.log(this.trainingControllerService.getTrainingList());
+        // console.log(this.districtControllerService.getDistrictList());
+        // console.log(this.trainingControllerService.getTrainingList());
 
         this.districtMapping = this.districtControllerService.getDistrictMap();
+        this.numberOfPatientsPerDistrictId =
+            this.trainingControllerService.getNumberOfPatientsPerDistrict();
 
-        // const districtListPromise =
-        //     this.districtControllerService.getDistrictList();
-        // const districtList = await districtListPromise.then((result) => {
-        //     return result;
-        // });
-        // console.log(JSON.stringify(districtList));
+        this.trainingControllerService.getNumberOfPatientsPerMonth();
 
-        this.backendConnectorService
-            .getTrainingTable()
-            .subscribe((trainingList: any) => {
-                for (let i = 0; i < trainingList.length; ++i) {
-                    // trainingDistrict For loop body
-                    trainingList[i].eventFrom = new Date(
-                        trainingList[i].eventFrom
-                    );
+        // console.log(this.districtMapping);
+        // console.log(this.numberOfPatientsPerDistrictId);
 
-                    trainingList[i].eventTo = new Date(trainingList[i].eventTo);
-                    if (!this.districts.includes(trainingList[i].districtId)) {
-                        this.districts.push(trainingList[i].districtId);
-                        this.numberOfPatientsPerDistrict[
-                            this.districts.indexOf(trainingList[i].districtId)
-                        ] = trainingList[i].noOfPatients;
-                    } else {
-                        this.numberOfPatientsPerDistrict[
-                            this.districts.indexOf(trainingList[i].districtId)
-                        ] += trainingList[i].noOfPatients;
-                    }
+        for (const [districtId, districtName] of this.districtMapping) {
+            // console.log(districtId, districtName);
+            this.numberOfPatientsPerDistrict.set(
+                districtName,
+                this.numberOfPatientsPerDistrictId.get(districtId)
+            );
+        }
 
-                    // training timeMapping for loop body
-                    if (
-                        trainingList[i].eventFrom.getFullYear() ===
-                            this.currentYear ||
-                        trainingList[i].eventFrom.getFullYear() ===
-                            this.currentYear - 1
-                    ) {
-                        this.numberOfPatientsPerMonth[
-                            this.monthMapping.indexOf(
-                                trainingList[i].eventFrom.getMonth()
-                            )
-                        ] += trainingList[i].noOfPatients;
-                    }
-                }
+        // console.log(this.numberOfPatientsPerDistrict);
 
-                console.log(this.numberOfPatientsPerMonth);
+        // training per district chart options
+        const trainingDistrictOptions = {
+            chart: {
+                type: "bar",
+                height: 400,
+            },
+            series: [
+                {
+                    name: "Number Of Patients",
+                    data: Array.from(this.numberOfPatientsPerDistrict.values()),
+                },
+            ],
+            dataLabels: {
+                enabled: false,
+            },
+            xaxis: {
+                //add district name array.
+                categories: Array.from(this.numberOfPatientsPerDistrict.keys()),
+            },
+            title: {
+                text: "Number of participants per district for training events",
+                align: "center",
+            },
+        };
 
-                this.numberOfPatientsPerDistrict =
-                    this.numberOfPatientsPerDistrict.slice(1);
-                this.districts = this.districts.slice(1);
-
-                // check statements
-                console.log(this.districts);
-                console.log(this.numberOfPatientsPerDistrict);
-
-                // put this in testing module
-                let checkSum = 0;
-                for (
-                    let i = 0;
-                    i < this.numberOfPatientsPerDistrict.length;
-                    ++i
-                ) {
-                    checkSum += this.numberOfPatientsPerDistrict[i];
-                }
-
-                checkSum = 0;
-                for (let i = 0; i < this.numberOfPatientsPerMonth.length; ++i) {
-                    checkSum += this.numberOfPatientsPerMonth[i];
-                }
-                console.log(checkSum);
-
-                // training per district chart options
-                const trainingDistrictOptions = {
-                    chart: {
-                        type: "bar",
-                        height: 400,
-                    },
-                    series: [
-                        {
-                            name: "Number Of Patients",
-                            data: this.numberOfPatientsPerDistrict,
-                        },
-                    ],
-                    xaxis: {
-                        //add district name array.
-                        categories: Array.from(
-                            this.districtMapping.values()
-                        ).slice(0, -1),
-                    },
-                    dataLabels: {
-                        enabled: false,
-                    },
-                    title: {
-                        text: "Number of participants per district for training events",
-                        align: "center",
-                    },
-                };
-
-                const trainingTimeMappingOptions = {
-                    chart: {
-                        type: "bar",
-                        height: 400,
-                    },
-                    series: [
-                        {
-                            name: "Number Of Patients",
-                            data: this.numberOfPatientsPerMonth,
-                        },
-                    ],
-                    xaxis: {
-                        //add district name array.
-                        categories: this.timeMapping,
-                    },
-                    dataLabels: {
-                        enabled: false,
-                    },
-                    title: {
-                        text: "Number of participants per month for training events for last 12 months",
-                        align: "center",
-                    },
-                };
-
-                this.initTrainingChart(
-                    trainingDistrictOptions,
-                    trainingTimeMappingOptions
-                );
-            });
+        this.initTrainingChart(trainingDistrictOptions);
     }
 
     ngOnDestroy(): void {
@@ -191,7 +97,7 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
 
     initTrainingChart(
         trainingDistrictOptions: any,
-        trainingTimeMappingOptions: any
+        trainingTimeMappingOptions?: any
     ): void {
         this.trainingDistrictchart = new ApexCharts(
             document.querySelector("#training1"),
@@ -199,10 +105,10 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         );
         this.trainingDistrictchart.render();
 
-        this.trainingLastYearChart = new ApexCharts(
-            document.querySelector("#training2"),
-            trainingTimeMappingOptions
-        );
-        this.trainingLastYearChart.render();
+        // this.trainingLastYearChart = new ApexCharts(
+        //     document.querySelector("#training2"),
+        //     trainingTimeMappingOptions
+        // );
+        // this.trainingLastYearChart.render();
     }
 }
