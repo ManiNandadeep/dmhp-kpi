@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { BackendConnectorService } from "src/app/services/backend-connector.service";
+import { TrainingControllerService } from "src/app/services/training-controller.service";
 
 @Component({
     selector: "app-card-group",
@@ -15,35 +16,21 @@ export class CardGroupComponent implements OnInit {
     // budget and expense variables
     totalBudget!: number;
 
-    constructor(public backendConnectorService: BackendConnectorService) {}
+    constructor(
+        public backendConnectorService: BackendConnectorService,
+        public trainingControllerService: TrainingControllerService
+    ) {}
 
-    ngOnInit(): void {
-        this.backendConnectorService
-            .getTrainingTable()
-            .subscribe((trainingList: any) => {
-                this.totalTrainings = trainingList.length;
-                this.totalTrainingPaxLastYear = 0;
-                this.totalTrainingPax = 0;
-                console.log(typeof trainingList[1].eventFrom);
-                console.log(typeof trainingList[1].eventTo);
-                let eventFrom = new Date(trainingList[1].eventFrom);
-                console.log(eventFrom);
-                console.log(typeof trainingList[1].eventFrom);
-                console.log(typeof trainingList[1].eventTo);
-                console.log(eventFrom.getFullYear());
-
-                for (let i = 0; i < trainingList.length; ++i) {
-                    trainingList[i].eventFrom = new Date(
-                        trainingList[i].eventFrom
-                    );
-                    trainingList[i].eventTo = new Date(trainingList[i].eventTo);
-                    if (trainingList[i].eventFrom.getFullYear() >= 2020) {
-                        this.totalTrainingPaxLastYear +=
-                            trainingList[i].noOfPatients;
-                    }
-                    this.totalTrainingPax += trainingList[i].noOfPatients;
-                }
-            });
+    async ngOnInit() {
+        if (this.trainingControllerService.getTrainingListLength() == 0) {
+            await this.trainingControllerService.initializeTraining();
+        }
+        this.totalTrainings =
+            this.trainingControllerService.getTrainingListLength();
+        this.totalTrainingPax =
+            this.trainingControllerService.getTotalTrainedPatients();
+        this.totalTrainingPaxLastYear =
+            this.trainingControllerService.getTotalNumberOfPatientsLastYear();
 
         this.backendConnectorService
             .getBudgetAllocation()

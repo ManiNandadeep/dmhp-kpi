@@ -34,6 +34,29 @@ export class TrainingControllerService {
         return this.trainingList;
     }
 
+    public getTrainingListLength() {
+        return this.trainingList.length;
+    }
+
+    public getTotalTrainedPatients() {
+        let totalTrainedPatients = 0;
+        for (let i = 0; i < this.trainingList.length; ++i) {
+            totalTrainedPatients += this.trainingList[i].noOfPatients;
+        }
+        return totalTrainedPatients;
+    }
+
+    public getTotalNumberOfPatientsLastYear() {
+        this.getNumberOfPatientsPerMonth();
+        let totalNumberOfPatients = 0;
+        for (const noOfPatients of this.numberOfPatientsPerMonth.values()) {
+            if (noOfPatients) {
+                totalNumberOfPatients += noOfPatients;
+            }
+        }
+        return totalNumberOfPatients;
+    }
+
     public getNumberOfPatientsPerDistrict() {
         const patientsPerDistrict: Map<number, number> = new Map();
         for (let i = 0; i < this.trainingList.length; ++i) {

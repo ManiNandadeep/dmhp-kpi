@@ -33,15 +33,17 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
 
     async ngOnInit() {
         await this.districtControllerService.initializeDistricts();
-        await this.trainingControllerService.initializeTraining();
+        if (this.trainingControllerService.getTrainingListLength() == 0) {
+            await this.trainingControllerService.initializeTraining();
+        }
 
+        // await this.trainingControllerService.initializeTraining();
         // console.log(this.districtControllerService.getDistrictList());
         // console.log(this.trainingControllerService.getTrainingList());
 
         this.districtMapping = this.districtControllerService.getDistrictMap();
         this.numberOfPatientsPerDistrictId =
             this.trainingControllerService.getNumberOfPatientsPerDistrict();
-
         this.numberOfPatientsPerMonth =
             this.trainingControllerService.getNumberOfPatientsPerMonth();
 
