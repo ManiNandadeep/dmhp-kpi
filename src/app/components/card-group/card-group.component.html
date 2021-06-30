@@ -1,19 +1,16 @@
 <div class="container">
     <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-3">
-            <div class="card consultation-card shadow-md">
+        <div class="col-xs-12 col-sm-12 col-md-3 card-component">
+            <div class="card consultation-card shadow-md h-100">
                 <div class="card-body">
                     <h5 class="card-title">Card title</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
                         card's content.</p>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
                 </div>
             </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-3">
-            <div class="card training-card shadow-md">
+        <div class="col-xs-12 col-sm-12 col-md-3 card-component">
+            <div class="card training-card shadow-md h-100">
                 <div class="card-body">
                     <h2 class="card-title">
                         <mat-icon aria-hidden="false" aria-label="Event Icon">event</mat-icon> Training Events
@@ -28,29 +25,26 @@
                 </div>
             </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-3">
-            <div class="card budget-card shadow-md">
+        <div class="col-xs-12 col-sm-12 col-md-3 card-component">
+            <div class="card budget-card shadow-md h-100">
                 <div class="card-body">
                     <h2 class="card-title">
-                        <mat-icon aria-hidden="false" aria-label="Paid Icon">paid</mat-icon> Expenditure
+                        <mat-icon aria-hidden="false" aria-label="Paid Icon">paid</mat-icon> Expenditure (In Lks)
                     </h2>
                     <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
                     <div class="card-text">
                         <h4><span class="card-heading">Total Budget Allocation:</span> {{ totalBudget }}</h4>
-                        <h4><span class="card-heading">Total District Expense:</span> 0</h4>
+                        <h4><span class="card-heading">Total District Expense:</span> {{ totalExpense }}</h4>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-3">
-            <div class="card extra-card shadow-sm">
+        <div class="col-xs-12 col-sm-12 col-md-3 card-component">
+            <div class="card extra-card shadow-sm h-100">
                 <div class="card-body">
                     <h5 class="card-title">Card title</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
                         card's content.</p>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
                 </div>
             </div>
         </div>

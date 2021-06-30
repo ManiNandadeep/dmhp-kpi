@@ -1,14 +1,12 @@
-::ng-deep .new-card {
-    border-radius: 5px !important;
-    box-shadow: 0 1px 2.94px 0.06px rgb(4 26 55 / 16%) !important;
-    margin: 3rem 0px 10px 0px !important;
+.card-component {
+    margin-bottom: 50px;
 }
 
 /* Overall Card Styling */
 .card {
     border-radius: 5px;
     box-shadow: 0 1px 2.94px 0.06px rgb(4 26 55 / 16%);
-    margin: 2rem 0px 1rem 0px;
+    margin: 20px 0px 10px 0px;
     padding: 3%;
 }
 
@@ -16,9 +14,9 @@ h2.card-title {
     font-size: 22px;
 }
 
-h2 mat-icon {
+/* h2 mat-icon {
     padding-top: 4px;
-}
+} */
 
 /* span.card-heading {
     font-family: "Roboto", sans-serif;
@@ -42,5 +40,5 @@ div.card-text h4 {
 }
 
 .extra-card {
-    background-color: #5fe372;
+    background-color: #ffbcbc;
 }
