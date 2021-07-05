@@ -120,6 +120,7 @@ export class TrainingControllerService {
             }
         }
         this.numberOfPatientsPerMonth = patientsPerMonth;
+        // console.log(this.numberOfPatientsPerMonth);
         return patientsPerMonth;
     }
 }

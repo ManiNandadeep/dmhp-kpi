@@ -42,8 +42,8 @@ app.get("/", function (req, res, next) {
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "<Add Password here>",
-    database: "dmhp",
+    password: "",
+    database: "DMHPv1",
 });
 
 con.connect(function (err) {
@@ -57,8 +57,8 @@ con.connect(function (err) {
 // });
 
 // CHECK
-app.post("/check", (req, res, next) => {
-    sql = `select * from districts`;
+app.get("/check", (req, res, next) => {
+    sql = `select * from Districts`;
     con.query(sql, function (err, response) {
         if (err) console.log(err);
         res.json(response);
@@ -222,7 +222,7 @@ sum(`Specify Other`) as `Specify Other`";
   });
 }) */
 
-app.post("/getTrainingDetails", (req, res) => {
+app.get("/getTrainingDetails", (req, res) => {
     // var input = req.body.year;
     // var fields = input.split("_");
     // var year = fields[0] + "-04-01";
@@ -231,29 +231,30 @@ app.post("/getTrainingDetails", (req, res) => {
     var nextYear = "2021-03-31";
     console.log(year);
     sql = `Select A.District,A.Population,B.WCD_STAFF,B.Medical_Officers,B.Nursing_Staff,B.Pharmacist,B.ANM_Health_Workers, B.Health_Assistants,B.Anganwadi,B.School_Students,B.Ayush_Doctors,B.Counsellor, B.RBSK_RKSK,B.Psychologist,B.Social_Workers,B.Community_Health_Workers,B.School_Teachers,
-          B.College_Teachers,B.College_Students from (select District,DistrictId,Population from districts where StateId='17' and DistrictId != '46') A left join
-          (select distinct DistrictId,SUM(CASE WHEN TargetGrpId = 3 THEN NoOfPatients ELSE 0 END) as WCD_STAFF,
-          SUM(CASE WHEN TargetGrpId = 6 THEN NoOfPatients ELSE 0 END) as Medical_Officers,
-          SUM(CASE WHEN TargetGrpId = 7 THEN NoOfPatients ELSE 0 END) as Nursing_Staff,
-          SUM(CASE WHEN TargetGrpId = 8 THEN NoOfPatients ELSE 0 END) as Pharmacist,
-          SUM(CASE WHEN TargetGrpId = 9 THEN NoOfPatients ELSE 0 END) as ANM_Health_Workers,
-          SUM(CASE WHEN TargetGrpId = 10 THEN NoOfPatients ELSE 0 END) as Health_Assistants,
-          SUM(CASE WHEN TargetGrpId = 12 THEN NoOfPatients ELSE 0 END) as Anganwadi,
-          SUM(CASE WHEN TargetGrpId = 13 THEN NoOfPatients ELSE 0 END) as School_Students,
-          SUM(CASE WHEN TargetGrpId = 14 THEN NoOfPatients ELSE 0 END) as Ayush_Doctors,
-          SUM(CASE WHEN TargetGrpId = 15 THEN NoOfPatients ELSE 0 END) as Counsellor,
-          SUM(CASE WHEN TargetGrpId = 26 THEN NoOfPatients ELSE 0 END) as RBSK_RKSK,
-          SUM(CASE WHEN TargetGrpId = 35 THEN NoOfPatients ELSE 0 END) as Psychologist,
-          SUM(CASE WHEN TargetGrpId = 36 THEN NoOfPatients ELSE 0 END) as Social_Workers,
-          SUM(CASE WHEN TargetGrpId = 37 THEN NoOfPatients ELSE 0 END) as Community_Health_Workers,
-          SUM(CASE WHEN TargetGrpId = 60 THEN NoOfPatients ELSE 0 END) as School_Teachers,
-          SUM(CASE WHEN TargetGrpId = 61 THEN NoOfPatients ELSE 0 END) as College_Teachers,
-          SUM(CASE WHEN TargetGrpId = 62 THEN NoOfPatients ELSE 0 END) as College_Students
-          from tbl_training
-          where EventFrom between ? and ?
-          group by DistrictId) B on A.DistrictId=B.DistrictId
-          group by A.District, A.Population
-          order by A.District`;
+    B.College_Teachers,B.College_Students from (select District,DistrictId,Population from Districts where StateId='17' and DistrictId != '46') A left join
+    (select distinct DistrictId,SUM(CASE WHEN TargetGrpId = 3 THEN NoOfPatients ELSE 0 END) as WCD_STAFF,
+    SUM(CASE WHEN TargetGrpId = 6 THEN NoOfPatients ELSE 0 END) as Medical_Officers,
+    SUM(CASE WHEN TargetGrpId = 7 THEN NoOfPatients ELSE 0 END) as Nursing_Staff,
+    SUM(CASE WHEN TargetGrpId = 8 THEN NoOfPatients ELSE 0 END) as Pharmacist,
+    SUM(CASE WHEN TargetGrpId = 9 THEN NoOfPatients ELSE 0 END) as ANM_Health_Workers,
+    SUM(CASE WHEN TargetGrpId = 10 THEN NoOfPatients ELSE 0 END) as Health_Assistants,
+    SUM(CASE WHEN TargetGrpId = 12 THEN NoOfPatients ELSE 0 END) as Anganwadi,
+    SUM(CASE WHEN TargetGrpId = 13 THEN NoOfPatients ELSE 0 END) as School_Students,
+    SUM(CASE WHEN TargetGrpId = 14 THEN NoOfPatients ELSE 0 END) as Ayush_Doctors,
+    SUM(CASE WHEN TargetGrpId = 15 THEN NoOfPatients ELSE 0 END) as Counsellor,
+    SUM(CASE WHEN TargetGrpId = 26 THEN NoOfPatients ELSE 0 END) as RBSK_RKSK,
+    SUM(CASE WHEN TargetGrpId = 35 THEN NoOfPatients ELSE 0 END) as Psychologist,
+    SUM(CASE WHEN TargetGrpId = 36 THEN NoOfPatients ELSE 0 END) as Social_Workers,
+    SUM(CASE WHEN TargetGrpId = 37 THEN NoOfPatients ELSE 0 END) as Community_Health_Workers,
+    SUM(CASE WHEN TargetGrpId = 60 THEN NoOfPatients ELSE 0 END) as School_Teachers,
+    SUM(CASE WHEN TargetGrpId = 61 THEN NoOfPatients ELSE 0 END) as College_Teachers,
+    SUM(CASE WHEN TargetGrpId = 62 THEN NoOfPatients ELSE 0 END) as College_Students
+    from tbl_training
+    where EventFrom between ? and ?
+    group by DistrictId) B on A.DistrictId=B.DistrictId
+    group by A.District, A.Population
+    order by A.District`;
+
 
     con.query(sql, [year, nextYear], function (err, response) {
         if (err) console.log(err);
