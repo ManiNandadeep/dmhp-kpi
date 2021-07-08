@@ -6,6 +6,23 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `getTraining`(
     IN start_date date,
     IN end_date date)
 BEGIN
+	
+    /*
+		StateId
+		DistrictId
+        EventId
+        TargetGrpId
+        ResourceId
+        
+        EventFrom
+        EventTo
+        
+        FacilityTypeId ?
+        SensitizationId ?
+        
+        CalenderType -> c/f
+        TimePeriod -> a/m/q
+    */
 
 	/* Declaring session variables*/
 	DECLARE district_id_string varchar(300);
@@ -13,6 +30,11 @@ BEGIN
 	DECLARE target_group_id_string varchar(300);
     DECLARE resource_id_string varchar(300);
     DECLARE date_filter_string varchar(300);
+    DECLARE MaxEventFrom date;
+    DECLARE MinEventFrom date;
+    
+    SELECT MIN(EventFrom) INTO @MinEventFrom FROM DMHPv1.tbl_training;
+    SELECT MAX(EventFrom) INTO @MaxEventFrom FROM DMHPv1.tbl_training;
         
     /* Create a district id filter statement string */
     if(district_list = '') then
@@ -45,7 +67,7 @@ BEGIN
     
     /* Filter by Start date and End Date */
     if(start_date = '0000-00-00' and end_date = '0000-00-00') then 
-		set @date_filter_string = "";
+		set @date_filter_string = CONCAT("EventFrom BETWEEN '", @MinEventFrom , "' and '", @MaxEventFrom, "'");
 	elseif(start_date = '0000-00-00') then
 		set @date_filter_string = CONCAT("EventFrom <= '", end_date, "'");
 	elseif(end_date = '0000-00-00') then
@@ -55,10 +77,10 @@ BEGIN
 	end if;
      
 		
-    /* PRINTING STATEMENTS 
+    /* PRINTING STATEMENTS */
+    select concat(@MaxEventFrom);
     select concat("district id string -> ", @district_id_string);
     select concat("date filter string -> ", @date_filter_string);
-    */
     
     
     /* CREATING STATEMENT*/
