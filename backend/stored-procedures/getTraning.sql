@@ -39,7 +39,7 @@ BEGIN
     DECLARE MinEventFrom date;
     DECLARE display_string varchar(500);
     
-    set @display_string=NULL;
+    set @display_string = "DistrictId";
     
     SELECT MIN(EventFrom) INTO @MinEventFrom FROM DMHPv1.tbl_training;
     SELECT MAX(EventFrom) INTO @MaxEventFrom FROM DMHPv1.tbl_training;
@@ -94,9 +94,9 @@ BEGIN
     
     
     /* The below code corresponds to displaying wrt */
-    if (FIND_IN_SET('DistrictId',display)) then
-		set @display_string = CONCAT("DistrictId");
-	end if;
+    -- if (FIND_IN_SET('DistrictId',display)) then
+		-- set @display_string = CONCAT("DistrictId");
+	-- end if;
     
     IF(FIND_IN_SET('ReportingMonthyear',display))THEN
 		IF(timeperiod_type='annually')THEN
