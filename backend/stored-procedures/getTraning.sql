@@ -26,7 +26,7 @@ BEGIN
         SensitizationId ?
         
         CalenderType -> c/f
-        TimePeriod -> annually,quaterlly,monthly
+        TimePeriod -> annually,quarterly,monthly
     */
 
 	/* Declaring session variables*/
@@ -39,7 +39,7 @@ BEGIN
     DECLARE MinEventFrom date;
     DECLARE display_string varchar(500);
     
-    set @display_string=NULL;
+    set @display_string = "DistrictId";
     
     SELECT MIN(EventFrom) INTO @MinEventFrom FROM DMHPv1.tbl_training;
     SELECT MAX(EventFrom) INTO @MaxEventFrom FROM DMHPv1.tbl_training;
@@ -94,9 +94,9 @@ BEGIN
     
     
     /* The below code corresponds to displaying wrt */
-    if (FIND_IN_SET('DistrictId',display)) then
-		set @display_string = CONCAT("DistrictId");
-	end if;
+    -- if (FIND_IN_SET('DistrictId',display)) then
+		-- set @display_string = CONCAT("DistrictId");
+	-- end if;
     
     IF(FIND_IN_SET('ReportingMonthyear',display))THEN
 		IF(timeperiod_type='annually')THEN
@@ -117,7 +117,7 @@ BEGIN
 	END IF;
     
     IF(FIND_IN_SET('ReportingMonthyear',display))THEN
-		IF(timeperiod_type='quaterlly')THEN
+		IF(timeperiod_type='quarterly')THEN
 			IF (year_type='c') THEN
 				IF(@display_string is NULL)THEN
 					SET @display_string=CONCAT("YEAR(EventFrom),QUARTER(EventFrom)as Quarter");
@@ -160,10 +160,21 @@ BEGIN
             @target_group_id_string, " and ", 
             @resource_id_string, " and ",
             @date_filter_string); 
-	
-    select concat(@statement);
-    
-    prepare stmt from @statement;
+            
+	set @numPatients = concat(
+			"select SUM(noOfPatients) from tbl_training where StateId = 17 and ",
+            @district_id_string," and ", 
+            @event_id_string, " and ", 
+            @target_group_id_string, " and ", 
+            @resource_id_string, " and ",
+            @date_filter_string); 
+            
+	set @finalstatement = @statement;
+            
+          
+    prepare stmt from @finalstatement;
     execute stmt;
     deallocate prepare stmt;
+    
+    
 END

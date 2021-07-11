@@ -38,7 +38,7 @@ app.use(function (req, res, next) {
 CONNECT TO MYSQL DATABASE
 */
 
-var passwordRoot = "Courier1@";
+var passwordRoot = "emter-your-mysql-root-password-here";
 
 
 var con = mysql.createConnection({
@@ -85,7 +85,16 @@ app.get("/training", function(req,res){
 
     con.query(sql, [display,district_list,event_list,target_group_list,resource_list,start_date,end_date,timeperiod_type,year_type], function (err, response) {
          if (err) console.log(err);
-         res.json(response);
+
+         
+        let patientSum = 0;
+        for(let i = 0; i < Object.keys(response[0]).length; i++){
+            patientSum += parseInt(response[0][i].noOfPatients);
+            }
+
+        var dict = {"SumPatients": patientSum};
+        response.push(dict);        
+        res.json(response);
       });
     
 
