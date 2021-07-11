@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from "@angular/core";
 import * as ApexCharts from "apexcharts";
 import { from } from "rxjs";
+import { map } from "rxjs/operators";
 import { BackendConnectorService } from "src/app/services/backend-connector.service";
 import { DistrictControllerService } from "src/app/services/district-controller.service";
 import { TrainingControllerService } from "src/app/services/training-controller.service";
@@ -18,50 +19,60 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     trainingLastYearChart!: ApexCharts;
 
     // training corresponding to districts
-    districtMapping: Map<number, string> = new Map();
-    numberOfPatientsPerDistrictId: Map<number, number> = new Map();
-    numberOfPatientsPerDistrict: Map<string, number | undefined> = new Map();
+    numberOfPatientsPerDistrict: Map<string, number> = new Map();
 
     // training corresponding to time series
-    numberOfPatientsPerMonth: Map<string, number | undefined> = new Map();
+    numberOfPatientsPerMonth: Map<string, number> = new Map();
 
     constructor(
         public backendConnectorService: BackendConnectorService,
-        public districtControllerService: DistrictControllerService,
         public trainingControllerService: TrainingControllerService
     ) {}
 
-    async ngOnInit() {
-        await this.districtControllerService.initializeDistricts();
-        if (this.trainingControllerService.getTrainingListLength() == 0) {
-            await this.trainingControllerService.initializeTraining();
-        }
+    ngOnInit() {
+        this.backendConnectorService
+            .getTraining(
+                this.trainingControllerService.getBodyParams("monthly", "c")
+            )
+            .subscribe((data: any) => {
+                const trainingData = data[0];
+                console.log(trainingData);
+                console.log(data);
 
-        // await this.trainingControllerService.initializeTraining();
-        // console.log(this.districtControllerService.getDistrictList());
-        // console.log(this.trainingControllerService.getTrainingList());
+                this.numberOfPatientsPerDistrict =
+                    this.trainingControllerService.getDistrictPatientMap(
+                        trainingData
+                    );
 
-        this.districtMapping = this.districtControllerService.getDistrictMap();
-        this.numberOfPatientsPerDistrictId =
-            this.trainingControllerService.getNumberOfPatientsPerDistrict();
-        this.numberOfPatientsPerMonth =
-            this.trainingControllerService.getNumberOfPatientsPerMonth();
+                this.numberOfPatientsPerMonth =
+                    this.trainingControllerService.getMonthlyPatientMap(
+                        trainingData
+                    );
 
-        // console.log(this.districtMapping);
-        // console.log(this.numberOfPatientsPerDistrictId);
+                this.initTrainingCharts(
+                    this.trainingDistrictchart,
+                    this.createChartOptions(
+                        this.numberOfPatientsPerDistrict,
+                        "Number of participants per district for training events"
+                    ),
+                    1
+                );
 
-        for (const [districtId, districtName] of this.districtMapping) {
-            // console.log(districtId, districtName);
-            this.numberOfPatientsPerDistrict.set(
-                districtName,
-                this.numberOfPatientsPerDistrictId.get(districtId)
-            );
-        }
+                this.initTrainingCharts(
+                    this.trainingLastYearChart,
+                    this.createChartOptions(
+                        this.numberOfPatientsPerMonth,
+                        "Number of participants last year monthly"
+                    ),
+                    2
+                );
+            });
+    }
 
-        // console.log(this.numberOfPatientsPerDistrict);
+    ngOnDestroy() {}
 
-        // training per district chart options
-        const trainingDistrictOptions = {
+    createChartOptions(valueMap: Map<string, number>, title: string) {
+        const chartOptions = {
             chart: {
                 type: "bar",
                 height: 400,
@@ -69,7 +80,7 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
             series: [
                 {
                     name: "Number Of Patients",
-                    data: Array.from(this.numberOfPatientsPerDistrict.values()),
+                    data: Array.from(valueMap.values()),
                 },
             ],
             dataLabels: {
@@ -77,68 +88,25 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
             },
             xaxis: {
                 //add district name array.
-                categories: Array.from(this.numberOfPatientsPerDistrict.keys()),
+                categories: Array.from(valueMap.keys()),
             },
             title: {
-                text: "Number of participants per district for training events",
+                text: title,
                 align: "center",
             },
         };
-
-        const trainingTimeMappingOptions = {
-            chart: {
-                type: "bar",
-                height: 400,
-            },
-            series: [
-                {
-                    name: "Number Of Patients",
-                    data: [...this.numberOfPatientsPerMonth.values()],
-                },
-            ],
-            xaxis: {
-                //add district name array.
-                categories: [...this.numberOfPatientsPerMonth.keys()],
-            },
-            dataLabels: {
-                enabled: false,
-            },
-            title: {
-                text: "Number of participants per month for training events for last year",
-                align: "center",
-            },
-        };
-
-        this.initTrainingChart(
-            trainingDistrictOptions,
-            trainingTimeMappingOptions
-        );
+        return chartOptions;
     }
 
-    ngOnDestroy(): void {
-        if (this.trainingDistrictchart) {
-            this.trainingDistrictchart.destroy();
-        }
-
-        if (this.trainingLastYearChart) {
-            this.trainingLastYearChart.destroy();
-        }
-    }
-
-    initTrainingChart(
-        trainingDistrictOptions: any,
-        trainingTimeMappingOptions?: any
+    initTrainingCharts(
+        chart: ApexCharts,
+        chartOptions: any,
+        graphId: number
     ): void {
-        this.trainingDistrictchart = new ApexCharts(
-            document.querySelector("#training1"),
-            trainingDistrictOptions
+        chart = new ApexCharts(
+            document.querySelector(`#training${graphId}`),
+            chartOptions
         );
-        this.trainingDistrictchart.render();
-
-        this.trainingLastYearChart = new ApexCharts(
-            document.querySelector("#training2"),
-            trainingTimeMappingOptions
-        );
-        this.trainingLastYearChart.render();
+        chart.render();
     }
 }

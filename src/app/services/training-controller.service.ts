@@ -1,84 +1,68 @@
 import { Injectable } from "@angular/core";
 import { BackendConnectorService } from "./backend-connector.service";
+import { DistrictControllerService } from "./district-controller.service";
 
 @Injectable({
     providedIn: "root",
 })
 export class TrainingControllerService {
-    private trainingList: any = [];
     private currentMonth: number = new Date().getMonth();
     private currentYear: number = new Date().getFullYear();
-    private numberOfPatientsPerMonth: Map<string, number | undefined> =
-        new Map();
 
-    constructor(private backendConnectorService: BackendConnectorService) {
-        // console.log(this.currentMonth, this.currentYear);
+    constructor(
+        private backendConnectorService: BackendConnectorService,
+        private districtControllerService: DistrictControllerService
+    ) {}
+
+    public getBodyParams(timeperiodType: string, yearType: string) {
+        const today: Date = new Date();
+        const todayLastYear: Date = new Date(
+            new Date().setFullYear(today.getFullYear() - 1)
+        );
+        const bodyParams = {
+            display: "DistrictId,ReportingMonthYear",
+            district_list: "",
+            event_list: "",
+            target_group_list: "",
+            resource_list: "",
+            start_date: todayLastYear.toISOString().slice(0, 10),
+            end_date: today.toISOString().slice(0, 10),
+            timeperiod_type: timeperiodType,
+            year_type: yearType,
+        };
+        return bodyParams;
     }
 
-    private TrainingListPromise() {
-        return this.backendConnectorService.getTrainingTable().toPromise();
-    }
+    public getDistrictPatientMap(trainingData: any) {
+        const districtPatientMap: Map<string, number> = new Map();
 
-    public async initializeTraining() {
-        const trainingListPromise = this.TrainingListPromise();
-        this.trainingList = await trainingListPromise.then((result: any) => {
-            for (let i = 0; i < result.length; ++i) {
-                result[i].eventFrom = new Date(result[i].eventFrom);
-                result[i].eventTo = new Date(result[i].eventTo);
-            }
-            return result;
-        });
-    }
+        const districtMap = this.districtControllerService.getDistrictMap();
 
-    public getTrainingList() {
-        return this.trainingList;
-    }
-
-    public getTrainingListLength() {
-        return this.trainingList.length;
-    }
-
-    public getTotalTrainedPatients() {
-        let totalTrainedPatients = 0;
-        for (let i = 0; i < this.trainingList.length; ++i) {
-            totalTrainedPatients += this.trainingList[i].noOfPatients;
-        }
-        return totalTrainedPatients;
-    }
-
-    public getTotalNumberOfPatientsLastYear() {
-        this.getNumberOfPatientsPerMonth();
-        let totalNumberOfPatients = 0;
-        for (const noOfPatients of this.numberOfPatientsPerMonth.values()) {
-            if (noOfPatients) {
-                totalNumberOfPatients += noOfPatients;
-            }
-        }
-        return totalNumberOfPatients;
-    }
-
-    public getNumberOfPatientsPerDistrict() {
-        const patientsPerDistrict: Map<number, number> = new Map();
-        for (let i = 0; i < this.trainingList.length; ++i) {
-            if (patientsPerDistrict.has(this.trainingList[i].districtId)) {
-                patientsPerDistrict.set(
-                    this.trainingList[i].districtId,
-                    patientsPerDistrict.get(this.trainingList[i].districtId) +
-                        this.trainingList[i].noOfPatients
+        for (let i = 0; i < trainingData.length; ++i) {
+            if (
+                districtPatientMap.has(
+                    districtMap.get(trainingData[i].DistrictId)
+                )
+            ) {
+                districtPatientMap.set(
+                    districtMap.get(trainingData[i].DistrictId),
+                    districtPatientMap.get(
+                        districtMap.get(trainingData[i].DistrictId)
+                    ) + trainingData[i].noOfPatients
                 );
             } else {
-                patientsPerDistrict.set(
-                    this.trainingList[i].districtId,
-                    this.trainingList[i].noOfPatients
+                districtPatientMap.set(
+                    districtMap.get(trainingData[i].DistrictId),
+                    trainingData[i].noOfPatients
                 );
             }
         }
-        patientsPerDistrict.delete(0);
-        console.log(patientsPerDistrict);
-        return patientsPerDistrict;
+
+        console.log(districtPatientMap);
+        return districtPatientMap;
     }
 
-    public getNumberOfPatientsPerMonth() {
+    public getMonthlyPatientMap(trainingList: any) {
         const monthNames = [
             "January",
             "February",
@@ -94,7 +78,7 @@ export class TrainingControllerService {
             "December",
         ];
 
-        const patientsPerMonth: Map<string, number | undefined> = new Map();
+        const patientsPerMonth: Map<string, number> = new Map();
         for (let i = 0; i > -12; --i) {
             let paddingMonth = this.currentMonth + i;
             patientsPerMonth.set(
@@ -106,21 +90,21 @@ export class TrainingControllerService {
                 0
             );
         }
-        for (let i = 0; i < this.trainingList.length; ++i) {
+        for (let i = 0; i < trainingList.length; ++i) {
             // console.log("In for loop");
-            const eventMonth =
-                monthNames[this.trainingList[i].eventFrom.getMonth()];
-            const eventYear = this.trainingList[i].eventFrom.getFullYear();
+            trainingList[i].EventFrom = new Date(trainingList[i].EventFrom);
+            const eventMonth = monthNames[trainingList[i].EventFrom.getMonth()];
+            const eventYear = trainingList[i].EventFrom.getFullYear();
             if (patientsPerMonth.has(`${eventMonth},${eventYear}`)) {
                 patientsPerMonth.set(
                     `${eventMonth},${eventYear}`,
                     patientsPerMonth.get(`${eventMonth},${eventYear}`) +
-                        this.trainingList[i].noOfPatients
+                        trainingList[i].noOfPatients
                 );
             }
         }
-        this.numberOfPatientsPerMonth = patientsPerMonth;
-        // console.log(this.numberOfPatientsPerMonth);
+        // this.numberOfPatientsPerMonth = patientsPerMonth;
+        console.log(patientsPerMonth);
         return patientsPerMonth;
     }
 }
