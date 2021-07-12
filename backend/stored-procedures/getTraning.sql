@@ -77,7 +77,7 @@ BEGIN
     
     /* Create a facility id filter statement string */
     if(facility_list = '') then 
-		set @facility_id_string = CONCAT("FacilityTypeId IN (select distinct FacilityTypeId from DMHPv1.tbl_training)");
+		set @facility_id_string = CONCAT("(FacilityTypeId IN (select distinct FacilityTypeId from DMHPv1.tbl_training) OR FacilityTypeId is NULL)");
 	else 
 		set @facility_id_string = CONCAT("FacilityTypeId IN (",facility_list,")");
 	end if;
