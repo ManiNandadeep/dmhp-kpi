@@ -108,11 +108,11 @@ BEGIN
     
     
     /* Filter by Start date and End Date */
-    if(start_date = '0000-00-00' and end_date = '0000-00-00') then 
+    if(start_date IS NULL and end_date IS NULL) then 
 		set @date_filter_string = CONCAT("EventFrom BETWEEN '", @MinEventFrom , "' and '", @MaxEventFrom, "'");
-	elseif(start_date = '0000-00-00') then
+	elseif(start_date IS NULL) then
 		set @date_filter_string = CONCAT("EventFrom <= '", end_date, "'");
-	elseif(end_date = '0000-00-00') then
+	elseif(end_date IS NULL) then
 		set @date_filter_string = CONCAT("EventFrom >= '", start_date, "'");
 	else 
 		set @date_filter_string = CONCAT("EventFrom BETWEEN '", start_date, "' and '", end_date , "'");
