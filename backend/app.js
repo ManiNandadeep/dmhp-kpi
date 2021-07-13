@@ -106,11 +106,18 @@ Checks:
 
 function checkSafeTrainingCall(display,group_by,district_list,facility_list,event_list,target_group_list,resource_list,start_date,end_date,timeperiod_type,year_type){
 
+    var errorString = "";
+
+
     let date_safe = true;
     date_safe = returnDateSafeSQL(start_date,end_date);
+    if(date_safe == false){
+        errorString += "end_date should not be before start_date ,";
+    }
     
     let year_type_safe = true; 
     if(year_type !== "" && year_type !== "c" && year_type !== "f") {
+        errorString += "year_type should be ''/'c'/'f' ,";
         year_type_safe = false;
     }
 
@@ -120,6 +127,7 @@ function checkSafeTrainingCall(display,group_by,district_list,facility_list,even
         for(let i = 0; i < district_list_arr.length; i++){
             if(parseInt(district_list_arr[i]) < 0)  {
                 district_list_safe = false;
+                errorString += "district_list should only have non-negative values ,";
                 break;
             }
         }
@@ -131,6 +139,7 @@ function checkSafeTrainingCall(display,group_by,district_list,facility_list,even
         for(let i = 0; i < event_list_arr.length; i++){
             if(parseInt(event_list_arr[i]) < 0)  {
                 event_list_safe = false;
+                errorString += "event_list should only have non-negative values ,";
                 break;
             }
         }
@@ -142,6 +151,7 @@ function checkSafeTrainingCall(display,group_by,district_list,facility_list,even
         for(let i = 0; i < target_list_arr.length; i++){
             if(parseInt(target_list_arr[i]) < 0)  {
                 target_list_safe = false;
+                errorString += "target_list should only have non-negative values ,";
                 break;
             }
         }
@@ -153,6 +163,7 @@ function checkSafeTrainingCall(display,group_by,district_list,facility_list,even
         for(let i = 0; i < resource_list_arr.length; i++){
             if(parseInt(resource_list_arr[i]) < 0)  {
                 resource_safe = false;
+                errorString += "resource_list should only have non-negative values ,";
                 break;
             }
         }
@@ -160,6 +171,7 @@ function checkSafeTrainingCall(display,group_by,district_list,facility_list,even
 
     let time_period_safe = true;
     if(timeperiod_type !== "annually" && timeperiod_type !== "quarterly" && timeperiod_type !== "monthly") {
+        errorString += "time_period_type should be 'annually'/'quarterly'/'monthly' ,";
         time_period_safe = false;
     }
 
@@ -169,13 +181,20 @@ function checkSafeTrainingCall(display,group_by,district_list,facility_list,even
         for(let i = 0; i < facility_list_arr.length; i++){
             if(parseInt(facility_list_arr[i]) < 0)  {
                 facility_safe = false;
+                errorString += "facility_list should only have non-negative values ,";
                 break;
             }
         }
     }
 
+    var checkVar = date_safe && year_type_safe && district_list_safe && event_list_safe && target_list_safe && resource_safe && time_period_safe && facility_safe;
 
-    return date_safe && year_type_safe && district_list_safe && event_list_safe && target_list_safe && resource_safe && time_period_safe && facility_safe;
+    var returnDict = {
+        checkVar,
+        errorString
+    };
+
+    return returnDict;
 }
 
 
@@ -276,10 +295,10 @@ app.get("/training",authenticateToken, function(req,res){
         */
 
         let isSafe = checkSafeTrainingCall(display,group_by,district_list,facility_list,event_list,target_group_list,resource_list,start_date,end_date,timeperiod_type,year_type);
-
-        if(isSafe == false){
+        if(isSafe.checkVar == false){
             incorrectInputDict = {
-                "message" : "One or more of the inputs are unsupported"
+                "message" : "One or more of the inputs are unsupported",
+                "error": isSafe.errorString
             };
             res.json(incorrectInputDict);
         }
