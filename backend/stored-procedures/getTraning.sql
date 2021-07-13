@@ -33,7 +33,7 @@ BEGIN
     */
 
 
-	/* Declaring session variables*/
+	/* Declaring session variables */
 	DECLARE district_id_string varchar(300);
     DECLARE facility_id_string varchar(300);
     DECLARE event_id_string varchar(300);
@@ -245,6 +245,7 @@ BEGIN
 	END IF;
     
     
+    /*
     IF(FIND_IN_SET('financial_year',group_by)) THEN
 		IF(@group_by_string is NULL) THEN
 			set @group_by_string = CONCAT("financial_year");
@@ -252,14 +253,25 @@ BEGIN
 			set @group_by_string = CONCAT(@group_by_string,",financial_year");
 		END IF;
 	END IF;
+    */
+    
     
     IF(FIND_IN_SET('Year',group_by)) THEN
-		IF(@group_by_string is NULL) THEN
-			set @group_by_string = CONCAT("Year");
+		IF(year_type='c') THEN
+			IF(@group_by_string is NULL) THEN
+				set @group_by_string = CONCAT("Year");
+			ELSE
+				set @group_by_string = CONCAT(@group_by_string,",Year");
+			END IF;
 		ELSE
-			set @group_by_string = CONCAT(@group_by_string,",Year");
+			IF(@group_by_string is NULL) THEN
+				set @group_by_string = CONCAT("financial_year");
+			ELSE
+				set @group_by_string = CONCAT(@group_by_string,",financial_year");
+			END IF;
 		END IF;
 	END IF;
+    
     
     IF(FIND_IN_SET('Quarter',group_by)) THEN
 		IF(@group_by_string is NULL) THEN
@@ -269,6 +281,7 @@ BEGIN
 		END IF;
 	END IF;
     
+    
     IF(FIND_IN_SET('EventId',group_by)) THEN
 		IF(@group_by_string is NULL) THEN
 			set @group_by_string = CONCAT("EventId");
@@ -277,6 +290,7 @@ BEGIN
 		END IF;
 	END IF;
     
+    
     IF(FIND_IN_SET('FacilityTypeId',group_by)) THEN
 		IF(@group_by_string is NULL) THEN
 			set @group_by_string = CONCAT("FacilityTypeId");
@@ -284,6 +298,7 @@ BEGIN
 			set @group_by_string = CONCAT(@group_by_string,",FacilityTypeId");
 		END IF;
 	END IF;
+    
     
     IF(FIND_IN_SET('ResourceId',group_by)) THEN
 		IF(@group_by_string is NULL) THEN
@@ -314,17 +329,17 @@ BEGIN
     /* CREATING STATEMENT*/
 	set @statement = concat(
 			"select ", @display_string,
-            ",sum(noOfPatients),count(TrainingId) from tbl_training where StateId = 17 and ",
+            ",sum(noOfPatients) as noOfPatients,count(TrainingId) as noOfEvents from tbl_training where StateId = 17 and ",
             @district_id_string," and ",
             @facility_id_string," and ",
             @event_id_string, " and ", 
             @target_group_id_string, " and ", 
             @resource_id_string, " and ",
             @date_filter_string, " group by ",
-            @group_by_string); 
+            @group_by_string, " order by DistrictId"); 
 
 	
-	select concat(@statement);
+	# select concat(@statement);
     prepare stmt from @statement;
     execute stmt;
     deallocate prepare stmt;
