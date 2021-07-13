@@ -233,6 +233,84 @@ function checkSafeTrainingCall(
     return returnDict;
 }
 
+
+/*
+Validation for tbl_districtexpense's stored procedure
+
+Checks:
+    - start_date <= end_date
+    - districtId are all non-negative
+    - YearType should be '','c', or 'f'
+    - TimePeriodType should be 'quarterly','monthly', or 'yearly'
+*/
+
+
+function checkSafeDistrictExpenseCall(
+    display,
+    group_by,
+    agg,
+    district_list,
+    start_date,
+    end_date,
+    timeperiod_type,
+    year_type,
+){
+    var errorString = "";
+
+    let date_safe = true;
+    date_safe = returnDateSafeSQL(start_date, end_date);
+    if (date_safe == false) {
+        errorString += "end_date should not be before start_date ,";
+    }
+
+    let year_type_safe = true;
+    if (year_type !== "" && year_type !== "c" && year_type !== "f") {
+        errorString += "year_type should be ''/'c'/'f' ,";
+        year_type_safe = false;
+    }
+
+    let district_list_safe = true;
+    if (district_list !== "") {
+        let district_list_arr = district_list.split(",");
+        for (let i = 0; i < district_list_arr.length; i++) {
+            if (parseInt(district_list_arr[i]) < 0) {
+                district_list_safe = false;
+                errorString +=
+                    "district_list should only have non-negative values ,";
+                break;
+            }
+        }
+    }
+
+    let time_period_safe = true;
+    if (
+        timeperiod_type !== "annually" &&
+        timeperiod_type !== "quarterly" &&
+        timeperiod_type !== "monthly"
+    ) {
+        errorString +=
+            "time_period_type should be 'annually'/'quarterly'/'monthly' ,";
+        time_period_safe = false;
+    }
+
+
+    var checkVar =
+        date_safe &&
+        year_type_safe &&
+        district_list_safe &&
+        time_period_safe;
+        
+    var returnDict = {
+        checkVar,
+        errorString,
+    };
+
+    return returnDict;
+}
+
+
+
+
 /*
 JWT Authentication
 */
@@ -338,7 +416,7 @@ app.post("/training", authenticateToken, function (req, res) {
 
             /*
                 VALIDATION
-        */
+            */
 
             let isSafe = checkSafeTrainingCall(
                 display,
@@ -366,9 +444,78 @@ app.post("/training", authenticateToken, function (req, res) {
     );
 });
 
+
+/*
+    Call the getDistrictExpense() stored procedure
+*/
+
+app.post("/districtexpense", authenticateToken, function (req, res){
+    let display = req.body.display;
+    let group_by = req.body.group_by;
+    let agg = req.body.agg;
+    let district_list = req.body.district_list;
+    let start_date = req.body.start_date;
+    let end_date = req.body.end_date;
+    let timeperiod_type = req.body.timeperiod_type;
+    let year_type = req.body.year_type; 
+    
+
+     /*
+        STORED PROCEDURE CALL
+    */
+
+    let sql = `CALL DMHPv1.getDistrictExpense (?,?,?,?,?,?,?,?)`;
+
+    con.query(
+        sql,
+        [
+            display,
+            group_by,
+            agg,
+            district_list,
+            start_date,
+            end_date,
+            timeperiod_type,
+            year_type,
+        ],
+        function (err, response) {
+            if (err) console.log(err);
+
+            /*
+                VALIDATION
+            */
+
+            let isSafe = checkSafeDistrictExpenseCall(
+                display,
+                group_by,
+                agg,
+                district_list,
+                start_date,
+                end_date,
+                timeperiod_type,
+                year_type,
+            );
+            if (isSafe.checkVar == false) {
+                incorrectInputDict = {
+                    message: "One or more of the inputs are unsupported",
+                    error: isSafe.errorString,
+                };
+                res.json(incorrectInputDict);
+            } else {
+                res.json(response);
+            }
+        }
+    );
+});
+
+
+
+
+
 /*
     Running the app
 */
+
 
 app.listen(port, () => {
     console.log(`Listening at Port https://localhost:${port}`);
