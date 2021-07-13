@@ -5,9 +5,14 @@ const jsonGroupBy = require("json-groupby");
 const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
 const { convertCompilerOptionsFromJson } = require("typescript");
+const dotenv = require('dotenv');
+
 
 const app = express();
 const port = 3000;
+
+
+dotenv.config({path:"../.env",});
 
 /*
     SET REQUEST HEADERS
@@ -38,7 +43,7 @@ app.use(function (req, res, next) {
 CONNECT TO MYSQL DATABASE
 */
 
-var passwordRoot = "this-actually-isnt-my-password";
+var passwordRoot = process.env.SQL_ROOT_PASSWORD;
 
 
 var con = mysql.createConnection({
@@ -98,6 +103,7 @@ Checks:
     - YearType should be '','c', or 'f'
     - TimePeriodType should be 'quarterly','monthly', or 'yearly'
 */
+
 function checkSafeTrainingCall(display,group_by,district_list,facility_list,event_list,target_group_list,resource_list,start_date,end_date,timeperiod_type,year_type){
 
     let date_safe = true;
@@ -173,13 +179,63 @@ function checkSafeTrainingCall(display,group_by,district_list,facility_list,even
 }
 
 
+/*
+JWT Authentication
+*/
+
+
+/*
+Express Middleware to check for the authorisation token - this can be found in "../.env"
+*/
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+  
+    if (token == null) return res.sendStatus(401)
+  
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+      if (err) return res.sendStatus(403) 
+      req.user = user
+      next()
+    })
+  }
+
+/*
+Users that can use the app - roles to be added later.
+*/
+
+var USERS = [
+    {'id':1,'username':'dmhp'},
+    {'id':2,'username': 'testuser'}
+  ];
+  
+app.use(expressJwt({secret: process.env.TOKEN_SECRET, algorithms: ['HS256'] }).unless({path: ['/api/auth']}));
+
+
+/*
+  Get Bearer Token
+*/
+
+app.post("/api/auth",(req,res)=>{
+    const body = req.body;
+    const user  = USERS.find(user=>user.username== body.username);
+    if(!user || body.password!=process.env.AUTH_PASSWORD){
+      return res.sendStatus(401);
+    }
+    var token = jwt.sign({userId:user.id},process.env.TOKEN_SECRET,{expiresIn:'2h'});
+    res.send({token});
+  })
+  
+
+
 
 
 /*
     Simple GET query to check if the API accepts requests
 */
 
-app.get("/", function (req, res, next) {
+app.get("/",authenticateToken, function (req, res, next) {
     res.json({
         message: "The API is running on port 3000.",
     });
@@ -190,7 +246,7 @@ app.get("/", function (req, res, next) {
     Call the getTraining() Stored Procedure 
 */
 
-app.get("/training", function(req,res){
+app.get("/training",authenticateToken, function(req,res){
 
     let display = req.body.display;
     let district_list = req.body.district_list;
