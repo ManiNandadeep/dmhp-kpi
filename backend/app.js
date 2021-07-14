@@ -6,8 +6,9 @@ const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
 const { convertCompilerOptionsFromJson } = require("typescript");
 const dotenv = require("dotenv");
-const validators = require('./validators');
-const mysqlConnector = require('./db');
+const validators = require("./validators");
+const mysqlConnector = require("./db");
+const cors = require("cors");
 
 const app = express();
 const port = 3000;
@@ -17,6 +18,8 @@ dotenv.config({ path: "../.env" });
 /*
     SET REQUEST HEADERS
 */
+
+app.use(cors());
 
 app.use(
     bodyParser.urlencoded({
@@ -33,6 +36,7 @@ app.use(function (req, res, next) {
     );
     res.setHeader(
         "Access-Control-Allow-Headers",
+        "Access-Control-Allow-Origin: *",
         "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers,X-Access-Token,XKey,Authorization"
     );
     next();
@@ -45,12 +49,11 @@ CONNECT TO MYSQL DATABASE
 var passwordRoot = process.env.SQL_ROOT_PASSWORD;
 database = "DMHPv1";
 
-var con = mysqlConnector.con(passwordRoot,database);
+var con = mysqlConnector.con(passwordRoot, database);
 
 con.connect(function (err) {
     if (err) console.log(err);
 });
-
 
 /*
 Express Middleware to check for the authorisation token - this can be found in "../.env"
@@ -82,7 +85,7 @@ app.use(
     expressJwt({
         secret: process.env.TOKEN_SECRET,
         algorithms: ["HS256"],
-    }).unless({ path: ["/api/auth"] })
+    }).unless({ path: ["/api/auth", "/", "/training"] })
 );
 
 /*
@@ -105,7 +108,7 @@ app.post("/api/auth", (req, res) => {
     Simple GET query to check if the API accepts requests
 */
 
-app.get("/", authenticateToken, function (req, res, next) {
+app.get("/", function (req, res, next) {
     res.json({
         message: "The API is running on port 3000.",
     });
@@ -115,7 +118,7 @@ app.get("/", authenticateToken, function (req, res, next) {
     Call the getTraining() Stored Procedure 
 */
 
-app.post("/training", authenticateToken, function (req, res) {
+app.post("/training", function (req, res) {
     let display = req.body.display;
     let district_list = req.body.district_list;
     let event_list = req.body.event_list;
@@ -181,12 +184,11 @@ app.post("/training", authenticateToken, function (req, res) {
     );
 });
 
-
 /*
     Call the getDistrictExpense() stored procedure
 */
 
-app.post("/districtexpense", authenticateToken, function (req, res){
+app.post("/districtexpense", authenticateToken, function (req, res) {
     let display = req.body.display;
     let group_by = req.body.group_by;
     let agg = req.body.agg;
@@ -194,10 +196,9 @@ app.post("/districtexpense", authenticateToken, function (req, res){
     let start_date = req.body.start_date;
     let end_date = req.body.end_date;
     let timeperiod_type = req.body.timeperiod_type;
-    let year_type = req.body.year_type; 
-    
+    let year_type = req.body.year_type;
 
-     /*
+    /*
         STORED PROCEDURE CALL
     */
 
@@ -230,7 +231,7 @@ app.post("/districtexpense", authenticateToken, function (req, res){
                 start_date,
                 end_date,
                 timeperiod_type,
-                year_type,
+                year_type
             );
             if (isSafe.checkVar == false) {
                 incorrectInputDict = {
@@ -245,14 +246,9 @@ app.post("/districtexpense", authenticateToken, function (req, res){
     );
 });
 
-
-
-
-
 /*
     Running the app
 */
-
 
 app.listen(port, () => {
     console.log(`Listening at Port https://localhost:${port}`);

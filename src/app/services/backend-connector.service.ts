@@ -34,7 +34,7 @@ export class BackendConnectorService {
     }
 
     getTraining(bodyParams: any) {
-        const trainingUrl: string = "http://localhost:3000/training/";
+        const trainingUrl: string = "http://localhost:3000/training";
         return this.http.post(trainingUrl, bodyParams);
     }
 }

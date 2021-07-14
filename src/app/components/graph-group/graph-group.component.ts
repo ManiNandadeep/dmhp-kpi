@@ -20,6 +20,23 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
 
     // training corresponding to districts
     numberOfPatientsPerDistrict: Map<string, number> = new Map();
+    today: Date = new Date();
+    todayLastYear: Date = new Date(
+        new Date().setFullYear(this.today.getFullYear() - 1)
+    );
+    districtTrainingBody = {
+        display: "DistrictId",
+        group_by: "DistrictId",
+        district_list: "",
+        facility_list: "",
+        event_list: "",
+        target_group_list: "",
+        resource_list: "",
+        start_date: this.todayLastYear.toISOString().slice(0, 10),
+        end_date: this.today.toISOString().slice(0, 10),
+        timeperiod_type: "quarterly",
+        year_type: "f",
+    };
 
     // training corresponding to time series
     numberOfPatientsPerMonth: Map<string, number> = new Map();
@@ -31,40 +48,23 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.backendConnectorService
-            .getTraining(
-                this.trainingControllerService.getBodyParams("monthly", "c")
-            )
+            .getTraining(this.districtTrainingBody)
             .subscribe((data: any) => {
+                console.log(data);
                 const trainingData = data[0];
                 console.log(trainingData);
-                console.log(data);
 
                 this.numberOfPatientsPerDistrict =
                     this.trainingControllerService.getDistrictPatientMap(
                         trainingData
                     );
-
-                this.numberOfPatientsPerMonth =
-                    this.trainingControllerService.getMonthlyPatientMap(
-                        trainingData
-                    );
-
                 this.initTrainingCharts(
                     this.trainingDistrictchart,
                     this.createChartOptions(
                         this.numberOfPatientsPerDistrict,
-                        "Number of participants per district for training events"
+                        "Number of Patients Per District"
                     ),
                     1
-                );
-
-                this.initTrainingCharts(
-                    this.trainingLastYearChart,
-                    this.createChartOptions(
-                        this.numberOfPatientsPerMonth,
-                        "Number of participants last year monthly"
-                    ),
-                    2
                 );
             });
     }

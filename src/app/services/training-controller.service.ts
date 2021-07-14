@@ -39,23 +39,10 @@ export class TrainingControllerService {
         const districtMap = this.districtControllerService.getDistrictMap();
 
         for (let i = 0; i < trainingData.length; ++i) {
-            if (
-                districtPatientMap.has(
-                    districtMap.get(trainingData[i].DistrictId)
-                )
-            ) {
-                districtPatientMap.set(
-                    districtMap.get(trainingData[i].DistrictId),
-                    districtPatientMap.get(
-                        districtMap.get(trainingData[i].DistrictId)
-                    ) + trainingData[i].noOfPatients
-                );
-            } else {
-                districtPatientMap.set(
-                    districtMap.get(trainingData[i].DistrictId),
-                    trainingData[i].noOfPatients
-                );
-            }
+            districtPatientMap.set(
+                districtMap.get(trainingData[i].DistrictId),
+                trainingData[i].noOfPatients
+            );
         }
 
         console.log(districtPatientMap);
