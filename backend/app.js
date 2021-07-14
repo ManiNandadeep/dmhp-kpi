@@ -6,7 +6,8 @@ const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
 const { convertCompilerOptionsFromJson } = require("typescript");
 const dotenv = require("dotenv");
-var validators = require('./validators');
+const validators = require('./validators');
+const mysqlConnector = require('./db');
 
 const app = express();
 const port = 3000;
@@ -42,13 +43,9 @@ CONNECT TO MYSQL DATABASE
 */
 
 var passwordRoot = process.env.SQL_ROOT_PASSWORD;
+database = "DMHPv1";
 
-var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: passwordRoot,
-    database: "DMHPv1",
-});
+var con = mysqlConnector.con(passwordRoot,database);
 
 con.connect(function (err) {
     if (err) console.log(err);
