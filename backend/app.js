@@ -85,7 +85,7 @@ app.use(
     expressJwt({
         secret: process.env.TOKEN_SECRET,
         algorithms: ["HS256"],
-    }).unless({ path: ["/api/auth", "/", "/training"] })
+    }).unless({ path: ["/api/auth", "/", "/training", "/districtexpense"] })
 );
 
 /*
@@ -188,7 +188,7 @@ app.post("/training", function (req, res) {
     Call the getDistrictExpense() stored procedure
 */
 
-app.post("/districtexpense", authenticateToken, function (req, res) {
+app.post("/districtexpense", function (req, res) {
     let display = req.body.display;
     let group_by = req.body.group_by;
     let agg = req.body.agg;

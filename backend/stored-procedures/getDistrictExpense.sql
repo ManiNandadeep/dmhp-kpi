@@ -30,6 +30,14 @@ BEGIN
     SET @display_string=NULL;
     SET @group_by_string = NULL;
 	SET @agg_string = NULL;
+    
+    
+    SET @total_expense_string = "(SUM(B3032_Psychiatrists) + SUM(B30112_Psyst_Counsellor) + 
+		SUM(B30114_SocialWorker) + SUM(B3012_StaffNurse) + SUM(B3012_PsyNurse) + SUM(B30137_MedialRedAsst) +
+        SUM(B30137_WardAsst) + SUM(Infrastucture) + SUM(Training) + SUM(IEC) + SUM(TargetIntervention) + SUM(Drugs) +
+        SUM(Equipments) + SUM(OperationExpense) + SUM(AmbulatoryService) + SUM(Miscellanious) + SUM(StateStaff1) +
+        SUM(StateStaff2) + SUM(B3032_PsychiatristsTA) + SUM(B30114_SocialWorkerTA) + SUM(B10162_Awarness) + 
+        SUM(J17_Contingency) + SUM(J18_InnovationMH) + SUM(B2030_AnnualIncrement)) as TotalExpense";
 
 	
 	SELECT MIN(ReportingMonthYear) INTO @MinReportingMonthYear FROM DMHPv1.tbl_districtexpense;
@@ -346,6 +354,14 @@ BEGIN
 		END IF;
 	END IF;
     
+    IF(FIND_IN_SET('TotalExpense',agg)) THEN
+		IF(@agg_string is NULL) THEN
+			SET @agg_string = CONCAT(@total_expense_string);
+		ELSE 
+			SET @agg_string = CONCAT(@agg_string,",",@total_expense_string);
+		END IF;
+	END IF;
+    
     
     /* GROUP BY filtration */
     IF(FIND_IN_SET('BudgetExpenseId',group_by)) THEN
@@ -377,7 +393,6 @@ BEGIN
 			END IF;
 		END IF;
 	END IF;
-    
     
     IF(FIND_IN_SET('Quarter',group_by)) THEN
 		IF(@group_by_string is NULL) THEN

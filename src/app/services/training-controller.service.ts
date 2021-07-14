@@ -35,9 +35,7 @@ export class TrainingControllerService {
 
     public getDistrictPatientMap(trainingData: any) {
         const districtPatientMap: Map<string, number> = new Map();
-
         const districtMap = this.districtControllerService.getDistrictMap();
-
         for (let i = 0; i < trainingData.length; ++i) {
             districtPatientMap.set(
                 districtMap.get(trainingData[i].DistrictId),
@@ -45,7 +43,7 @@ export class TrainingControllerService {
             );
         }
 
-        console.log(districtPatientMap);
+        // console.log(districtPatientMap);
         return districtPatientMap;
     }
 
@@ -65,7 +63,7 @@ export class TrainingControllerService {
             "December",
         ];
 
-        const patientsPerMonth: Map<string, number> = new Map();
+        let patientsPerMonth: Map<string, number> = new Map();
         for (let i = 0; i > -12; --i) {
             let paddingMonth = this.currentMonth + i;
             patientsPerMonth.set(
@@ -77,6 +75,7 @@ export class TrainingControllerService {
                 0
             );
         }
+        patientsPerMonth = new Map([...patientsPerMonth].reverse());
         for (let i = 0; i < trainingList.length; ++i) {
             // console.log("In for loop");
             trainingList[i].EventFrom = new Date(trainingList[i].EventFrom);
@@ -90,8 +89,7 @@ export class TrainingControllerService {
                 );
             }
         }
-        // this.numberOfPatientsPerMonth = patientsPerMonth;
-        console.log(patientsPerMonth);
+        // console.log(patientsPerMonth);
         return patientsPerMonth;
     }
 }

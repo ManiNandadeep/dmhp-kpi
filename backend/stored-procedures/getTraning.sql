@@ -343,5 +343,4 @@ BEGIN
     prepare stmt from @statement;
     execute stmt;
     deallocate prepare stmt;
-
 END

@@ -37,4 +37,10 @@ export class BackendConnectorService {
         const trainingUrl: string = "http://localhost:3000/training";
         return this.http.post(trainingUrl, bodyParams);
     }
+
+    getDistrictExpense(bodyParams: any) {
+        const districtExpenseUrl: string =
+            "http://localhost:3000/districtexpense";
+        return this.http.post(districtExpenseUrl, bodyParams);
+    }
 }

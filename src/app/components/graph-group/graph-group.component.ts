@@ -4,6 +4,7 @@ import { from } from "rxjs";
 import { map } from "rxjs/operators";
 import { BackendConnectorService } from "src/app/services/backend-connector.service";
 import { DistrictControllerService } from "src/app/services/district-controller.service";
+import { DistrictExpenseControllerService } from "src/app/services/district-expense-controller.service";
 import { TrainingControllerService } from "src/app/services/training-controller.service";
 
 @Component({
@@ -17,6 +18,8 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     // 2.) training corresponding to time series,i.e, last 12 months
     trainingDistrictchart!: ApexCharts;
     trainingLastYearChart!: ApexCharts;
+    DistrictExpenseDistrictChart!: ApexCharts;
+    DistrictExpenseLastYearChart!: ApexCharts;
 
     // training corresponding to districts
     numberOfPatientsPerDistrict: Map<string, number> = new Map();
@@ -35,29 +38,68 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         start_date: this.todayLastYear.toISOString().slice(0, 10),
         end_date: this.today.toISOString().slice(0, 10),
         timeperiod_type: "quarterly",
-        year_type: "f",
+        year_type: "c",
     };
 
     // training corresponding to time series
     numberOfPatientsPerMonth: Map<string, number> = new Map();
+    MonthlyTrainingBody = {
+        display: "ReportingMonthyear",
+        group_by: "TrainingId",
+        district_list: "",
+        facility_list: "",
+        event_list: "",
+        target_group_list: "",
+        resource_list: "",
+        start_date: this.todayLastYear.toISOString().slice(0, 10),
+        end_date: this.today.toISOString().slice(0, 10),
+        timeperiod_type: "monthly",
+        year_type: "c",
+    };
+
+    // DistrictExpense Corresponding to districts
+    expensePerDistrict: Map<string, number> = new Map();
+    DistrictExpenseBody = {
+        display: "DistrictId",
+        group_by: "DistrictId",
+        agg: "TotalExpense",
+        district_list: "",
+        start_date: this.todayLastYear.toISOString().slice(0, 10),
+        end_date: this.today.toISOString().slice(0, 10),
+        timeperiod_type: "annually",
+        year_type: "c",
+    };
+
+    // DistrictExpense corresponding to time series
+    expensePerMonth: Map<string, number> = new Map();
+    MonthlyExpenseBody = {
+        display: "ReportingMonthYear",
+        group_by: "BudgetExpenseId",
+        agg: "TotalExpense",
+        district_list: "",
+        start_date: this.todayLastYear.toISOString().slice(0, 10),
+        end_date: this.today.toISOString().slice(0, 10),
+        timeperiod_type: "monthly",
+        year_type: "c",
+    };
 
     constructor(
         public backendConnectorService: BackendConnectorService,
-        public trainingControllerService: TrainingControllerService
+        public trainingControllerService: TrainingControllerService,
+        public districtExpenseControllerService: DistrictExpenseControllerService
     ) {}
 
     ngOnInit() {
         this.backendConnectorService
             .getTraining(this.districtTrainingBody)
             .subscribe((data: any) => {
-                console.log(data);
                 const trainingData = data[0];
-                console.log(trainingData);
 
                 this.numberOfPatientsPerDistrict =
                     this.trainingControllerService.getDistrictPatientMap(
                         trainingData
                     );
+
                 this.initTrainingCharts(
                     this.trainingDistrictchart,
                     this.createChartOptions(
@@ -65,6 +107,65 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                         "Number of Patients Per District"
                     ),
                     1
+                );
+            });
+
+        this.backendConnectorService
+            .getTraining(this.MonthlyTrainingBody)
+            .subscribe((data: any) => {
+                const trainingData = data[0];
+
+                this.numberOfPatientsPerMonth =
+                    this.trainingControllerService.getMonthlyPatientMap(
+                        trainingData
+                    );
+                this.initTrainingCharts(
+                    this.trainingDistrictchart,
+                    this.createChartOptions(
+                        this.numberOfPatientsPerMonth,
+                        "Number of Patients Monthly"
+                    ),
+                    2
+                );
+            });
+
+        this.backendConnectorService
+            .getDistrictExpense(this.DistrictExpenseBody)
+            .subscribe((data: any) => {
+                // console.log(data);
+                const expenseData = data[0];
+                this.expensePerDistrict =
+                    this.districtExpenseControllerService.getDistrictExpenseMap(
+                        expenseData
+                    );
+
+                this.initDistrictExpenseCharts(
+                    this.DistrictExpenseDistrictChart,
+                    this.createDistrictExpenseChartOptions(
+                        this.expensePerDistrict,
+                        "Total Expense Per District (In Lakhs)"
+                    ),
+                    1
+                );
+            });
+
+        this.backendConnectorService
+            .getDistrictExpense(this.MonthlyExpenseBody)
+            .subscribe((data: any) => {
+                const expenseData = data[0];
+
+                this.expensePerMonth =
+                    this.districtExpenseControllerService.getMonthlyExpenseMap(
+                        expenseData
+                    );
+
+                this.initDistrictExpenseCharts(
+                    this.DistrictExpenseLastYearChart,
+                    this.createDistrictExpenseChartOptions(
+                        this.expensePerMonth,
+                        "Total Expense Last Year monthly (In Lakhs)"
+                    ),
+                    2
                 );
             });
     }
@@ -98,6 +199,36 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         return chartOptions;
     }
 
+    createDistrictExpenseChartOptions(
+        valueMap: Map<string, number>,
+        title: string
+    ) {
+        const chartOptions = {
+            chart: {
+                type: "bar",
+                height: 400,
+            },
+            series: [
+                {
+                    name: "Total Expense",
+                    data: Array.from(valueMap.values()),
+                },
+            ],
+            dataLabels: {
+                enabled: false,
+            },
+            xaxis: {
+                //add district name array.
+                categories: Array.from(valueMap.keys()),
+            },
+            title: {
+                text: title,
+                align: "center",
+            },
+        };
+        return chartOptions;
+    }
+
     initTrainingCharts(
         chart: ApexCharts,
         chartOptions: any,
@@ -105,6 +236,18 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     ): void {
         chart = new ApexCharts(
             document.querySelector(`#training${graphId}`),
+            chartOptions
+        );
+        chart.render();
+    }
+
+    initDistrictExpenseCharts(
+        chart: ApexCharts,
+        chartOptions: any,
+        graphId: number
+    ): void {
+        chart = new ApexCharts(
+            document.querySelector(`#districtExpense${graphId}`),
             chartOptions
         );
         chart.render();
