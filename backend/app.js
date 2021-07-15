@@ -81,11 +81,13 @@ var USERS = [
     { id: 2, username: "testuser" },
 ];
 
+var excludedRoutes = ["/api/auth"];
+
 app.use(
     expressJwt({
         secret: process.env.TOKEN_SECRET,
         algorithms: ["HS256"],
-    }).unless({ path: ["/api/auth", "/", "/training", "/districtexpense"] })
+    }).unless({ path: excludedRoutes })
 );
 
 /*
