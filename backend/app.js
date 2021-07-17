@@ -81,7 +81,8 @@ var USERS = [
     { id: 2, username: "testuser" },
 ];
 
-var excludedRoutes = ["/api/auth"];
+var excludedRoutes = ["/api/auth",
+                    "/"];
 
 app.use(
     expressJwt({
