@@ -1,3 +1,7 @@
+/*
+    VERSION - 1,01
+*/
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getHRData`(
 	IN district_list varchar(200),
     IN taluka_list varchar(200),
@@ -5,7 +9,6 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `getHRData`(
     IN end_date date)
 BEGIN
 	/*
-        Version 1,0,1
         
 		DistrictId
         TalukaId

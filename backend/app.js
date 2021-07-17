@@ -110,6 +110,8 @@ app.post("/api/auth", (req, res) => {
     Simple GET query to check if the API accepts requests
 */
 
+// Note: Auth not required for this route 
+
 app.get("/", function (req, res, next) {
     res.json({
         message: "The API is running on port 3000.",
@@ -120,7 +122,7 @@ app.get("/", function (req, res, next) {
     Call the getTraining() Stored Procedure 
 */
 
-app.post("/training", function (req, res) {
+app.post("/training", authenticateToken,  function (req, res) {
     let display = req.body.display;
     let district_list = req.body.district_list;
     let event_list = req.body.event_list;
@@ -190,7 +192,7 @@ app.post("/training", function (req, res) {
     Call the getDistrictExpense() stored procedure
 */
 
-app.post("/districtexpense", function (req, res) {
+app.post("/districtexpense", authenticateToken, function (req, res) {
     let display = req.body.display;
     let group_by = req.body.group_by;
     let agg = req.body.agg;
@@ -247,6 +249,59 @@ app.post("/districtexpense", function (req, res) {
         }
     );
 });
+
+/*
+    Call the getHRdata() stored procedure
+*/
+
+app.post("/hr", authenticateToken,  function (req, res) {
+    let district_list = req.body.district_list;
+    let taluka_list = req.body.taluka_list;
+    let start_date = req.body.start_date;
+    let end_date = req.body.end_date;
+
+    /*
+        STORED PROCEDURE CALL
+    */
+
+    let sql = `CALL DMHPv1.getHRdata (?,?,?,?)`;
+
+    con.query(
+        sql,
+        [
+            district_list,
+            taluka_list,
+            start_date,
+            end_date,
+        ],
+        function (err, response) {
+            if (err) console.log(err);
+
+            /*
+                VALIDATION
+            */
+
+            let isSafe = validators.HRValidator(
+                district_list,
+                taluka_list,
+                start_date,
+                end_date,
+            );
+            if (isSafe.checkVar == false) {
+                incorrectInputDict = {
+                    message: "One or more of the inputs are unsupported",
+                    error: isSafe.errorString,
+                };
+                res.json(incorrectInputDict);
+            } else {
+                res.json(response);
+            }
+        }
+    );
+});
+
+
+
 
 /*
     Running the app

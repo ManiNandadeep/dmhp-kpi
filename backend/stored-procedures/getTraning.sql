@@ -1,3 +1,7 @@
+/*
+	VERSION - 1,02
+*/
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getTraining`(
 	IN display varchar(200),
     IN group_by varchar(200),

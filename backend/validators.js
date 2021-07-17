@@ -255,7 +255,73 @@ module.exports = {
         };
     
         return returnDict;
-    }
+    },
+
+        /*
+            Validation for tbl_hrdatainfo
+
+            Checks:
+                - DistrictIDs, TalukaIDs are non-negative
+                - Start Date <= End Date
+
+        */
+
+        HRValidator : function checkHRCall(
+            district_list,
+            taluka_list,
+            start_date,
+            end_date,
+        ){
+            var errorString = "";
+    
+            let date_safe = true;
+            date_safe = returnDateSafeSQL(start_date, end_date);
+            if (date_safe == false) {
+                errorString += "end_date should not be before start_date ,";
+            }
+
+        
+            let district_list_safe = true;
+            if (district_list !== "") {
+                let district_list_arr = district_list.split(",");
+                for (let i = 0; i < district_list_arr.length; i++) {
+                    if (parseInt(district_list_arr[i]) < 0) {
+                        district_list_safe = false;
+                        errorString +=
+                            "district_list should only have non-negative values ,";
+                        break;
+                    }
+                }
+            }
+
+            let taluka_list_safe = true;
+            if (taluka_list !== "") {
+                let taluka_list_arr = taluka_list.split(",");
+                for (let i = 0; i < taluka_list_arr.length; i++) {
+                    if (parseInt(taluka_list_arr[i]) < 0) {
+                        taluka_list_safe = false;
+                        errorString +=
+                            "taluka_list should only have non-negative values ,";
+                        break;
+                    }
+                }
+            }
+        
+        
+        
+            var checkVar =
+                taluka_list_safe &&
+                district_list_safe &&
+                date_safe;
+                
+            var returnDict = {
+                checkVar,
+                errorString,
+            };
+        
+            return returnDict;
+        }
+    
     
 
 

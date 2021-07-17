@@ -3,7 +3,7 @@
 	"group_by":"DistrictId",
 	"agg":"Psychiatrists,SocialWorker",
 	"district_list":"15,16",
-	"start_date":"2019-01-01",
+	"start_date":"2018-01-01",
 	"end_date":"2020-01-01",
 	"timeperiod_type":"annually",
 	"year_type":"f"
