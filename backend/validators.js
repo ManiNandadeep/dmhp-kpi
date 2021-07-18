@@ -320,7 +320,71 @@ module.exports = {
             };
         
             return returnDict;
+        },
+
+            /*
+            Validation for tbl_manasadhara's stored procedure
+
+            Checks:
+                - start_date <= end_date
+                - districtId, statusId are all non-negative
+                - YearType should be '','c', or 'f'
+                - TimePeriodType should be 'quarterly','monthly', or 'yearly'
+            */
+
+        manasadharaValidator: function checkManasadharaCall(
+            display,
+            group_by,
+            agg,
+            district_list,
+            status_list,
+            start_date,
+            end_date,
+            timeperiod_type,
+            year_type
+        ){
+            let temp_safe = false;
+            temp_dict = this.districtExpenseValidator(
+                display,
+                group_by,
+                agg,
+                district_list,
+                start_date,
+                end_date,
+                timeperiod_type,
+                year_type
+            )
+            temp_safe = temp_dict.checkVar;
+            error_string_temp = temp_dict.errorString;
+
+            let status_list_safe = false;
+            let status_list_str = "";
+            
+            if (status_list !== "") {
+                let status_list_arr = status_list.split(",");
+                for (let i = 0; i < status_list_arr.length; i++) {
+                    if (parseInt(status_list_arr[i]) < 0) {
+                        status_list_safe = false;
+                        status_list_str +=
+                            "status_list should only have non-negative values ,";
+                        break;
+                    }
+                }
+            }
+
+            let errorString = error_string_temp + status_list_str;
+            let checkVar = status_list_safe && temp_safe;
+            
+            var returnDict = {
+                checkVar,
+                errorString,
+            };
+
+            return returnDict;
+
         }
+
+
     
     
 

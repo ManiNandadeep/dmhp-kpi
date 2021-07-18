@@ -301,6 +301,71 @@ app.post("/hr", authenticateToken,  function (req, res) {
     );
 });
 
+/*
+    CALL THE getDistrictManasadhara() stored procedure
+*/
+app.post("/manasadhara", authenticateToken, function (req, res) {
+    let display = req.body.display;
+    let group_by = req.body.group_by;
+    let agg = req.body.agg;
+    let district_list = req.body.district_list;
+    let status_list = req.body.status_list;
+    let start_date = req.body.start_date;
+    let end_date = req.body.end_date;
+    let timeperiod_type = req.body.timeperiod_type;
+    let year_type = req.body.year_type;
+    
+
+    /*
+        STORED PROCEDURE CALL
+    */
+
+    let sql = `CALL DMHPv1.getDistrictManasadhara (?,?,?,?,?,?,?,?,?))`;
+
+    con.query(
+        sql,
+        [
+            display,
+            group_by,
+            agg,
+            district_list,
+            status_list,
+            start_date,
+            end_date,
+            timeperiod_type,
+            year_type,
+        ],
+        function (err, response) {
+            if (err) console.log(err);
+
+            /*
+                VALIDATION
+            */
+
+            let isSafe = validators.manasadharaValidator(
+                display,
+                group_by,
+                agg,
+                district_list,
+                status_list,
+                start_date,
+                end_date,
+                timeperiod_type,
+                year_type
+            );
+            if (isSafe.checkVar == false) {
+                incorrectInputDict = {
+                    message: "One or more of the inputs are unsupported",
+                    error: isSafe.errorString,
+                };
+                res.json(incorrectInputDict);
+            } else {
+                res.json(response);
+            }
+        }
+    );
+});
+
 
 
 

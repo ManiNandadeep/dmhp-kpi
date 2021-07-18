@@ -1,3 +1,7 @@
+/*
+	VERSION - 1,01
+*/
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getMnsAlloAction`(
 	IN display varchar(200),
 	IN group_by varchar(200),
