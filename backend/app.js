@@ -320,7 +320,7 @@ app.post("/manasadhara", authenticateToken, function (req, res) {
         STORED PROCEDURE CALL
     */
 
-    let sql = `CALL DMHPv1.getDistrictManasadhara (?,?,?,?,?,?,?,?,?))`;
+    let sql = `CALL DMHPv1.getDistrictManasadhara (?,?,?,?,?,?,?,?,?)`;
 
     con.query(
         sql,

@@ -357,7 +357,8 @@ module.exports = {
             temp_safe = temp_dict.checkVar;
             error_string_temp = temp_dict.errorString;
 
-            let status_list_safe = false;
+
+            let status_list_safe = true;
             let status_list_str = "";
             
             if (status_list !== "") {
@@ -374,6 +375,8 @@ module.exports = {
 
             let errorString = error_string_temp + status_list_str;
             let checkVar = status_list_safe && temp_safe;
+
+
             
             var returnDict = {
                 checkVar,
