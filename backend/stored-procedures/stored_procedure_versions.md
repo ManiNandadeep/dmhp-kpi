@@ -1,7 +1,7 @@
 - getDistrictExpense : 1,02
 - getHRdata: 1,01
 - getTraining: 1,02
-- getMnsAlloAction: 1,01
+- getMnsAlloAction: 1,02
 - getDistrictManasadhara : 1,01
 
 

@@ -1,0 +1,11 @@
+{
+	"display":"MNSId",
+	"group_by":"MNSId",
+	"agg":"Head_15",
+	"district_list":"",
+	"status_list":"",
+	"start_date":"2000-01-01",
+	"end_date":"2021-01-01",
+	"timeperiod_type":"quarterly",
+	"year_type":"c"
+}

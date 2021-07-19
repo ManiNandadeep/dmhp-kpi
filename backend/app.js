@@ -367,6 +367,64 @@ app.post("/manasadhara", authenticateToken, function (req, res) {
 });
 
 
+/*
+    CALL THE getMnsAlloAction() stored procedure
+*/
+app.post("/mnsallocation", authenticateToken,  function (req, res) {
+    let display = req.body.display;
+    let group_by = req.body.group_by;
+    let agg = req.body.agg;
+    let district_list = req.body.district_list;
+    let quaterly_list = req.body.quaterly_list;
+    let financial_year = req.body.financial_year;
+
+    /*
+        STORED PROCEDURE CALL
+    */
+
+    let sql = `CALL DMHPv1.getMnsAlloAction (?,?,?,?,?,?)`;
+
+    con.query(
+        sql,
+        [
+            display,
+            group_by,
+            agg,
+            district_list,
+            quaterly_list,
+            financial_year
+        ],
+        function (err, response) {
+            if (err) console.log(err);
+
+            /*
+                VALIDATION
+            */
+
+            let isSafe = validators.MnsValidator(
+                display,
+                group_by,
+                agg,
+                district_list,
+                quaterly_list,
+                financial_year
+            );
+            
+            if (isSafe.checkVar == false) {
+                incorrectInputDict = {
+                    message: "One or more of the inputs are unsupported",
+                    error: isSafe.errorString,
+                };
+                res.json(incorrectInputDict);
+            } else {
+                res.json(response);
+            }
+        }
+    );
+});
+
+
+
 
 
 /*

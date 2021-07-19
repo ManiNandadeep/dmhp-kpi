@@ -1,0 +1,8 @@
+{
+	"display":"RHead_15,DistrictId",
+	"group_by":"DistrictId",
+	"agg":"RHead_15",
+	"district_list":"",
+	"quaterly_list":"1,2",
+	"financial_year":""
+}

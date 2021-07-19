@@ -1,5 +1,5 @@
 /*
-	VERSION - 1,01
+	VERSION - 1,02
 */
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getMnsAlloAction`(
@@ -16,12 +16,8 @@ BEGIN
 		agg
 		
         district_list
-        status_list
-		
-        start_date
-		end_date
-        timeperiod_type
-		year_type 
+		quaterly_list : SPELLING!
+		financial_year		
     */
     
 	DECLARE district_id_string varchar(300);

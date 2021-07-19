@@ -3,6 +3,8 @@ SQL DateTime to Javascript Date
 Compare the dates
 */
 
+const { identifierModuleUrl } = require("@angular/compiler");
+
 function returnDateSafeSQL(SQLdate1String, SQLdate2String) {
     var sqlDateStr1 = SQLdate1String;
     sqlDateStr1 = sqlDateStr1.replace(/:| /g, "-");
@@ -45,6 +47,11 @@ function returnDateSafeSQL(SQLdate1String, SQLdate2String) {
     }
 
     return sqlDate2.getTime() >= sqlDate1.getTime();
+}
+
+// Helper function to check if obj is in arr - supports older IE browsers
+function includeObj(arr,obj) {
+    return (arr.indexOf(obj) != -1);
 }
 
 
@@ -385,7 +392,81 @@ module.exports = {
 
             return returnDict;
 
+        },
+
+                /*
+            Validation for tbl_mnsalloaction's stored procedure
+
+            Checks:
+                - districtId are all non-negative
+                - quaterlyList should be in [1,2,3,4]
+                - financial_year YYYY-YY
+            */
+
+
+        MnsValidator : function checkMNSAllocationExpenseCall(
+            display,
+            group_by,
+            agg,
+            district_list,
+            quaterly_list,
+            financial_year
+    ){
+        var errorString = "";
+    
+    
+    
+        let district_list_safe = true;
+        if (district_list !== "") {
+            let district_list_arr = district_list.split(",");
+            for (let i = 0; i < district_list_arr.length; i++) {
+                if (parseInt(district_list_arr[i]) < 0) {
+                    district_list_safe = false;
+                    errorString +=
+                        "district_list should only have non-negative values ,";
+                    break;
+                }
+            }
         }
+
+        var quarterly_list_safe = true;
+        let allowed_quarter_values = ["1","2","3","4"];
+        if(quaterly_list !== ""){
+            let quarterly_list_arr = quaterly_list.split(",");
+            for (let i = 0; i<quarterly_list_arr.length; i++){
+                if (includeObj(allowed_quarter_values,quarterly_list_arr[i]) === false){
+                    quarterly_list_safe = false;
+                    errorString += 
+                        "quaterly_list should only have non-negative values, ";
+                    break;
+                }
+            }
+        }
+
+        let financial_year_safe = true;
+        let financial_year_arr = financial_year.split("-");
+
+        if(financial_year !== ""){
+            if(financial_year_arr.length !== 2 || financial_year_arr[0].length !== 4 || financial_year_arr[1].length !== 2 || (parseInt("20" + financial_year_arr[1]) - parseInt(financial_year_arr[0]) !== 1)){
+                financial_year_safe = false;
+                errorString += "financial_year should be of the form YYYY-YY";
+            }
+        }
+
+
+    
+        var checkVar =
+            district_list_safe &&
+            quarterly_list_safe &&
+            financial_year_safe;
+            
+        var returnDict = {
+            checkVar,
+            errorString,
+        };
+    
+        return returnDict;
+    }
 
 
     
