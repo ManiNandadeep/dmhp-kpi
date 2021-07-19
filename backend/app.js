@@ -9,6 +9,7 @@ const dotenv = require("dotenv");
 const validators = require("./validators");
 const mysqlConnector = require("./db");
 const cors = require("cors");
+const users = require("./users");
 
 const app = express();
 const port = 3000;
@@ -76,11 +77,8 @@ function authenticateToken(req, res, next) {
 Users that can use the app - roles to be added later.
 */
 
-var USERS = [
-    { id: 1, username: "dmhp" },
-    { id: 2, username: "testuser" },
-];
-
+var USERS = users.users();
+console.log(USERS);
 var excludedRoutes = ["/api/auth",
                     "/"];
 
@@ -409,7 +407,7 @@ app.post("/mnsallocation", authenticateToken,  function (req, res) {
                 quaterly_list,
                 financial_year
             );
-            
+
             if (isSafe.checkVar == false) {
                 incorrectInputDict = {
                     message: "One or more of the inputs are unsupported",
