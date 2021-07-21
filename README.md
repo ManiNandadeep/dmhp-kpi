@@ -35,3 +35,10 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 - To install all dependencies, run `npm install` in the main directory
 - `cd Backend ; nodemon app`
 - Make API calls as per the files in ```sample-json-calls``` subdirectory
+
+## Spring Boot Backend
+
+- Install all maven dependencies 
+- Configure `application.properties`
+- Populate the tables and stored procedures
+- Build, and run the project on IntelliJ for Java EE Developers
