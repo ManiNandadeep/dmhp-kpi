@@ -36,9 +36,22 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 - `cd Backend ; nodemon app`
 - Make API calls as per the files in ```sample-json-calls``` subdirectory
 
-## Spring Boot Backend
+# Spring Boot Backend
+
+## Steps to run this project:
 
 - Install all maven dependencies 
 - Configure `application.properties`
 - Populate the tables and stored procedures
 - Build, and run the project on IntelliJ for Java EE Developers
+
+
+## MySQL Setup  
+
+In your MySQL console, create a new user `root` with all privileges, as follows:
+
+- `CREATE USER 'root'@'localhost' IDENTIFIED BY 'insert-password-here';`
+- `GRANT ALL PRIVILEGES ON * . * TO 'newuser'@'localhost';`
+- `FLUSH PRIVILEGES`;
+
+Then, populate the database from the SQL dump, and change the corresponding environment variables in code.
