@@ -56,6 +56,56 @@ function includeObj(arr,obj) {
 
 
 
+// Validator to check if all array objects are non-negative, and to provide an error string if any element defaults.
+
+function checkIfAllArrayElementsAreNonNegativeErrorString(commaSepString,colName){
+    var flag = true;
+    var errorString = "";
+
+    
+    let arr = commaSepString.split(",");
+        for(let i = 0; i < arr.length; i++){
+            if(parseInt(arr[i]) < 0){
+                flag = false;
+                break;
+            }
+    }
+
+    if(flag === false){
+        errorString += colName + " should only have non-negative values."
+    }
+
+    let returnDict = {
+        flag,
+        errorString
+    };
+
+    return returnDict;
+}
+
+// Validator to check if the object provided lies in a list of objects, and to provide an error string if it doesn't.
+
+function checkObjInArrErrorString(obj,arr,colName){
+    var flag = true;
+    var errorString = "";
+
+    flag = includeObj(obj,arr);
+
+    if(flag === false){
+        errorString += colName + " should be in " + arr.toString();
+    }
+
+    let returnDict = {
+        flag,
+        errorString
+    };
+
+    return returnDict;
+}
+
+
+
+
 
 module.exports = {
 
@@ -84,93 +134,50 @@ module.exports = {
     ) {
         var errorString = "";
     
+        // Date
         let date_safe = true;
         date_safe = returnDateSafeSQL(start_date, end_date);
         if (date_safe == false) {
             errorString += "end_date should not be before start_date ,";
         }
+
+        // Year Type
+        let year_arr = ["","c","f"];
+        let year_dict = checkObjInArrErrorString(year_type,year_arr,"year_type");
+        let year_type_safe = year_dict.flag;
+        errorString += year_dict.errorString;
     
-        let year_type_safe = true;
-        if (year_type !== "" && year_type !== "c" && year_type !== "f") {
-            errorString += "year_type should be ''/'c'/'f' ,";
-            year_type_safe = false;
-        }
-    
-        let district_list_safe = true;
-        if (district_list !== "") {
-            let district_list_arr = district_list.split(",");
-            for (let i = 0; i < district_list_arr.length; i++) {
-                if (parseInt(district_list_arr[i]) < 0) {
-                    district_list_safe = false;
-                    errorString +=
-                        "district_list should only have non-negative values ,";
-                    break;
-                }
-            }
-        }
-    
-        let event_list_safe = true;
-        if (event_list !== "") {
-            let event_list_arr = event_list.split(",");
-            for (let i = 0; i < event_list_arr.length; i++) {
-                if (parseInt(event_list_arr[i]) < 0) {
-                    event_list_safe = false;
-                    errorString +=
-                        "event_list should only have non-negative values ,";
-                    break;
-                }
-            }
-        }
-    
-        let target_list_safe = true;
-        if (target_group_list !== "") {
-            let target_list_arr = target_group_list.split(",");
-            for (let i = 0; i < target_list_arr.length; i++) {
-                if (parseInt(target_list_arr[i]) < 0) {
-                    target_list_safe = false;
-                    errorString +=
-                        "target_list should only have non-negative values ,";
-                    break;
-                }
-            }
-        }
-    
-        let resource_safe = true;
-        if (resource_list !== "") {
-            let resource_list_arr = resource_list.split(",");
-            for (let i = 0; i < resource_list_arr.length; i++) {
-                if (parseInt(resource_list_arr[i]) < 0) {
-                    resource_safe = false;
-                    errorString +=
-                        "resource_list should only have non-negative values ,";
-                    break;
-                }
-            }
-        }
-    
-        let time_period_safe = true;
-        if (
-            timeperiod_type !== "annually" &&
-            timeperiod_type !== "quarterly" &&
-            timeperiod_type !== "monthly"
-        ) {
-            errorString +=
-                "time_period_type should be 'annually'/'quarterly'/'monthly' ,";
-            time_period_safe = false;
-        }
-    
-        let facility_safe = true;
-        if (facility_list !== "") {
-            let facility_list_arr = facility_list.split(",");
-            for (let i = 0; i < facility_list_arr.length; i++) {
-                if (parseInt(facility_list_arr[i]) < 0) {
-                    facility_safe = false;
-                    errorString +=
-                        "facility_list should only have non-negative values ,";
-                    break;
-                }
-            }
-        }
+        // District List
+        let district_dict = checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
+        let district_list_safe = district_dict.flag;
+        errorString += district_dict.errorString;
+        
+        // Event List
+        let event_dict = checkIfAllArrayElementsAreNonNegativeErrorString(event_list,"event_list");
+        let event_list_safe = event_dict.flag;
+        errorString += event_dict.errorString;
+        
+        // Target List
+        let target_dict = checkIfAllArrayElementsAreNonNegativeErrorString(target_group_list,"target_group_list");
+        let target_list_safe = target_dict.flag;
+        errorString += target_dict.errorString;
+        
+        // Resource List
+        let resource_dict = checkIfAllArrayElementsAreNonNegativeErrorString(resource_list,"resource_list");
+        let resource_safe = resource_dict.flag;
+        errorString += resource_dict.errorString;
+
+        // Time Period Type
+        let time_period_arr = ["annually","quarterly","monthly"];
+        let time_period_dict = checkObjInArrErrorString(time_period_safe,time_period_arr,"time_period_type");
+        let time_period_safe = time_period_dict.flag;
+        errorString += time_period_dict.errorString;
+
+        // Facility List
+        let facility_dict = checkIfAllArrayElementsAreNonNegativeErrorString(facility_list,"facility_list");
+        let facility_safe = facility_dict.flag;
+        errorString += resource_dict.errorString;   
+        
     
         var checkVar =
             date_safe &&
@@ -213,41 +220,29 @@ module.exports = {
     ){
         var errorString = "";
     
+        // Date
         let date_safe = true;
         date_safe = returnDateSafeSQL(start_date, end_date);
         if (date_safe == false) {
             errorString += "end_date should not be before start_date ,";
         }
     
-        let year_type_safe = true;
-        if (year_type !== "" && year_type !== "c" && year_type !== "f") {
-            errorString += "year_type should be ''/'c'/'f' ,";
-            year_type_safe = false;
-        }
+        // Year Type
+        let year_arr = ["","c","f"];
+        let year_dict = checkObjInArrErrorString(year_type,year_arr,"year_type");
+        let year_type_safe = year_dict.flag;
+        errorString += year_dict.errorString;
     
-        let district_list_safe = true;
-        if (district_list !== "") {
-            let district_list_arr = district_list.split(",");
-            for (let i = 0; i < district_list_arr.length; i++) {
-                if (parseInt(district_list_arr[i]) < 0) {
-                    district_list_safe = false;
-                    errorString +=
-                        "district_list should only have non-negative values ,";
-                    break;
-                }
-            }
-        }
+        // District List
+        let district_dict = checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
+        let district_list_safe = district_dict.flag;
+        errorString += district_dict.errorString;
     
-        let time_period_safe = true;
-        if (
-            timeperiod_type !== "annually" &&
-            timeperiod_type !== "quarterly" &&
-            timeperiod_type !== "monthly"
-        ) {
-            errorString +=
-                "time_period_type should be 'annually'/'quarterly'/'monthly' ,";
-            time_period_safe = false;
-        }
+        // Time Period Type
+        let time_period_arr = ["annually","quarterly","monthly"];
+        let time_period_dict = checkObjInArrErrorString(time_period_safe,time_period_arr,"time_period_type");
+        let time_period_safe = time_period_dict.flag;
+        errorString += time_period_dict.errorString;
     
     
         var checkVar =
@@ -281,6 +276,7 @@ module.exports = {
         ){
             var errorString = "";
     
+            // Date
             let date_safe = true;
             date_safe = returnDateSafeSQL(start_date, end_date);
             if (date_safe == false) {
@@ -288,32 +284,16 @@ module.exports = {
             }
 
         
-            let district_list_safe = true;
-            if (district_list !== "") {
-                let district_list_arr = district_list.split(",");
-                for (let i = 0; i < district_list_arr.length; i++) {
-                    if (parseInt(district_list_arr[i]) < 0) {
-                        district_list_safe = false;
-                        errorString +=
-                            "district_list should only have non-negative values ,";
-                        break;
-                    }
-                }
-            }
+            // District List
+            let district_dict = checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
+            let district_list_safe = district_dict.flag;
+            errorString += district_dict.errorString;
 
-            let taluka_list_safe = true;
-            if (taluka_list !== "") {
-                let taluka_list_arr = taluka_list.split(",");
-                for (let i = 0; i < taluka_list_arr.length; i++) {
-                    if (parseInt(taluka_list_arr[i]) < 0) {
-                        taluka_list_safe = false;
-                        errorString +=
-                            "taluka_list should only have non-negative values ,";
-                        break;
-                    }
-                }
-            }
-        
+            // Taluka List
+            let taluka_dict = checkIfAllArrayElementsAreNonNegativeErrorString(taluka_list,"taluka_list");
+            let taluka_list_safe = taluka_dict.flag;
+            errorString += taluka_dict.errorString;
+          
         
         
             var checkVar =
@@ -364,21 +344,14 @@ module.exports = {
             temp_safe = temp_dict.checkVar;
             error_string_temp = temp_dict.errorString;
 
-
-            let status_list_safe = true;
             let status_list_str = "";
-            
-            if (status_list !== "") {
-                let status_list_arr = status_list.split(",");
-                for (let i = 0; i < status_list_arr.length; i++) {
-                    if (parseInt(status_list_arr[i]) < 0) {
-                        status_list_safe = false;
-                        status_list_str +=
-                            "status_list should only have non-negative values ,";
-                        break;
-                    }
-                }
-            }
+
+
+            // Status List
+            let status_dict = checkIfAllArrayElementsAreNonNegativeErrorString(status_list,"status_list");
+            let status_list_safe = status_dict.flag;
+            status_list_str += status_dict.errorString;
+
 
             let errorString = error_string_temp + status_list_str;
             let checkVar = status_list_safe && temp_safe;
@@ -416,33 +389,19 @@ module.exports = {
     
     
     
-        let district_list_safe = true;
-        if (district_list !== "") {
-            let district_list_arr = district_list.split(",");
-            for (let i = 0; i < district_list_arr.length; i++) {
-                if (parseInt(district_list_arr[i]) < 0) {
-                    district_list_safe = false;
-                    errorString +=
-                        "district_list should only have non-negative values ,";
-                    break;
-                }
-            }
-        }
+        // District List
+        let district_dict = checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
+        let district_list_safe = district_dict.flag;
+        errorString += district_dict.errorString;
 
-        var quarterly_list_safe = true;
-        let allowed_quarter_values = ["1","2","3","4"];
-        if(quaterly_list !== ""){
-            let quarterly_list_arr = quaterly_list.split(",");
-            for (let i = 0; i<quarterly_list_arr.length; i++){
-                if (includeObj(allowed_quarter_values,quarterly_list_arr[i]) === false){
-                    quarterly_list_safe = false;
-                    errorString += 
-                        "quaterly_list should only have non-negative values, ";
-                    break;
-                }
-            }
-        }
+        // Quarterly List 
+        let quarter_arr = ["1","2","3","4"];
+        let quarter_dict = checkObjInArrErrorString(quaterly_list,quarter_arr,"quaterly_list");
+        let quarterly_list_safe = quarter_dict.flag;
+        errorString += year_dict.errorString;
 
+        
+        // Financial Year
         let financial_year_safe = true;
         let financial_year_arr = financial_year.split("-");
 
