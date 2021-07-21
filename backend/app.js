@@ -78,7 +78,6 @@ Users that can use the app - roles to be added later.
 */
 
 var USERS = users.users();
-console.log(USERS);
 var excludedRoutes = ["/api/auth",
                     "/"];
 

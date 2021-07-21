@@ -49,9 +49,15 @@ function returnDateSafeSQL(SQLdate1String, SQLdate2String) {
     return sqlDate2.getTime() >= sqlDate1.getTime();
 }
 
+/*
 // Helper function to check if obj is in arr - supports older IE browsers
 function includeObj(arr,obj) {
     return (arr.indexOf(obj) != -1);
+}
+*/
+
+function includeObj(obj,arr){
+    return arr.includes(obj);
 }
 
 
@@ -72,7 +78,7 @@ function checkIfAllArrayElementsAreNonNegativeErrorString(commaSepString,colName
     }
 
     if(flag === false){
-        errorString += colName + " should only have non-negative values."
+        errorString += colName + " should only have non-negative values. "
     }
 
     let returnDict = {
@@ -92,7 +98,7 @@ function checkObjInArrErrorString(obj,arr,colName){
     flag = includeObj(obj,arr);
 
     if(flag === false){
-        errorString += colName + " should be in " + arr.toString();
+        errorString += colName + " should be in " + arr.toString() + " ";
     }
 
     let returnDict = {
@@ -138,7 +144,7 @@ module.exports = {
         let date_safe = true;
         date_safe = returnDateSafeSQL(start_date, end_date);
         if (date_safe == false) {
-            errorString += "end_date should not be before start_date ,";
+            errorString += "end_date should not be before start_date , ";
         }
 
         // Year Type
@@ -169,7 +175,7 @@ module.exports = {
 
         // Time Period Type
         let time_period_arr = ["annually","quarterly","monthly"];
-        let time_period_dict = checkObjInArrErrorString(time_period_safe,time_period_arr,"time_period_type");
+        let time_period_dict = checkObjInArrErrorString(timeperiod_type,time_period_arr,"timeperiod_type");
         let time_period_safe = time_period_dict.flag;
         errorString += time_period_dict.errorString;
 
@@ -240,7 +246,7 @@ module.exports = {
     
         // Time Period Type
         let time_period_arr = ["annually","quarterly","monthly"];
-        let time_period_dict = checkObjInArrErrorString(time_period_safe,time_period_arr,"time_period_type");
+        let time_period_dict = checkObjInArrErrorString(timeperiod_type,time_period_arr,"time_period_type");
         let time_period_safe = time_period_dict.flag;
         errorString += time_period_dict.errorString;
     
@@ -395,10 +401,19 @@ module.exports = {
         errorString += district_dict.errorString;
 
         // Quarterly List 
-        let quarter_arr = ["1","2","3","4"];
-        let quarter_dict = checkObjInArrErrorString(quaterly_list,quarter_arr,"quaterly_list");
-        let quarterly_list_safe = quarter_dict.flag;
-        errorString += year_dict.errorString;
+        var quarterly_list_safe = true;
+        let allowed_quarter_values = ["1","2","3","4"];
+        if(quaterly_list !== ""){
+            let quarterly_list_arr = quaterly_list.split(",");
+            for (let i = 0; i<quarterly_list_arr.length; i++){
+                if (includeObj(quarterly_list_arr[i],allowed_quarter_values) === false){
+                    quarterly_list_safe = false;
+                    errorString += 
+                        "quaterly_list should only have non-negative values, ";
+                    break;
+                }
+            }
+        }
 
         
         // Financial Year
@@ -432,4 +447,4 @@ module.exports = {
     
 
 
-};
+};  
