@@ -48,4 +48,9 @@ export class BackendConnectorService {
         const districtMnsUrl: string = "http://localhost:3000/manasadhara";
         return this.http.post(districtMnsUrl, bodyParams);
     }
+
+    getMNSAllocation(bodyParams: any) {
+        const MNSAllocationUrl: string = "http://localhost:3000/mnsallocation";
+        return this.http.post(MNSAllocationUrl, bodyParams);
+    }
 }

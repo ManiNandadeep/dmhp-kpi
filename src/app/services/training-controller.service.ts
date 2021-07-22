@@ -92,4 +92,15 @@ export class TrainingControllerService {
         // console.log(patientsPerMonth);
         return patientsPerMonth;
     }
+
+    public getTotal(trainingData: any) {
+        let totalEvents: number = 0;
+        let totalPatients: number = 0;
+
+        for (let i = 0; i < trainingData.length; ++i) {
+            totalEvents += trainingData[i].noOfEvents;
+            totalPatients += trainingData[i].noOfPatients;
+        }
+        return [totalEvents, totalPatients];
+    }
 }

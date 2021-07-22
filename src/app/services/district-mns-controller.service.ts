@@ -76,4 +76,13 @@ export class DistrictMNSControllerService {
         // console.log(MNSExpensePerMonth);
         return MNSExpensePerMonth;
     }
+
+    public getTotalMNSExpenditure(MNSData: any) {
+        let totalMNSExpense: number = 0;
+        for (let i = 0; i < MNSData.length; ++i) {
+            totalMNSExpense += MNSData[i].TotalExpense;
+        }
+
+        return totalMNSExpense;
+    }
 }

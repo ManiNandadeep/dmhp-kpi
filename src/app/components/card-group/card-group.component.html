@@ -17,10 +17,9 @@
                     </h2>
                     <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
                     <div class="card-text">
-                        <h4><span class="card-heading">Total Trainings:</span> </h4>
-                        <h4><span class="card-heading">No. Of People Trained:</span>
+                        <h4><span class="card-heading">Training Events held: {{ totalEvents }}</span> </h4>
+                        <h4><span class="card-heading">No. Of People Trained: {{ totalPatients }}</span>
                         </h4>
-                        <h4><span class="card-heading">Total People Trained:</span> </h4>
                     </div>
                 </div>
             </div>
@@ -29,7 +28,7 @@
             <div class="card budget-card shadow-md h-100">
                 <div class="card-body">
                     <h2 class="card-title">
-                        <mat-icon aria-hidden="false" aria-label="Paid Icon">paid</mat-icon> Expenditure (In Lks)
+                        <mat-icon aria-hidden="false" aria-label="Paid Icon">paid</mat-icon> Expenditure (in lakhs)
                     </h2>
                     <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
                     <div class="card-text">
@@ -42,9 +41,11 @@
         <div class="col-xs-12 col-sm-12 col-md-3 card-component">
             <div class="card extra-card shadow-sm h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                        card's content.</p>
+                    <h2 class="card-title">Manasadhara (in lakhs)</h2>
+                    <div class="card-text">
+                        <h4><span class="card-heading">Manasadhara Allocation: {{ MNSAllocation }}</span> </h4>
+                        <h4><span class="card-heading">Manasadhara Expense: {{ MNSExpenditure }}</span> </h4>
+                    </div>
                 </div>
             </div>
         </div>

@@ -6,6 +6,7 @@ import { BackendConnectorService } from "src/app/services/backend-connector.serv
 import { DistrictControllerService } from "src/app/services/district-controller.service";
 import { DistrictExpenseControllerService } from "src/app/services/district-expense-controller.service";
 import { DistrictMNSControllerService } from "src/app/services/district-mns-controller.service";
+import { MnsAllocationControllerService } from "src/app/services/mns-allocation-controller.service";
 import { TrainingControllerService } from "src/app/services/training-controller.service";
 
 @Component({
@@ -23,6 +24,7 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     DistrictExpenseLastYearChart!: ApexCharts;
     DistrictMNSChart!: ApexCharts;
     DistrictMNSLastYearChart!: ApexCharts;
+    DistrictMNSAllocationChart!: ApexCharts;
 
     // training corresponding to districts
     numberOfPatientsPerDistrict: Map<string, number> = new Map();
@@ -114,11 +116,23 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         year_type: "c",
     };
 
+    // MNS Allocation according to districts
+    MNSAllocationPerDistrict: Map<string, number> = new Map();
+    MNSAllocationDistrictBody = {
+        display: "DistrictId",
+        group_by: "DistrictId",
+        agg: "TotalExpense",
+        district_list: "",
+        quaterly_list: "",
+        financial_year: "",
+    };
+
     constructor(
         public backendConnectorService: BackendConnectorService,
         public trainingControllerService: TrainingControllerService,
         public districtExpenseControllerService: DistrictExpenseControllerService,
-        public districtMNSControllerService: DistrictMNSControllerService
+        public districtMNSControllerService: DistrictMNSControllerService,
+        public MNSAllocationControllerService: MnsAllocationControllerService
     ) {}
 
     ngOnInit() {
@@ -241,6 +255,27 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                     2
                 );
             });
+
+        this.backendConnectorService
+            .getMNSAllocation(this.MNSAllocationDistrictBody)
+            .subscribe((data: any) => {
+                const MNSAllocationData: any = data[0];
+                console.log(MNSAllocationData);
+
+                this.MNSAllocationPerDistrict =
+                    this.MNSAllocationControllerService.getDistrictMNSAllocationMap(
+                        MNSAllocationData
+                    );
+
+                this.initMNSAllocationCharts(
+                    this.DistrictMNSAllocationChart,
+                    this.createMNSAllocationChartOptions(
+                        this.MNSAllocationPerDistrict,
+                        "Manasadhara Allocation Per District (In Lakhs)"
+                    ),
+                    1
+                );
+            });
     }
 
     ngOnDestroy() {}
@@ -332,6 +367,36 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         return chartOptions;
     }
 
+    createMNSAllocationChartOptions(
+        valueMap: Map<string, number>,
+        title: string
+    ) {
+        const chartOptions = {
+            chart: {
+                type: "bar",
+                height: 400,
+            },
+            series: [
+                {
+                    name: "Manasadhara Allocation",
+                    data: Array.from(valueMap.values()),
+                },
+            ],
+            dataLabels: {
+                enabled: false,
+            },
+            xaxis: {
+                //add district name array.
+                categories: Array.from(valueMap.keys()),
+            },
+            title: {
+                text: title,
+                align: "center",
+            },
+        };
+        return chartOptions;
+    }
+
     initTrainingCharts(
         chart: ApexCharts,
         chartOptions: any,
@@ -363,6 +428,18 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     ) {
         chart = new ApexCharts(
             document.querySelector(`#districtMNS${graphId}`),
+            chartOptions
+        );
+        chart.render();
+    }
+
+    initMNSAllocationCharts(
+        chart: ApexCharts,
+        chartOptions: any,
+        graphId: number
+    ) {
+        chart = new ApexCharts(
+            document.querySelector(`#MNSAllocation${graphId}`),
             chartOptions
         );
         chart.render();
