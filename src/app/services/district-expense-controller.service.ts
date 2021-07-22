@@ -74,4 +74,12 @@ export class DistrictExpenseControllerService {
         // console.log(ExpensePerMonth);
         return ExpensePerMonth;
     }
+    public getTotalDistrictExpenditure(ExpensePerMonth:any){
+        let TotalDistrictExpenditure:number=0;
+        for (let i=0;i<ExpensePerMonth.length;i++){
+            TotalDistrictExpenditure+=ExpensePerMonth[i].TotalExpense;
+        }
+        return +TotalDistrictExpenditure.toFixed(3);
+    }
 }
+

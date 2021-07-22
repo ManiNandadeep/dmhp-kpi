@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { BackendConnectorService } from "src/app/services/backend-connector.service";
+import { DistrictExpenseControllerService } from "src/app/services/district-expense-controller.service";
 import { DistrictMNSControllerService } from "src/app/services/district-mns-controller.service";
 import { MnsAllocationControllerService } from "src/app/services/mns-allocation-controller.service";
 import { TrainingControllerService } from "src/app/services/training-controller.service";
@@ -59,11 +60,25 @@ export class CardGroupComponent implements OnInit {
         financial_year: "2020-21",
     };
 
+    //district expense variables
+    DistrictExpense!: number;
+    DistrictExpenseBody = {
+        display: "DistrictId",
+        group_by: "DistrictId",
+        agg: "TotalExpense",
+        district_list: "",
+        start_date: this.todayLastYear.toISOString().slice(0, 10),
+        end_date: this.today.toISOString().slice(0, 10),
+        timeperiod_type: "annually",
+        year_type: "c",
+    };
+
     constructor(
         public backendConnectorService: BackendConnectorService,
         public trainingControllerService: TrainingControllerService,
         public districtMNSControllerService: DistrictMNSControllerService,
-        public MNSAllocationControllerService: MnsAllocationControllerService
+        public MNSAllocationControllerService: MnsAllocationControllerService,
+        public DistrictExpenseControllerService: DistrictExpenseControllerService
     ) {}
 
     ngOnInit() {
@@ -96,11 +111,22 @@ export class CardGroupComponent implements OnInit {
             .getMNSAllocation(this.MNSAllocationDistrictBody)
             .subscribe((data: any) => {
                 const MNSData = data[0];
-                console.log(MNSData);
+                // console.log(MNSData);
                 this.MNSAllocation =
                     this.MNSAllocationControllerService.getTotalMNSAllocation(
                         MNSData
                     );
             });
+        
+        this.backendConnectorService
+            .getDistrictExpense(this.DistrictExpenseBody)  
+            .subscribe((data:any)=>{
+                const DistrictExpenseData=data[0];
+                console.log(DistrictExpenseData);
+                this.DistrictExpense=
+                this.DistrictExpenseControllerService.getTotalDistrictExpenditure(
+                    DistrictExpenseData
+                );
+        });
     }
 }
