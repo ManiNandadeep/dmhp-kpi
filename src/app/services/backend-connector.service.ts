@@ -53,4 +53,9 @@ export class BackendConnectorService {
         const MNSAllocationUrl: string = "http://localhost:3000/mnsallocation";
         return this.http.post(MNSAllocationUrl, bodyParams);
     }
+
+    getHRData(bodyParams: any) {
+        const HRDataInfoUrl: string = "http://localhost:3000/hr";
+        return this.http.post(HRDataInfoUrl, bodyParams);
+    }
 }

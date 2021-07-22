@@ -73,6 +73,15 @@ export class CardGroupComponent implements OnInit {
         year_type: "c",
     };
 
+    // HR variables
+    activePeople!: number;
+    HRDataBody = {
+        district_list: "",
+        taluka_list: "",
+        start_date: this.todayLastYear.toISOString().slice(0, 10),
+        end_date: "2021-03-30",
+    };
+
     constructor(
         public backendConnectorService: BackendConnectorService,
         public trainingControllerService: TrainingControllerService,
@@ -117,16 +126,27 @@ export class CardGroupComponent implements OnInit {
                         MNSData
                     );
             });
-        
+
         this.backendConnectorService
-            .getDistrictExpense(this.DistrictExpenseBody)  
-            .subscribe((data:any)=>{
-                const DistrictExpenseData=data[0];
-                console.log(DistrictExpenseData);
-                this.DistrictExpense=
-                this.DistrictExpenseControllerService.getTotalDistrictExpenditure(
-                    DistrictExpenseData
-                );
-        });
+            .getDistrictExpense(this.DistrictExpenseBody)
+            .subscribe((data: any) => {
+                const DistrictExpenseData = data[0];
+                // console.log(DistrictExpenseData);
+                this.DistrictExpense =
+                    this.DistrictExpenseControllerService.getTotalDistrictExpenditure(
+                        DistrictExpenseData
+                    );
+            });
+
+        this.backendConnectorService
+            .getHRData(this.HRDataBody)
+            .subscribe((data: any) => {
+                const HRData = data[0];
+                console.log(HRData);
+                this.activePeople = 0;
+                for (let i = 0; i < HRData.length; ++i) {
+                    this.activePeople += HRData[i].TotalActivePeople;
+                }
+            });
     }
 }

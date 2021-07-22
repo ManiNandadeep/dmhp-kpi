@@ -85,6 +85,7 @@ var excludedRoutes = [
     "/districtexpense",
     "/manasadhara",
     "/mnsallocation",
+    "/hr",
 ];
 
 app.use(
@@ -258,7 +259,7 @@ app.post("/districtexpense", function (req, res) {
     Call the getHRdata() stored procedure
 */
 
-app.post("/hr", authenticateToken, function (req, res) {
+app.post("/hr", function (req, res) {
     let district_list = req.body.district_list;
     let taluka_list = req.body.taluka_list;
     let start_date = req.body.start_date;
