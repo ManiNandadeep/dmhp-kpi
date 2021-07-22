@@ -5,6 +5,7 @@ import { map } from "rxjs/operators";
 import { BackendConnectorService } from "src/app/services/backend-connector.service";
 import { DistrictControllerService } from "src/app/services/district-controller.service";
 import { DistrictExpenseControllerService } from "src/app/services/district-expense-controller.service";
+import { DistrictMNSControllerService } from "src/app/services/district-mns-controller.service";
 import { TrainingControllerService } from "src/app/services/training-controller.service";
 
 @Component({
@@ -20,6 +21,8 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     trainingLastYearChart!: ApexCharts;
     DistrictExpenseDistrictChart!: ApexCharts;
     DistrictExpenseLastYearChart!: ApexCharts;
+    DistrictMNSChart!: ApexCharts;
+    DistrictMNSLastYearChart!: ApexCharts;
 
     // training corresponding to districts
     numberOfPatientsPerDistrict: Map<string, number> = new Map();
@@ -83,10 +86,39 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         year_type: "c",
     };
 
+    // District Manasadhara according to districts
+    MnsPerDistrict: Map<string, number> = new Map();
+    MnsDistrictBody = {
+        display: "DistrictId",
+        group_by: "DistrictId",
+        agg: "TotalExpense",
+        district_list: "",
+        status_list: "",
+        start_date: this.todayLastYear.toISOString().slice(0, 10),
+        end_date: this.today.toISOString().slice(0, 10),
+        timeperiod_type: "annually",
+        year_type: "c",
+    };
+
+    // District Manasadhara according to time series
+    MnsPerMonth: Map<string, number> = new Map();
+    MnsMonthBody = {
+        display: "ReportingMonthYear",
+        group_by: "MNSId",
+        agg: "TotalExpense",
+        district_list: "",
+        status_list: "",
+        start_date: this.todayLastYear.toISOString().slice(0, 10),
+        end_date: this.today.toISOString().slice(0, 10),
+        timeperiod_type: "monthly",
+        year_type: "c",
+    };
+
     constructor(
         public backendConnectorService: BackendConnectorService,
         public trainingControllerService: TrainingControllerService,
-        public districtExpenseControllerService: DistrictExpenseControllerService
+        public districtExpenseControllerService: DistrictExpenseControllerService,
+        public districtMNSControllerService: DistrictMNSControllerService
     ) {}
 
     ngOnInit() {
@@ -168,6 +200,47 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                     2
                 );
             });
+
+        this.backendConnectorService
+            .getDistrictManasadhara(this.MnsDistrictBody)
+            .subscribe((data: any) => {
+                const districtMNSData = data[0];
+
+                this.MnsPerDistrict =
+                    this.districtMNSControllerService.getDistrictMnsMap(
+                        districtMNSData
+                    );
+
+                this.initDistrictMNSCharts(
+                    this.DistrictMNSChart,
+                    this.createDistrictMNSChartOptions(
+                        this.MnsPerDistrict,
+                        "Manasadhara Expense per District (for the last year)"
+                    ),
+                    1
+                );
+            });
+
+        this.backendConnectorService
+            .getDistrictManasadhara(this.MnsMonthBody)
+            .subscribe((data: any) => {
+                const districtMNSData = data[0];
+                // console.log(districtMNSData);
+
+                this.MnsPerMonth =
+                    this.districtMNSControllerService.getMonthlyMNSMap(
+                        districtMNSData
+                    );
+
+                this.initDistrictMNSCharts(
+                    this.DistrictMNSLastYearChart,
+                    this.createDistrictMNSChartOptions(
+                        this.MnsPerMonth,
+                        "Manasadhara Expense Last Year monthly (In Lakhs)"
+                    ),
+                    2
+                );
+            });
     }
 
     ngOnDestroy() {}
@@ -229,6 +302,36 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         return chartOptions;
     }
 
+    createDistrictMNSChartOptions(
+        valueMap: Map<string, number>,
+        title: string
+    ) {
+        const chartOptions = {
+            chart: {
+                type: "bar",
+                height: 400,
+            },
+            series: [
+                {
+                    name: "Manasadhara Expense",
+                    data: Array.from(valueMap.values()),
+                },
+            ],
+            dataLabels: {
+                enabled: false,
+            },
+            xaxis: {
+                //add district name array.
+                categories: Array.from(valueMap.keys()),
+            },
+            title: {
+                text: title,
+                align: "center",
+            },
+        };
+        return chartOptions;
+    }
+
     initTrainingCharts(
         chart: ApexCharts,
         chartOptions: any,
@@ -248,6 +351,18 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     ): void {
         chart = new ApexCharts(
             document.querySelector(`#districtExpense${graphId}`),
+            chartOptions
+        );
+        chart.render();
+    }
+
+    initDistrictMNSCharts(
+        chart: ApexCharts,
+        chartOptions: any,
+        graphId: number
+    ) {
+        chart = new ApexCharts(
+            document.querySelector(`#districtMNS${graphId}`),
             chartOptions
         );
         chart.render();

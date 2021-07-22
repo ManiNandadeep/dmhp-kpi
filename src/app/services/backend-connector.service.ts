@@ -43,4 +43,9 @@ export class BackendConnectorService {
             "http://localhost:3000/districtexpense";
         return this.http.post(districtExpenseUrl, bodyParams);
     }
+
+    getDistrictManasadhara(bodyParams: any) {
+        const districtMnsUrl: string = "http://localhost:3000/manasadhara";
+        return this.http.post(districtMnsUrl, bodyParams);
+    }
 }
