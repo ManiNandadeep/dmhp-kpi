@@ -32,6 +32,7 @@ BCOR5mm, % Binding correction
 \usepackage{minted}
 \usepackage{amsmath} % for '\text' macro
 \usepackage{tabularx}
+\usepackage{wrapfig}
 
 \usepackage[sorting=none]{biblatex}
 \addbibresource{sample.bib}
@@ -253,13 +254,14 @@ These are the arguments passed to it:
 \begin{section}{Parameters}
 
 \begin{center}
-\begin{tabular}{| c | c |}
+
+\begin{tabular}{c|c}
 \hline 
 $display$ & This column specifies the list of columns that will be included in the query \\ \\ 
 \hline 
  $group\_by$ & The resulting columns will be grouped by these values \\ \\
 \hline 
-$agg$ &  This column specifies the list of columns that will be included in the aggregation query \\ \\ 
+$agg$ &  This column specifies what will be included in the aggregation query \\ \\ 
 \hline 
  $district\_list$ &  The output will contain values with DistrictIDs present in this list\\ \\ 
 \hline 
@@ -288,6 +290,7 @@ $target\_group_list$ & The output will contain values with TargetGroupIDs presen
 $resource\_list$ & The output will contain values with ResourceIDs present in this list  \\ \\ 
 \hline 
 \end{tabular} 
+
 \end{center}
 
 \end{section}
@@ -295,46 +298,8 @@ $resource\_list$ & The output will contain values with ResourceIDs present in th
 
 \newpage 
 
-\begin{table}[ht]
-\centering
-\resizebox{\textwidth}{!}{\begin{tabular}{ll}
- \hline 
-$display$ & This column specifies the list of columns that will be included in the query \\ \\ 
-\hline 
- $group\_by$ & The resulting columns will be grouped by these values \\ \\
-\hline 
-$agg$ &  This column specifies the list of columns that will be included in the aggregation query \\ \\ 
-\hline 
- $district\_list$ &  The output will contain values with DistrictIDs present in this list\\ \\ 
-\hline 
-$start\_date$ & This column specifies the starting point of date filtration \\ \\
-\hline 
-$end\_date$ & This column specifies the culmminating point of date filtration  \\ \\
-\hline 
-$timeperiod\_type$  & This specifies whether the query is ordered monthly, quarterly, or yearly  \\ \\ 
-\hline 
-$year\_type$  & Specifies what type of output is generated - financial year or calendar year \\ \\ 
-\hline 
-$status\_list$  & The output will contain values with StatusIDs present in this list \\ \\ 
-\hline 
-$taluka\_list$ & The output will contain values with TalukaIDs present in this list \\ \\ 
-\hline 
-$quaterly\_list$ & The output will contain values with DistrictIDs present in this list \\ \\ 
-\hline 
- $financial\_year$ & This is a date proxy for the getMNSAlloAction stored procedure  \\ \\ 
-\hline 
-$facility\_list$ &  The output will contain values with FacilityTypeId present in this list\\ \\ 
-\hline 
- $event\_list$ & The output will contain values with EventIDs present in this list   \\ \\ 
-\hline 
-$target\_group_list$ & The output will contain values with TargetGroupIDs present in this list \\ \\ 
-\hline 
-$resource\_list$ & The output will contain values with ResourceIDs present in this list  \\ \\ 
-\hline 
-\end{tabular}}
-\end{table} 
 
-\newpage
+
 
 
 
