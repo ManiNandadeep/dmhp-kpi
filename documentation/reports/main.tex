@@ -1,0 +1,360 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Arsclassica Article
+% LaTeX Template
+% Version 1.1 (1/8/17)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Lorenzo Pantieri (http://www.lorenzopantieri.net) with extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+
+%----------------------------------------------------------------------------------------
+
+\documentclass[
+10pt, % Main document font size
+a4paper, % Paper type, use 'letterpaper' for US Letter paper
+oneside, % One page layout (no page indentation)
+%twoside, % Two page layout (page indentation for binding and different headers)
+headinclude,footinclude, % Extra spacing for the header and footer
+BCOR5mm, % Binding correction
+]{scrartcl}
+
+\usepackage{braket}
+\usepackage{minted}
+\usepackage{amsmath} % for '\text' macro
+\usepackage{tabularx}
+
+\usepackage[sorting=none]{biblatex}
+\addbibresource{sample.bib}
+
+\input{structure.tex} % Include the structure.tex file which specified the document structure and layout
+
+\hyphenation{Fortran hy-phen-ation} % Specify custom hyphenation points in words with dashes where you would like hyphenation to occur, or alternatively, don't put any dashes in a word to stop hyphenation altogether
+
+%----------------------------------------------------------------------------------------
+%	TITLE AND AUTHOR(S)
+%----------------------------------------------------------------------------------------
+
+\title{\normalfont\spacedallcaps{DMHP PROJECT REPORT}} % The article title
+
+% \subtitle{Mani Nandadeep (IMT2019051), R Prasannavenkatesh (IMT2019063) \& Vijay Jaisankar (IMT2019525)} % Uncomment to display a subtitle
+
+%\author{\spacedlowsmallcaps{Mani Nandadeep}} 
+%\author{\spacedlowsmallcaps{R Prasannavenkatesh}}
+
+\author{
+  Mani Nandadeep\\
+  \texttt{IMT2019051}
+  \and
+  R Prasannavenkatesh\\
+  \texttt{IMT2019063}
+  \and
+  Vijay Jaisankar\\
+  \texttt{IMT2019525}
+  \and
+  M Dhanush\\
+  \texttt{IMT2019049}
+}
+
+% The article author(s) - author affiliations need to be specified in the AUTHOR AFFILIATIONS block
+
+\date{} % An optional date to appear under the author(s)
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	HEADERS
+%----------------------------------------------------------------------------------------
+
+\renewcommand{\sectionmark}[1]{\markright{\spacedlowsmallcaps{#1}}} % The header for all pages (oneside) or for even pages (twoside)
+%\renewcommand{\subsectionmark}[1]{\markright{\thesubsection~#1}} % Uncomment when using the twoside option - this modifies the header on odd pages
+\lehead{\mbox{\llap{\small\thepage\kern1em\color{halfgray} \vline}\color{halfgray}\hspace{0.5em}\rightmark\hfil}} % The header style
+
+\pagestyle{scrheadings} % Enable the headers specified in this block
+
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS & LISTS OF FIGURES AND TABLES
+%----------------------------------------------------------------------------------------
+
+\maketitle % Print the title/author/date block
+
+\setcounter{tocdepth}{3} % Set the depth of the table of contents to show sections and subsections only
+
+\tableofcontents % Print the table of contents
+
+\newpage
+
+
+\begin{section}{Stored Procedures}
+
+A \textit{Stored Procedure} is a set of SQL statements with an assigned names, so that it can be shared with multiple applications and can generate dynamic queries as compared to a static query. \\ \\
+It is \textbf{abstracted} from the regular code and just called in the API, similar to a function call and returns a cut of the database which are filtered according to the call arguments. \\ \\ 
+Stored Procedure for the $tbl\_training$, $tbl\_districtexpense$, $tbl\_hrdatainfo$, $tbl\_districtmanasadhara$ and $tbl\_mnsalloaction$ tables have been implemented in this project. \\ \\ 
+Now, rather than creating many API routes, a \textbf{single API route} will suffice for both training and district expense Data modules. Also this makes the graphing process simpler. \\ \\
+Here is a list of all the \textit{stored procedures} implemented, their \textit{primary functionalities} and their \textit{argument lists}: 
+
+\newpage
+
+\begin{subsection}{getTraining}
+This stored procedure generates a dynamic cut of the $tbl\_training$ table. \\ \\ \\
+It filters the output based on the following parameters: 
+\begin{itemize}
+        \item Select a predefined list of columns.
+        \item Group the output by a predefined list of columns.
+        \item Filter by District, Facility, Event, Targeted Group, and Resource IDs.
+        \item Reject all entries lying outside of a given date range.
+        \item Group the output annually, monthly, or quarterly.
+        \item Group the output by calendar year or financial year.
+\end{itemize} 
+\\ \\ \\
+
+These are the arguments passed to it: 
+\begin{itemize}
+        \item display
+        \item group\_by
+        \item district\_list
+        \item facility\_list
+        \item event\_list
+        \item target\_group\_list
+        \item resource\_list
+        \item start\_date
+        \item end\_date
+        \item timeperiod\_type
+        \item year\_type
+\end{itemize}
+
+\end{subsection}
+
+\newpage
+
+\begin{subsection}{getMnsAlloAction}
+This stored procedure generates a dynamic cut of the $tbl\_mnsalloaction$ table. \\ \\ \\
+It filters the output based on the following parameters: 
+\begin{itemize}
+        \item Select a predefined list of columns.
+        \item Group the output by a predefined list of columns.
+        \item Filter by District, Financial Year, and Quarter IDs.
+        \item Select arithmetic operations performed on a select list of columns.
+\end{itemize} 
+\\ \\ \\
+These are the arguments passed to it: 
+\begin{itemize}
+        \item display
+        \item group\_by
+        \item agg
+        \item district\_list
+        \item quarterly\_list
+        \item financial\_year
+\end{itemize}
+
+\end{subsection}
+
+\newpage
+
+\begin{subsection}{getHRData}
+This stored procedure generates the rolling sum of active and contracted workers extracted from the $tbl\_hrdatainfo$ table. \\ \\ \\
+It filters the output based on the following parameters: 
+\begin{itemize}
+        \item Group the output by a predefined list of columns.
+        \item Filter by District and Taluka IDs.
+        \item Reject all entries lying outside of a given date range.
+\end{itemize} 
+\\ \\ \\
+
+These are the arguments passed to it: 
+\begin{itemize}
+        \item district\_list
+        \item taluka\_list
+        \item start\_date
+        \item end\_date
+\end{itemize}
+
+\end{subsection}
+
+\newpage
+
+\begin{subsection}{getDistrictManasadhara}
+This stored procedure generates a dynamic cut of the $tbl\_districtmanasadhara$ table. \\ \\ \\
+It filters the output based on the following parameters: 
+\begin{itemize}
+        \item Select a predefined list of columns.
+        \item Group the output by a predefined list of columns.
+        \item Filter by District and Status IDs.
+        \item Reject all entries lying outside of a given date range.
+        \item Select arithmetic operations performed on a select list of columns.
+        \item Group the output annually, monthly, or quarterly.
+        \item Group the output by calendar year or financial year.
+\end{itemize} 
+\\ \\ \\
+These are the arguments passed to it: 
+\begin{itemize}
+        \item display
+        \item group\_by
+        \item agg
+        \item district\_list
+        \item status\_list
+        \item start\_date
+        \item end\_date
+        \item timeperiod\_type
+        \item year\_type
+\end{itemize}
+
+\end{subsection}
+
+\newpage
+
+
+\begin{subsection}{getDistrictExpense}
+This stored procedure generates a dynamic cut of the $tbl\_districtexpense$ table. \\ \\ \\
+It filters the output based on the following parameters: 
+\begin{itemize}
+        \item Select a predefined list of columns.
+        \item Group the output by a predefined list of columns.
+        \item Filter by District and Status IDs.
+        \item Reject all entries lying outside of a given date range.
+        \item Select arithmetic operations performed on a select list of columns.
+        \item Group the output annually, monthly, or quarterly.
+        \item Group the output by calendar year or financial year.
+\end{itemize} 
+\\ \\ \\
+These are the arguments passed to it: 
+\begin{itemize}
+        \item display
+        \item group\_by
+        \item agg
+        \item district\_list
+        \item status\_list
+        \item start\_date
+        \item end\_date
+        \item timeperiod\_type
+        \item year\_type
+\end{itemize}
+
+\end{subsection}
+
+
+
+
+\end{section}
+
+\newpage
+
+\begin{section}{Parameters}
+
+\begin{center}
+\begin{tabular}{| c | c |}
+\hline 
+$display$ & This column specifies the list of columns that will be included in the query \\ \\ 
+\hline 
+ $group\_by$ & The resulting columns will be grouped by these values \\ \\
+\hline 
+$agg$ &  This column specifies the list of columns that will be included in the aggregation query \\ \\ 
+\hline 
+ $district\_list$ &  The output will contain values with DistrictIDs present in this list\\ \\ 
+\hline 
+$start\_date$ & This column specifies the starting point of date filtration \\ \\
+\hline 
+$end\_date$ & This column specifies the culmminating point of date filtration  \\ \\
+\hline 
+$timeperiod\_type$  & This specifies whether the query is ordered monthly, quarterly, or yearly  \\ \\ 
+\hline 
+$year\_type$  & Specifies what type of output is generated - financial year or calendar year \\ \\ 
+\hline 
+$status\_list$  & The output will contain values with StatusIDs present in this list \\ \\ 
+\hline 
+$taluka\_list$ & The output will contain values with TalukaIDs present in this list \\ \\ 
+\hline 
+$quaterly\_list$ & The output will contain values with DistrictIDs present in this list \\ \\ 
+\hline 
+ $financial\_year$ & This is a date proxy for the getMNSAlloAction stored procedure  \\ \\ 
+\hline 
+$facility\_list$ &  The output will contain values with FacilityTypeId present in this list\\ \\ 
+\hline 
+ $event\_list$ & The output will contain values with EventIDs present in this list   \\ \\ 
+\hline 
+$target\_group_list$ & The output will contain values with TargetGroupIDs present in this list \\ \\ 
+\hline 
+$resource\_list$ & The output will contain values with ResourceIDs present in this list  \\ \\ 
+\hline 
+\end{tabular} 
+\end{center}
+
+\end{section}
+
+
+\newpage 
+
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{\begin{tabular}{ll}
+ \hline 
+$display$ & This column specifies the list of columns that will be included in the query \\ \\ 
+\hline 
+ $group\_by$ & The resulting columns will be grouped by these values \\ \\
+\hline 
+$agg$ &  This column specifies the list of columns that will be included in the aggregation query \\ \\ 
+\hline 
+ $district\_list$ &  The output will contain values with DistrictIDs present in this list\\ \\ 
+\hline 
+$start\_date$ & This column specifies the starting point of date filtration \\ \\
+\hline 
+$end\_date$ & This column specifies the culmminating point of date filtration  \\ \\
+\hline 
+$timeperiod\_type$  & This specifies whether the query is ordered monthly, quarterly, or yearly  \\ \\ 
+\hline 
+$year\_type$  & Specifies what type of output is generated - financial year or calendar year \\ \\ 
+\hline 
+$status\_list$  & The output will contain values with StatusIDs present in this list \\ \\ 
+\hline 
+$taluka\_list$ & The output will contain values with TalukaIDs present in this list \\ \\ 
+\hline 
+$quaterly\_list$ & The output will contain values with DistrictIDs present in this list \\ \\ 
+\hline 
+ $financial\_year$ & This is a date proxy for the getMNSAlloAction stored procedure  \\ \\ 
+\hline 
+$facility\_list$ &  The output will contain values with FacilityTypeId present in this list\\ \\ 
+\hline 
+ $event\_list$ & The output will contain values with EventIDs present in this list   \\ \\ 
+\hline 
+$target\_group_list$ & The output will contain values with TargetGroupIDs present in this list \\ \\ 
+\hline 
+$resource\_list$ & The output will contain values with ResourceIDs present in this list  \\ \\ 
+\hline 
+\end{tabular}}
+\end{table} 
+
+\newpage
+
+
+
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+%\section{References}
+\renewcommand{\refname}{\spacedlowsmallcaps{References}} % For modifying the bibliography heading
+% \medskip
+
+%Sets the bibliography style to UNSRT and imports the 
+%bibliography file "samples.bib".
+% \bibliographystyle{unsrt}
+%\bibliography{sample}
+
+% ACM Notations
+
+\printbibliography
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
