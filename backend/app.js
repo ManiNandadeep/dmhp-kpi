@@ -65,7 +65,7 @@ function authenticateToken(req, res, next) {
     const token = authHeader && authHeader.split(" ")[1];
 
     if (token == null) return res.sendStatus(401);
-
+    
     jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
         if (err) return res.sendStatus(403);
         req.user = user;
@@ -80,12 +80,7 @@ Users that can use the app - roles to be added later.
 var USERS = users.users();
 var excludedRoutes = [
     "/api/auth",
-    "/",
-    "/training",
-    "/districtexpense",
-    "/manasadhara",
-    "/mnsallocation",
-    "/hr",
+    "/"
 ];
 
 app.use(

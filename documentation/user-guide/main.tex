@@ -1,0 +1,268 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Arsclassica Article
+% LaTeX Template
+% Version 1.1 (1/8/17)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Lorenzo Pantieri (http://www.lorenzopantieri.net) with extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+
+%----------------------------------------------------------------------------------------
+
+\documentclass[
+10pt, % Main document font size
+a4paper, % Paper type, use 'letterpaper' for US Letter paper
+oneside, % One page layout (no page indentation)
+%twoside, % Two page layout (page indentation for binding and different headers)
+headinclude,footinclude, % Extra spacing for the header and footer
+BCOR5mm, % Binding correction
+]{scrartcl}
+
+\usepackage{braket}
+\usepackage{minted}
+\usepackage{amsmath} % for '\text' macro
+\usepackage{tabularx}
+\usepackage{wrapfig}
+\usepackage{hyperref}
+
+\usepackage[sorting=none]{biblatex}
+\addbibresource{sample.bib}
+
+\input{structure.tex} % Include the structure.tex file which specified the document structure and layout
+
+\hyphenation{Fortran hy-phen-ation} % Specify custom hyphenation points in words with dashes where you would like hyphenation to occur, or alternatively, don't put any dashes in a word to stop hyphenation altogether
+
+%----------------------------------------------------------------------------------------
+%	TITLE AND AUTHOR(S)
+%----------------------------------------------------------------------------------------
+
+\title{\normalfont\spacedallcaps{DMHP : USER GUIDE}} % The article title
+
+% \subtitle{Mani Nandadeep (IMT2019051), R Prasannavenkatesh (IMT2019063) \& Vijay Jaisankar (IMT2019525)} % Uncomment to display a subtitle
+
+%\author{\spacedlowsmallcaps{Mani Nandadeep}} 
+%\author{\spacedlowsmallcaps{R Prasannavenkatesh}}
+
+\author{
+  Mani Nandadeep\\
+  \texttt{IMT2019051}
+  \and
+  R Prasannavenkatesh\\
+  \texttt{IMT2019063}
+  \and
+  Vijay Jaisankar\\
+  \texttt{IMT2019525}
+  \and
+  M Dhanush\\
+  \texttt{IMT2019049}
+}
+
+% The article author(s) - author affiliations need to be specified in the AUTHOR AFFILIATIONS block
+
+\date{} % An optional date to appear under the author(s)
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	HEADERS
+%----------------------------------------------------------------------------------------
+
+\renewcommand{\sectionmark}[1]{\markright{\spacedlowsmallcaps{#1}}} % The header for all pages (oneside) or for even pages (twoside)
+%\renewcommand{\subsectionmark}[1]{\markright{\thesubsection~#1}} % Uncomment when using the twoside option - this modifies the header on odd pages
+\lehead{\mbox{\llap{\small\thepage\kern1em\color{halfgray} \vline}\color{halfgray}\hspace{0.5em}\rightmark\hfil}} % The header style
+
+\pagestyle{scrheadings} % Enable the headers specified in this block
+
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS & LISTS OF FIGURES AND TABLES
+%----------------------------------------------------------------------------------------
+
+\maketitle % Print the title/author/date block
+
+\setcounter{tocdepth}{3} % Set the depth of the table of contents to show sections and subsections only
+
+\tableofcontents % Print the table of contents
+
+\newpage
+
+%--------------------------------------------------------------------------------------------%
+
+\begin{section}{Adding a new chart : Angular}
+The current version of the project uses \href{https://apexcharts.com/}{Apex Charts} for graphing procedures. The graphing procedure has the following workflow: 
+
+\begin{subsection}{Call the API } 
+First, we call the required API using the corresponding body parameters. For example, to call \textit{/getTraining}, we send the required arguments in a JSON format as the body parameters which in turn accesses the corresponding Node.js route. \\ 
+The API is called via a method present in the \textit{backend-connector service} which returns a \href{https://rxjs.dev/}{rxjs} observable.
+\end{subsection}
+    
+\begin{subsection}{Subscribe to the API observable } 
+The API call returns an \textit{observable} which is to be \textit{subscribed} further. In the subscription body the data is returned and the corresponding logic can be registered and executed. The API observable can then be operated in your required \textit{component}. 
+\end{subsection}
+    
+\begin{subsection}{Create a map} 
+Using the data from the API, create an \href{https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map}{ES6 map} with your custom key-value pairs.\\ \\ You can either create the map in the \textit{subscription body} of your API call itself or you can outsource the logic to one of the \textit{services} which in turn takes in the API response and returns the corresponding map. 
+\end{subsection}
+
+\begin{subsection}{Creating Apex charts options}
+Once we have created the map, we create an \textit{options} variable which contains the necessary details to \href{https://apexcharts.com/docs/creating-first-javascript-chart/}{create the graph}.\\ \\ The chart options creation can be abstracted to a service or we can create that in the component itself. 
+\end{subsection} 
+
+\begin{subsection}{Rendering Apex Charts }
+Once the options are created use the \href{https://apexcharts.com/docs/methods/#render}{render} method of apex charts to render the graph in the required position. Much like the other steps in this process, the chart rendering can again be abstracted to a service or we can create that in the component itself. 
+\end{subsection}
+ 
+
+\newpage
+
+
+
+\end{section}
+
+\newpage
+
+%--------------------------------------------------------------------------------------------%
+\begin{section}{Adding a new route : Node.js}
+To make a new route in \textit{node.js}, here's what we have to do. \\ 
+\begin{subsection}{Prerequisites}
+Before adding a new route, the following information should be ready:
+\begin{itemize}
+    \item The HTTP Method of the new request (i.e GET/POST/PUT/PATCH/DELETE/etc)
+    \item The JSON format of the input (if any). In particular, the variable names of the keys in the input parameters should be known.
+    \item Whether the new route needs JWT authentication for access
+    \item If the new request calls a stored procedure, the stored procedure should be added to the database and the argument list and order should be known.
+    \item A Validation function for the input parameters (if any)
+\end{itemize}
+\end{subsection}
+
+\begin{subsection}{Adding the route}
+If the route does not need authentication, add the route to the \textit{excludedRoutes} array in \textit{app.js}. \\ \\
+The syntax for adding a new route is $expressObject.HTTPMETHOD (ROUTE, function\_for\_processing)$ \\ \\
+For example, $app.get("/newroute",(req,res) => {res.json("Hello World")});$ \\ specifies a \textit{GET} request to the \textit{newroute} endpoint, which returns "Hello World".
+\end{subsection}
+
+\begin{subsection}{Processing input JSON}
+If the input JSON is of the form $"key":"value"$, $key$ can be accessed by $req.body.key$, if $req$ is the request object variable. \\ \\
+One can then process the input parameters.
+\end{subsection}
+
+\begin{subsection}{Validation}
+If we are going to add a Validation function to the input parameters, that must be abstracted away in $validators.js$. \\ \\
+The syntax for the same is : \\
+$referenceName : function functionName(<parameters>) {...}$ \\ \\
+Note that this will be one of the exports in the file, this can then be called in $app.js$ as follows: $referenceName(<parameters>)$
+
+\begin{subsection}{Testing the Route}
+We can use an service like Postman, cURL, or Insomnia to call the route. Do note that, if JWT is used, a \textit{Bearer Token} must be added; this token can be found by calling the $/api/auth$ route. \\ \\
+Please add the successful input JSON as an example call in the $/backend/sample-json-calls$ directory. 
+
+\end{subsection}
+
+\end{subsection}
+\newpage
+\end{section}
+
+%--------------------------------------------------------------------------------------------%
+
+\begin{section}{Adding a new route : Spring Boot}
+To make a new route in Spring Boot, here's what we have to do. \\ \\
+
+\begin{subsection}{Prerequisites}
+Before adding a new route, the following information should be ready.
+\begin{itemize}
+    \item The HTTP Method of the new request (i.e GET/POST/PUT/PATCH/DELETE/etc)
+    \item The JSON format of the input (if any). In particular, the variable names of the keys in the input parameters should be known.
+    \item The column names in the table, and the corresponding flags that will determine decorators for the variables representing column names.
+    \item Methods that fall outside the bounds of JPARepository methods need to be present beforehand.
+    \item Custom Error handling classes, if any, should be created beforehand.
+\end{itemize}
+\end{subsection}
+
+\begin{subsection}{Entity}
+In the \textit{entity} package, there are classes corresponding tables. In these classes, variables corresponding to column names, along with decorators that elucidate Hibernate validators are also present (for example, \textit{@NotNull} and \textit{@Id}). \\ \\
+To add a route that needs representation of a new table, a new file should be added in this package, whose name should be the same as that of the table. Note that, if we want to keep the same column nomenclature format as that of MySQL, the following lines should be present in the $application.properties$ file : \\ \\ 
+$spring.jpa.hibernate.naming.implicit-strategy= \\
+org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl \\ \\
+spring.jpa.hibernate.naming.physical-strategy= \\
+org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl$
+\end{subsection}
+
+\begin{subsection}{Controller}
+In the \textit{controller} package, we have an enumeration of API routes and permissions for tables. \\ \\ To add a new route, we must add a new controller and bind it to the new Entity class created. \\ \\We can also add \textit{Controller-level Logic}, by allowing access to only certain callers; this is encapsulated in the $@CrossOrigin()$ decorator. \\ \\ 
+We then call the corresponding method of the service layer through \textit{dependency injection}. \\ \\
+For example, a POST request to the $/newroute/$ endpoint which allows only \textit{localhost:4200} to access it, which calls SERVICEMETHOD is given by: \\ \\
+@PostMapping("/newroute") \\
+@CrossOrigin(origins = "http://localhost:4200") \\
+public returnType functionName(<parameters>) \{ \\ 
+    \hspace{10cm} // Processing \\
+    \hspace{1cm} return boundServiceObject.SERVICEMETHOD(<parameters>); \\ 
+\}
+\end{subsection}
+
+\begin{subsection}{Service}
+The \textit{service} package consists of pairs of Interface-Implementing classes for tables. Every method outlined in the Controller class should be implemented using this paradigm. \\ \\
+Service Layer methods involve \textit{Service-level logic}, and Calling the Repository Layer methods for the same.\\ \\
+For example, a function in the Service Layer that facilitates adding a new entry to the Table is given by: \\ \\
+@Override \\
+public entity\_class\_name SERVICEMETHOD(entity\_class\_name var) \{ \\
+        return boundRepositoryObject.save(var); \\
+\} \\ \\
+The $@Override$ stems from the fact that this method is in the implementation class that implements the interface containing $SERVICEMETHOD$.
+\end{subsection}
+
+\begin{subsection}{Repository}
+The \textit{repository} package consists of a list of Interfaces that extend $JpaRepository$. We can either use these methods out of the box, or by creating our own. Note that, this could entail making new interfaces created for this purpose. \\ \\
+The syntax for the repository is \\ $RepositoryClassName<Entity\_Class\_Name \\, DataTypeOfPrimaryKeyOfCorrespondingEntityClass>$
+\end{subsection}
+
+\begin{subsection}{Tests}
+We can add unit tests in the $demo/src/test/TESTINGLAYERPACKAGE$. \\ \\
+We must take care of two things here: 
+\begin{itemize}
+    \item Mocking the parent Layer
+    \item Assertions of the test
+\end{itemize}
+\end{subsection}
+
+\begin{subsection}{Testing the Route}
+We can use an service like Postman, cURL, or Insomnia to call the route.
+\end{subsection}
+
+
+
+\end{section}
+
+
+
+
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+%\section{References}
+\renewcommand{\refname}{\spacedlowsmallcaps{References}} % For modifying the bibliography heading
+% \medskip
+
+%Sets the bibliography style to UNSRT and imports the 
+%bibliography file "samples.bib".
+% \bibliographystyle{unsrt}
+%\bibliography{sample}
+
+% ACM Notations
+
+\printbibliography
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
