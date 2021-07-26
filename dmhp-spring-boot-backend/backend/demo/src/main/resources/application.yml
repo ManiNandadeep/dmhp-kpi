@@ -1,0 +1,15 @@
+server:
+    port: 8082
+spring:
+    datasource:
+        driver-class-name: com.mysql.jdbc.Driver
+        password: nopenotthistime
+        url: jdbc:mysql://localhost:3306/DBNAME?zeroDateTimeBehavior=convertToNull
+        username: root
+    jpa:
+        hibernate:
+            ddl-auto: update
+            naming:
+                implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        show-sql: true

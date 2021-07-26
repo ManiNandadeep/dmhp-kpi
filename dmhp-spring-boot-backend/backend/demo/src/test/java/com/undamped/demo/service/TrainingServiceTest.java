@@ -40,12 +40,13 @@ class TrainingServiceTest {
 
     @Test
     // @DisplayName("Test case 9")
-    public void whenTrainingFetch(){
+    public void whenTrainingFetch() {
         // Validation goes here
         List<tbl_training> found = trainingService.fetchTrainingList();
         List<tbl_training> emptyList = Collections.emptyList();
         assertFalse(found.isEmpty());
     }
+
 }
 
 
