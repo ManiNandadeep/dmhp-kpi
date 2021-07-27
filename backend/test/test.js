@@ -25,9 +25,8 @@ it("Auth route returns 401 status code if no password is sent.", async () => {
     await pactum
         .spec()
         .post("http://localhost:3000/api/auth")
-        .expectStatus(401)
+        .expectStatus(401);
 });
-
 
 /*
     API Auth Testing
@@ -37,11 +36,8 @@ it("Auth route returns 200 status code with correct parameters.", async () => {
         .spec()
         .post("http://localhost:3000/api/auth")
         .withBody(expected.authBody)
-        .expectStatus(200)
+        .expectStatus(200);
 });
-
-
-
 
 /*
     tbl_training API Testing
@@ -94,8 +90,6 @@ it("tbl_districtExpense only allows Authorised access.", async () => {
         .expectStatus(401);
 });
 
-
-
 it("Check status code for tbl_districtExpense.", async () => {
     let districtExpenseBody = expected.tbl_districtExpense_body;
     await pactum
@@ -116,5 +110,77 @@ it("Check output for tbl_districtExpense.", async () => {
         .post("http://localhost:3000/districtexpense")
         .withHeaders("Authorization", `Bearer ${bearerToken}`)
         .withBody(districtExpenseBody)
+        .expectBody(responseBody);
+});
+
+/*
+    tbl_DistrictExpense API Testing
+    http://localhost:3000/manasadhara
+*/
+
+it("tbl_districtManasadhara only allows Authorised access.", async () => {
+    const districtMNSBody = expected.tbl_districtMNS_body;
+    await pactum
+        .spec()
+        .post("http://localhost:3000/manasadhara")
+        .withBody(districtMNSBody)
+        .expectStatus(401);
+});
+
+it("Check status code for tbl_districtManasadhara.", async () => {
+    const districtMNSBody = expected.tbl_districtMNS_body;
+    await pactum
+        .spec()
+        .post("http://localhost:3000/manasadhara")
+        .withHeaders("Authorization", `Bearer ${bearerToken}`)
+        .withBody(districtMNSBody)
+        .expectStatus(200);
+});
+
+it("Check output for tbl_districtManasadhara.", async () => {
+    const districtMNSBody = expected.tbl_districtMNS_body;
+    const responseBody = expected.tbl_districtMNS_response;
+
+    await pactum
+        .spec()
+        .post("http://localhost:3000/manasadhara")
+        .withHeaders("Authorization", `Bearer ${bearerToken}`)
+        .withBody(districtMNSBody)
+        .expectBody(responseBody);
+});
+
+/*
+    tbl_DistrictExpense API Testing
+    http://localhost:3000/mnsallocation
+*/
+
+it("tbl_MNSAlloAction only allows Authorised access.", async () => {
+    const MNSAllocationBody = expected.tbl_MNSAllocation_body;
+    await pactum
+        .spec()
+        .post("http://localhost:3000/mnsallocation")
+        .withBody(MNSAllocationBody)
+        .expectStatus(401);
+});
+
+it("Check status code for tbl_MNSAlloAction.", async () => {
+    const MNSAllocationBody = expected.tbl_MNSAllocation_body;
+    await pactum
+        .spec()
+        .post("http://localhost:3000/mnsallocation")
+        .withHeaders("Authorization", `Bearer ${bearerToken}`)
+        .withBody(MNSAllocationBody)
+        .expectStatus(200);
+});
+
+it("Check output for tbl_MNSAlloAction.", async () => {
+    const MNSAllocationBody = expected.tbl_MNSAllocation_body;
+    const responseBody = expected.tbl_MNSAllocation_response;
+
+    await pactum
+        .spec()
+        .post("http://localhost:3000/mnsallocation")
+        .withHeaders("Authorization", `Bearer ${bearerToken}`)
+        .withBody(MNSAllocationBody)
         .expectBody(responseBody);
 });
