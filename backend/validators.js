@@ -4,113 +4,7 @@ Compare the dates
 */
 
 const { identifierModuleUrl } = require("@angular/compiler");
-
-function returnDateSafeSQL(SQLdate1String, SQLdate2String) {
-    var sqlDateStr1 = SQLdate1String;
-    sqlDateStr1 = sqlDateStr1.replace(/:| /g, "-");
-    var YMDhms1 = sqlDateStr1.split("-");
-    var sqlDate1 = new Date();
-
-    sqlDate1.setFullYear(
-        parseInt(YMDhms1[0]),
-        parseInt(YMDhms1[1]) - 1,
-        parseInt(YMDhms1[2])
-    );
-
-    if (YMDhms1.length == 6) {
-        sqlDate1.setHours(
-            parseInt(YMDhms1[3]),
-            parseInt(YMDhms1[4]),
-            parseInt(YMDhms1[5]),
-            0
-        );
-    }
-
-    var sqlDateStr2 = SQLdate2String;
-    sqlDateStr2 = sqlDateStr2.replace(/:| /g, "-");
-    var YMDhms2 = sqlDateStr2.split("-");
-    var sqlDate2 = new Date();
-
-    sqlDate2.setFullYear(
-        parseInt(YMDhms2[0]),
-        parseInt(YMDhms2[1]) - 1,
-        parseInt(YMDhms2[2])
-    );
-
-    if (YMDhms2.length == 6) {
-        sqlDate2.setHours(
-            parseInt(YMDhms2[3]),
-            parseInt(YMDhms2[4]),
-            parseInt(YMDhms2[5]),
-            0
-        );
-    }
-
-    return sqlDate2.getTime() >= sqlDate1.getTime();
-}
-
-/*
-// Helper function to check if obj is in arr - supports older IE browsers
-function includeObj(arr,obj) {
-    return (arr.indexOf(obj) != -1);
-}
-*/
-
-function includeObj(obj,arr){
-    return arr.includes(obj);
-}
-
-
-
-// Validator to check if all array objects are non-negative, and to provide an error string if any element defaults.
-
-function checkIfAllArrayElementsAreNonNegativeErrorString(commaSepString,colName){
-    var flag = true;
-    var errorString = "";
-
-    
-    let arr = commaSepString.split(",");
-        for(let i = 0; i < arr.length; i++){
-            if(parseInt(arr[i]) < 0){
-                flag = false;
-                break;
-            }
-    }
-
-    if(flag === false){
-        errorString += colName + " should only have non-negative values. "
-    }
-
-    let returnDict = {
-        flag,
-        errorString
-    };
-
-    return returnDict;
-}
-
-// Validator to check if the object provided lies in a list of objects, and to provide an error string if it doesn't.
-
-function checkObjInArrErrorString(obj,arr,colName){
-    var flag = true;
-    var errorString = "";
-
-    flag = includeObj(obj,arr);
-
-    if(flag === false){
-        errorString += colName + " should be in " + arr.toString() + " ";
-    }
-
-    let returnDict = {
-        flag,
-        errorString
-    };
-
-    return returnDict;
-}
-
-
-
+const helpers = require("./helpers");
 
 
 module.exports = {
@@ -142,45 +36,45 @@ module.exports = {
     
         // Date
         let date_safe = true;
-        date_safe = returnDateSafeSQL(start_date, end_date);
+        date_safe = helpers.returnDateSafeSQL(start_date, end_date);
         if (date_safe == false) {
             errorString += "end_date should not be before start_date , ";
         }
 
         // Year Type
         let year_arr = ["","c","f"];
-        let year_dict = checkObjInArrErrorString(year_type,year_arr,"year_type");
+        let year_dict = helpers.checkObjInArrErrorString(year_type,year_arr,"year_type");
         let year_type_safe = year_dict.flag;
         errorString += year_dict.errorString;
     
         // District List
-        let district_dict = checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
+        let district_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
         let district_list_safe = district_dict.flag;
         errorString += district_dict.errorString;
         
         // Event List
-        let event_dict = checkIfAllArrayElementsAreNonNegativeErrorString(event_list,"event_list");
+        let event_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(event_list,"event_list");
         let event_list_safe = event_dict.flag;
         errorString += event_dict.errorString;
         
         // Target List
-        let target_dict = checkIfAllArrayElementsAreNonNegativeErrorString(target_group_list,"target_group_list");
+        let target_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(target_group_list,"target_group_list");
         let target_list_safe = target_dict.flag;
         errorString += target_dict.errorString;
         
         // Resource List
-        let resource_dict = checkIfAllArrayElementsAreNonNegativeErrorString(resource_list,"resource_list");
+        let resource_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(resource_list,"resource_list");
         let resource_safe = resource_dict.flag;
         errorString += resource_dict.errorString;
 
         // Time Period Type
         let time_period_arr = ["annually","quarterly","monthly"];
-        let time_period_dict = checkObjInArrErrorString(timeperiod_type,time_period_arr,"timeperiod_type");
+        let time_period_dict = helpers.checkObjInArrErrorString(timeperiod_type,time_period_arr,"timeperiod_type");
         let time_period_safe = time_period_dict.flag;
         errorString += time_period_dict.errorString;
 
         // Facility List
-        let facility_dict = checkIfAllArrayElementsAreNonNegativeErrorString(facility_list,"facility_list");
+        let facility_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(facility_list,"facility_list");
         let facility_safe = facility_dict.flag;
         errorString += resource_dict.errorString;   
         
@@ -228,25 +122,25 @@ module.exports = {
     
         // Date
         let date_safe = true;
-        date_safe = returnDateSafeSQL(start_date, end_date);
+        date_safe = helpers.returnDateSafeSQL(start_date, end_date);
         if (date_safe == false) {
             errorString += "end_date should not be before start_date ,";
         }
     
         // Year Type
         let year_arr = ["","c","f"];
-        let year_dict = checkObjInArrErrorString(year_type,year_arr,"year_type");
+        let year_dict = helpers.checkObjInArrErrorString(year_type,year_arr,"year_type");
         let year_type_safe = year_dict.flag;
         errorString += year_dict.errorString;
     
         // District List
-        let district_dict = checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
+        let district_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
         let district_list_safe = district_dict.flag;
         errorString += district_dict.errorString;
     
         // Time Period Type
         let time_period_arr = ["annually","quarterly","monthly"];
-        let time_period_dict = checkObjInArrErrorString(timeperiod_type,time_period_arr,"time_period_type");
+        let time_period_dict = helpers.checkObjInArrErrorString(timeperiod_type,time_period_arr,"time_period_type");
         let time_period_safe = time_period_dict.flag;
         errorString += time_period_dict.errorString;
     
@@ -284,19 +178,19 @@ module.exports = {
     
             // Date
             let date_safe = true;
-            date_safe = returnDateSafeSQL(start_date, end_date);
+            date_safe = helpers.returnDateSafeSQL(start_date, end_date);
             if (date_safe == false) {
                 errorString += "end_date should not be before start_date ,";
             }
 
         
             // District List
-            let district_dict = checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
+            let district_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
             let district_list_safe = district_dict.flag;
             errorString += district_dict.errorString;
 
             // Taluka List
-            let taluka_dict = checkIfAllArrayElementsAreNonNegativeErrorString(taluka_list,"taluka_list");
+            let taluka_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(taluka_list,"taluka_list");
             let taluka_list_safe = taluka_dict.flag;
             errorString += taluka_dict.errorString;
           
@@ -354,7 +248,7 @@ module.exports = {
 
 
             // Status List
-            let status_dict = checkIfAllArrayElementsAreNonNegativeErrorString(status_list,"status_list");
+            let status_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(status_list,"status_list");
             let status_list_safe = status_dict.flag;
             status_list_str += status_dict.errorString;
 
@@ -396,7 +290,7 @@ module.exports = {
     
     
         // District List
-        let district_dict = checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
+        let district_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
         let district_list_safe = district_dict.flag;
         errorString += district_dict.errorString;
 
@@ -406,7 +300,7 @@ module.exports = {
         if(quaterly_list !== ""){
             let quarterly_list_arr = quaterly_list.split(",");
             for (let i = 0; i<quarterly_list_arr.length; i++){
-                if (includeObj(quarterly_list_arr[i],allowed_quarter_values) === false){
+                if (helpers.includeObj(quarterly_list_arr[i],allowed_quarter_values) === false){
                     quarterly_list_safe = false;
                     errorString += 
                         "quaterly_list should only have non-negative values, ";

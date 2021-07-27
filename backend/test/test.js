@@ -3,6 +3,39 @@
 const pactum = require("pactum");
 var expected = require("./expected");
 const bearerToken = expected.bearerToken;
+const helpers = require(".././helpers");
+
+/*
+    Synchronous Check for Validators
+*/
+
+// Date Safe Function
+if(helpers.returnDateSafeSQL("","2020-01-01") === false && helpers.returnDateSafeSQL("2020-01-01","2019-01-01") === false && helpers.returnDateSafeSQL("2020-01-01","2021-01-01") === true){
+    console.log("✔️ Return Date Safe.");
+}
+
+else{
+    console.log("❌ Return Date Safe Function.");
+}
+
+// Check if all elements in an array are non-negative Function
+if(helpers.checkIfAllArrayElementsAreNonNegativeErrorString("").flag === true && helpers.checkIfAllArrayElementsAreNonNegativeErrorString("0,1").flag === true && helpers.checkIfAllArrayElementsAreNonNegativeErrorString("-1").flag === false){
+    console.log("✔️ Check all non-negative function.");
+}
+
+else{
+    console.log("❌ Check all non-negative function.");
+}
+
+// Check if an object is present in an array Function
+if(helpers.checkObjInArrErrorString("a",[]).flag === false && helpers.checkObjInArrErrorString("1","1,2,3").flag === true && helpers.checkObjInArrErrorString(null,[]).flag === false){
+    console.log("✔️ Check if object in array function.");
+}
+
+else{
+    console.log("❌ Check if object in array function.");
+}
+
 
 /*
     Sanity check to see if Pactum is running properly
