@@ -1,13 +1,13 @@
 {
-	"display":"DistrictId,ReportingMonthYear",
-	"district_list":"3,4,5",
-	"event_list":"",
-	"target_group_list":"",
-	"resource_list":"",
-	"start_date":"2017-01-01",
-	"end_date":"2020-01-01",
-	"timeperiod_type":"quarterly",
-	"year_type":"f",
-	"group_by":"DistrictId,financial_year,Quarter",
-	"facility_list":""
+    "display": "DistrictId,ReportingMonthYear",
+    "district_list": "",
+    "event_list": "",
+    "target_group_list": "",
+    "resource_list": "",
+    "start_date": "2017-01-01",
+    "end_date": "2020-01-01",
+    "timeperiod_type": "quarterly",
+    "year_type": "f",
+    "group_by": "DistrictId,financial_year,Quarter",
+    "facility_list": ""
 }
