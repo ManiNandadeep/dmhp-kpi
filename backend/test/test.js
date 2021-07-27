@@ -1,9 +1,8 @@
 // Unit tests for the node.js backend
 
 const pactum = require("pactum");
-
-const bearerToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyNzM5MzU5MiwiZXhwIjoxNjI3NDAwNzkyfQ.b7434BqSQ5S8riZ2PiaHRl-y_Myl7Jj01QotCeyB8oU";
+var expected = require("./expected");
+const bearerToken = expected.bearerToken;
 
 /*
     Sanity check to see if Pactum is running properly
@@ -24,19 +23,7 @@ it("The API is active.", async () => {
     http://localhost:3000/training
 */
 it("Check status code for tbl_training", async () => {
-    const trainingBody = {
-        display: "DistrictId,ReportingMonthYear",
-        district_list: "",
-        event_list: "",
-        target_group_list: "",
-        resource_list: "",
-        start_date: "2017-01-01",
-        end_date: "2020-01-01",
-        timeperiod_type: "quarterly",
-        year_type: "f",
-        group_by: "DistrictId,financial_year,Quarter",
-        facility_list: "",
-    };
+    let trainingBody = expected.tbl_training_body;
     await pactum
         .spec()
         .post("http://localhost:3000/training")
@@ -46,41 +33,9 @@ it("Check status code for tbl_training", async () => {
 });
 
 it("Check output for tbl_training", async () => {
-    const trainingBody = {
-        display: "DistrictId,ReportingMonthYear",
-        district_list: "2",
-        event_list: "",
-        target_group_list: "",
-        resource_list: "",
-        start_date: "2020-12-01",
-        end_date: "2020-12-02",
-        timeperiod_type: "quarterly",
-        year_type: "f",
-        group_by: "DistrictId,financial_year,Quarter",
-        facility_list: "",
-    };
+    let trainingBody = expected.tbl_training_body;
 
-    const responseBody = [
-        [
-            {
-                DistrictId: 2,
-                financial_year: "2020-2021",
-                Quarter: 3,
-                noOfPatients: 113,
-                noOfEvents: 1,
-            },
-        ],
-        {
-            fieldCount: 0,
-            affectedRows: 0,
-            insertId: 0,
-            serverStatus: 34,
-            warningCount: 0,
-            message: "",
-            protocol41: true,
-            changedRows: 0,
-        },
-    ];
+    let responseBody = expected.tbl_training_response;
 
     await pactum
         .spec()
@@ -95,16 +50,7 @@ it("Check output for tbl_training", async () => {
     http://localhost:3000/districtexpense
 */
 it("Check status code for tbl_districtExpense", async () => {
-    const districtExpenseBody = {
-        display: "DistrictId",
-        group_by: "DistrictId",
-        agg: "TotalExpense",
-        district_list: "",
-        start_date: "2018-01-01",
-        end_date: "2020-01-01",
-        timeperiod_type: "annually",
-        year_type: "f",
-    };
+    let districtExpenseBody = expected.tbl_districtExpense_body;
     await pactum
         .spec()
         .post("http://localhost:3000/districtexpense")
@@ -114,43 +60,9 @@ it("Check status code for tbl_districtExpense", async () => {
 });
 
 it("Check output for tbl_districtExpense", async () => {
-    const districtExpenseBody = {
-        display: "DistrictId",
-        group_by: "DistrictId",
-        agg: "TotalExpense",
-        district_list: "1,2,3",
-        start_date: "2018-01-01",
-        end_date: "2020-01-01",
-        timeperiod_type: "annually",
-        year_type: "f",
-    };
+    let districtExpenseBody = expected.tbl_districtExpense_body;
 
-    const responseBody = [
-        [
-            {
-                DistrictId: 1,
-                TotalExpense: 88.2071,
-            },
-            {
-                DistrictId: 2,
-                TotalExpense: 87.70897,
-            },
-            {
-                DistrictId: 3,
-                TotalExpense: 99.44484,
-            },
-        ],
-        {
-            fieldCount: 0,
-            affectedRows: 0,
-            insertId: 0,
-            serverStatus: 34,
-            warningCount: 0,
-            message: "",
-            protocol41: true,
-            changedRows: 0,
-        },
-    ];
+    let responseBody = expected.tbl_districtExpense_response;
 
     await pactum
         .spec()
