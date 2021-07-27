@@ -12,6 +12,7 @@ const tbl_training_body = require("../sample-json-calls/call_training_stored_pro
 const tbl_districtExpense_body = require("../sample-json-calls/call_districtexpense_storedprocedure.json");
 const tbl_districtMNS_body = require("../sample-json-calls/call_get_district_manasadhara_stored_procedure.json")
 const tbl_MNSAllocation_body = require("../sample-json-calls/call_mnsalloaction_stored_procedure.json");
+const tbl_HR_body = require("../sample-json-calls/call_hr_storedprocedure.json");
 
 module.exports = {
     bearerToken:
@@ -100,11 +101,6 @@ module.exports = {
     tbl_MNSAllocation_response: [
         [
           {
-            "concat(@statement)": "select DistrictId,SUM(RHead_15) as RHead_15 from DMHPv1.tbl_mnsalloaction where StateId = 17 and DistrictId IN (12) and QuaterlyId IN (1,2) and FinancialYear IN (select distinct FinancialYear from DMHPv1.tbl_mnsalloaction) GROUP BY DistrictId"
-          }
-        ],
-        [
-          {
             "DistrictId": 12,
             "RHead_15": 5.28
           }
@@ -119,5 +115,44 @@ module.exports = {
           "protocol41": true,
           "changedRows": 0
         }
-      ]
+      ],
+
+      tbl_HR_body: tbl_HR_body,
+
+      tbl_HR_response :    
+        [
+            [
+                {
+                "DesignationID": 2,
+                "TotalActivePeople": 1
+                },
+                {
+                "DesignationID": 5,
+                "TotalActivePeople": 1
+                },
+                {
+                "DesignationID": 6,
+                "TotalActivePeople": 1
+                },
+                {
+                "DesignationID": 3,
+                "TotalActivePeople": 1
+                },
+                {
+                "DesignationID": 9,
+                "TotalActivePeople": 1
+                }
+            ],
+            {
+                "fieldCount": 0,
+                "affectedRows": 0,
+                "insertId": 0,
+                "serverStatus": 34,
+                "warningCount": 0,
+                "message": "",
+                "protocol41": true,
+                "changedRows": 0
+            }
+    ]
+    
 };
