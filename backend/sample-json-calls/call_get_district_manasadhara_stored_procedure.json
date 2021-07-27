@@ -1,11 +1,11 @@
 {
-	"display":"MNSId",
-	"group_by":"MNSId",
+	"display":"DistrictId",
+	"group_by":"DistrictId",
 	"agg":"Head_15",
-	"district_list":"",
+	"district_list":"27,29",
 	"status_list":"",
-	"start_date":"2000-01-01",
-	"end_date":"2021-01-01",
+	"start_date":"2020-01-01",
+	"end_date":"2020-01-02",
 	"timeperiod_type":"quarterly",
 	"year_type":"c"
 }
