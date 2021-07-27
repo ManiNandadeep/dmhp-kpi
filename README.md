@@ -45,6 +45,11 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 - Populate the tables and stored procedures
 - Build, and run the project on IntelliJ for Java EE Developers
 
+## Run tests
+
+- `cd backend/test`
+- `npx mocha test.js` (Note: If `mocha` is installed globally,  `mocha test.js` will suffice.)
+
 
 ## MySQL Setup  
 
