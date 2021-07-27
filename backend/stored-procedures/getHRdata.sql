@@ -1,5 +1,5 @@
 /*
-    VERSION - 1,01
+    VERSION - 1,02
 */
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getHRData`(
@@ -65,7 +65,7 @@ BEGIN
     " and ", @taluka_id_string, " and ",
     @date_filter_string, " GROUP BY ", @group_by_string);
     
-    select concat(@statement);
+    -- select concat(@statement);
     prepare stmt from @statement;
     execute stmt;
     deallocate prepare stmt;

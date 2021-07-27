@@ -1,5 +1,5 @@
 /*
-	VERSION - 1,02
+	VERSION - 1,03
 */
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getMnsAlloAction`(
@@ -186,7 +186,7 @@ BEGIN
     
     set @statement = CONCAT("select ", @display_string ,",", @agg_string ," from DMHPv1.tbl_mnsalloaction where StateId = 17 and ", @district_id_string, " and ", @quaterly_id_string, " and ", @financial_year_string, " GROUP BY ", @group_by_string);
     
-    select concat(@statement);
+    -- select concat(@statement);
     prepare stmt from @statement;
     execute stmt;
     deallocate prepare stmt;
