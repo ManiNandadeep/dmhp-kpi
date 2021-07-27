@@ -1,5 +1,13 @@
+const dotenv = require("dotenv");
+dotenv.config({ path: "../../.env" });
+
+
 module.exports = {
     bearerToken :  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyNzM5ODI4MiwiZXhwIjoxNjI3NDA1NDgyfQ.KZ_nyaSGltMdU72b11A4GlFxHVXDoC4EeEAw6B1hBTk",
+    authBody: {
+        "username":"dmhp",
+        "password":process.env.AUTH_PASSWORD
+    },
     tbl_training_body : {
         display: "DistrictId,ReportingMonthYear",
         district_list: "2",

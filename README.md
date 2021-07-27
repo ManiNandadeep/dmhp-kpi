@@ -45,9 +45,10 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 - Populate the tables and stored procedures
 - Build, and run the project on IntelliJ for Java EE Developers
 
-## Run tests
+## Run the tests of this project:
 
 - `cd backend/test`
+-  Change the bearer token in `expected.js` by copying and pasting the value attained by accessing the `/api/auth` route.
 - `npx mocha test.js` (Note: If `mocha` is installed globally,  `mocha test.js` will suffice.)
 
 

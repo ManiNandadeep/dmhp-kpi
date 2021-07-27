@@ -19,10 +19,45 @@ it("The API is active.", async () => {
 });
 
 /*
+    Sanity check to check if authorisation returns 401 if no password is sent.
+*/
+it("Auth route returns 401 status code if no password is sent.", async () => {
+    await pactum
+        .spec()
+        .post("http://localhost:3000/api/auth")
+        .expectStatus(401)
+});
+
+
+/*
+    API Auth Testing
+*/
+it("Auth route returns 200 status code with correct parameters.", async () => {
+    await pactum
+        .spec()
+        .post("http://localhost:3000/api/auth")
+        .withBody(expected.authBody)
+        .expectStatus(200)
+});
+
+
+
+
+/*
     tbl_training API Testing
     http://localhost:3000/training
 */
-it("Check status code for tbl_training", async () => {
+
+it("tbl_training only allows Authorised access.", async () => {
+    let trainingBody = expected.tbl_training_body;
+    await pactum
+        .spec()
+        .post("http://localhost:3000/training")
+        .withBody(trainingBody)
+        .expectStatus(401);
+});
+
+it("Check status code for tbl_training.", async () => {
     let trainingBody = expected.tbl_training_body;
     await pactum
         .spec()
@@ -32,7 +67,7 @@ it("Check status code for tbl_training", async () => {
         .expectStatus(200);
 });
 
-it("Check output for tbl_training", async () => {
+it("Check output for tbl_training.", async () => {
     let trainingBody = expected.tbl_training_body;
 
     let responseBody = expected.tbl_training_response;
@@ -49,7 +84,19 @@ it("Check output for tbl_training", async () => {
     tbl_DistrictExpense API Testing
     http://localhost:3000/districtexpense
 */
-it("Check status code for tbl_districtExpense", async () => {
+
+it("tbl_districtExpense only allows Authorised access.", async () => {
+    let districtExpenseBody = expected.tbl_districtExpense_body;
+    await pactum
+        .spec()
+        .post("http://localhost:3000/districtexpense")
+        .withBody(districtExpenseBody)
+        .expectStatus(401);
+});
+
+
+
+it("Check status code for tbl_districtExpense.", async () => {
     let districtExpenseBody = expected.tbl_districtExpense_body;
     await pactum
         .spec()
@@ -59,7 +106,7 @@ it("Check status code for tbl_districtExpense", async () => {
         .expectStatus(200);
 });
 
-it("Check output for tbl_districtExpense", async () => {
+it("Check output for tbl_districtExpense.", async () => {
     let districtExpenseBody = expected.tbl_districtExpense_body;
 
     let responseBody = expected.tbl_districtExpense_response;
