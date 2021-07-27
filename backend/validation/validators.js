@@ -3,7 +3,6 @@ SQL DateTime to Javascript Date
 Compare the dates
 */
 
-const { identifierModuleUrl } = require("@angular/compiler");
 const helpers = require("./helpers");
 
 

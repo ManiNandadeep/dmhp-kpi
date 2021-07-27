@@ -1,6 +1,5 @@
 /*
     MySQL connection details
-
 */
 const mysql = require("mysql");
 

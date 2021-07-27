@@ -6,10 +6,10 @@ const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
 const { convertCompilerOptionsFromJson } = require("typescript");
 const dotenv = require("dotenv");
-const validators = require("./validators");
-const mysqlConnector = require("./db");
+const validators = require("./validation/validators");
+const mysqlConnector = require("./resources/db");
 const cors = require("cors");
-const users = require("./users");
+const users = require("./resources/users");
 
 const app = express();
 const port = 3000;
@@ -110,7 +110,7 @@ app.post("/api/auth", (req, res) => {
     Simple GET query to check if the API accepts requests
 */
 
-// Note: Auth not required for this route
+// Note: Authorisation is not required for this route
 
 app.get("/", function (req, res, next) {
     res.json({

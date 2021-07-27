@@ -3,7 +3,7 @@
 const pactum = require("pactum");
 var expected = require("./expected");
 const bearerToken = expected.bearerToken;
-const helpers = require(".././helpers");
+const helpers = require("../validation/helpers");
 
 /*
     Synchronous Check for Validators
