@@ -78,7 +78,15 @@ Users that can use the app - roles to be added later.
 */
 
 var USERS = users.users();
-var excludedRoutes = ["/api/auth", "/"];
+var excludedRoutes = [
+    "/api/auth",
+    "/",
+    "/training",
+    "/districtexpense",
+    "/hr",
+    "/manasadhara",
+    "/mnsallocation",
+];
 
 app.use(
     expressJwt({
@@ -119,7 +127,7 @@ app.get("/", function (req, res, next) {
     Call the getTraining() Stored Procedure 
 */
 
-app.post("/training", authenticateToken, function (req, res) {
+app.post("/training", function (req, res) {
     let display = req.body.display;
     let district_list = req.body.district_list;
     let event_list = req.body.event_list;
@@ -189,7 +197,7 @@ app.post("/training", authenticateToken, function (req, res) {
     Call the getDistrictExpense() stored procedure
 */
 
-app.post("/districtexpense", authenticateToken, function (req, res) {
+app.post("/districtexpense", function (req, res) {
     let display = req.body.display;
     let group_by = req.body.group_by;
     let agg = req.body.agg;
@@ -251,7 +259,7 @@ app.post("/districtexpense", authenticateToken, function (req, res) {
     Call the getHRdata() stored procedure
 */
 
-app.post("/hr", authenticateToken, function (req, res) {
+app.post("/hr", function (req, res) {
     let district_list = req.body.district_list;
     let taluka_list = req.body.taluka_list;
     let start_date = req.body.start_date;
@@ -295,7 +303,7 @@ app.post("/hr", authenticateToken, function (req, res) {
 /*
     CALL THE getDistrictManasadhara() stored procedure
 */
-app.post("/manasadhara", authenticateToken, function (req, res) {
+app.post("/manasadhara", function (req, res) {
     let display = req.body.display;
     let group_by = req.body.group_by;
     let agg = req.body.agg;
@@ -359,7 +367,7 @@ app.post("/manasadhara", authenticateToken, function (req, res) {
 /*
     CALL THE getMnsAlloAction() stored procedure
 */
-app.post("/mnsallocation", authenticateToken, function (req, res) {
+app.post("/mnsallocation", function (req, res) {
     let display = req.body.display;
     let group_by = req.body.group_by;
     let agg = req.body.agg;
