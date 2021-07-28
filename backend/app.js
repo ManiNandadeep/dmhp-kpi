@@ -147,14 +147,11 @@ app.post("/training", authenticateToken, function (req, res) {
     let group_by = req.body.group_by;
     let facility_list = req.body.facility_list;
 
-    /*
-        STORED PROCEDURE CALL
-    */
+        /*
+            Validation
+        */
 
-    let sql = `CALL DMHPv1.getTraining (?,?,?,?,?,?,?,?,?,?,?)`;
-    con.query(
-        sql,
-        [
+        let isSafe = validators.trainingValidator(
             display,
             group_by,
             district_list,
@@ -165,40 +162,43 @@ app.post("/training", authenticateToken, function (req, res) {
             start_date,
             end_date,
             timeperiod_type,
-            year_type,
-        ],
-        function (err, response) {
-            if (err) console.log(err);
-            console.log(response);
+            year_type
+        );
 
-            /*
-                VALIDATION
-            */
-
-            let isSafe = validators.trainingValidator(
-                display,
-                group_by,
-                district_list,
-                facility_list,
-                event_list,
-                target_group_list,
-                resource_list,
-                start_date,
-                end_date,
-                timeperiod_type,
-                year_type
-            );
-            if (isSafe.checkVar == false) {
-                incorrectInputDict = {
-                    message: "One or more of the inputs are unsupported",
-                    error: isSafe.errorString,
-                };
-                res.json(incorrectInputDict);
-            } else {
-                res.json(response);
-            }
+        if (isSafe.checkVar == false) {
+            incorrectInputDict = {
+                message: "One or more of the inputs are unsupported",
+                error: isSafe.errorString,
+            };
+            res.json(incorrectInputDict);
         }
-    );
+
+        else{
+            let sql = `CALL DMHPv1.getTraining (?,?,?,?,?,?,?,?,?,?,?)`;
+            /*
+                STORED PROCEDURE CALL
+            */
+            con.query(
+                sql,
+                [
+                    display,
+                    group_by,
+                    district_list,
+                    facility_list,
+                    event_list,
+                    target_group_list,
+                    resource_list,
+                    start_date,
+                    end_date,
+                    timeperiod_type,
+                    year_type,
+                ],
+                function (err, response) {
+                    if (err) console.log(err);
+                    res.json(response);
+                }
+            );
+        }
 });
 
 /*
@@ -216,31 +216,36 @@ app.post("/districtexpense", authenticateToken, function (req, res) {
     let year_type = req.body.year_type;
 
     /*
-        STORED PROCEDURE CALL
+        VALIDATION
     */
 
-    let sql = `CALL DMHPv1.getDistrictExpense (?,?,?,?,?,?,?,?)`;
+    let isSafe = validators.districtExpenseValidator(
+        display,
+        group_by,
+        agg,
+        district_list,
+        start_date,
+        end_date,
+        timeperiod_type,
+        year_type
+    );
 
-    con.query(
-        sql,
-        [
-            display,
-            group_by,
-            agg,
-            district_list,
-            start_date,
-            end_date,
-            timeperiod_type,
-            year_type,
-        ],
-        function (err, response) {
-            if (err) console.log(err);
+    if (isSafe.checkVar == false) {
+        incorrectInputDict = {
+            message: "One or more of the inputs are unsupported",
+            error: isSafe.errorString,
+        };
+        res.json(incorrectInputDict);
+    }
 
-            /*
-                VALIDATION
-            */
-
-            let isSafe = validators.districtExpenseValidator(
+    else{
+        let sql = `CALL DMHPv1.getDistrictExpense (?,?,?,?,?,?,?,?)`;
+        /*
+            STORED PROCEDURE CALL
+         */
+        con.query(
+            sql,
+            [
                 display,
                 group_by,
                 agg,
@@ -248,19 +253,14 @@ app.post("/districtexpense", authenticateToken, function (req, res) {
                 start_date,
                 end_date,
                 timeperiod_type,
-                year_type
-            );
-            if (isSafe.checkVar == false) {
-                incorrectInputDict = {
-                    message: "One or more of the inputs are unsupported",
-                    error: isSafe.errorString,
-                };
-                res.json(incorrectInputDict);
-            } else {
+                year_type,
+            ],
+            function (err, response) {
+                if (err) console.log(err);
                 res.json(response);
             }
-        }
-    );
+        );
+    }
 });
 
 /*
@@ -274,38 +274,40 @@ app.post("/hr", authenticateToken, function (req, res) {
     let end_date = req.body.end_date;
 
     /*
-        STORED PROCEDURE CALL
+        VALIDATION
     */
 
-    let sql = `CALL DMHPv1.getHRdata (?,?,?,?)`;
+    
 
-    con.query(
-        sql,
-        [district_list, taluka_list, start_date, end_date],
-        function (err, response) {
-            if (err) console.log(err);
+    let isSafe = validators.HRValidator(
+        district_list,
+        taluka_list,
+        start_date,
+        end_date
+    );
 
-            /*
-                VALIDATION
-            */
+    if (isSafe.checkVar == false) {
+        incorrectInputDict = {
+            message: "One or more of the inputs are unsupported",
+            error: isSafe.errorString,
+        };
+        res.json(incorrectInputDict);
+    }
 
-            let isSafe = validators.HRValidator(
-                district_list,
-                taluka_list,
-                start_date,
-                end_date
-            );
-            if (isSafe.checkVar == false) {
-                incorrectInputDict = {
-                    message: "One or more of the inputs are unsupported",
-                    error: isSafe.errorString,
-                };
-                res.json(incorrectInputDict);
-            } else {
+    else{
+        let sql = `CALL DMHPv1.getHRdata (?,?,?,?)`;
+        /*
+            STORED PROCEDURE CALL
+        */
+        con.query(
+            sql,
+            [district_list, taluka_list, start_date, end_date],
+            function (err, response) {
+                if (err) console.log(err);
                 res.json(response);
             }
-        }
-    );
+        );
+    }
 });
 
 /*
@@ -323,14 +325,10 @@ app.post("/manasadhara", authenticateToken, function (req, res) {
     let year_type = req.body.year_type;
 
     /*
-        STORED PROCEDURE CALL
+        VALIDATION
     */
 
-    let sql = `CALL DMHPv1.getDistrictManasadhara (?,?,?,?,?,?,?,?,?)`;
-
-    con.query(
-        sql,
-        [
+        let isSafe = validators.manasadharaValidator(
             display,
             group_by,
             agg,
@@ -339,37 +337,41 @@ app.post("/manasadhara", authenticateToken, function (req, res) {
             start_date,
             end_date,
             timeperiod_type,
-            year_type,
-        ],
-        function (err, response) {
-            if (err) console.log(err);
-
-            /*
-                VALIDATION
-            */
-
-            let isSafe = validators.manasadharaValidator(
-                display,
-                group_by,
-                agg,
-                district_list,
-                status_list,
-                start_date,
-                end_date,
-                timeperiod_type,
-                year_type
-            );
-            if (isSafe.checkVar == false) {
-                incorrectInputDict = {
-                    message: "One or more of the inputs are unsupported",
-                    error: isSafe.errorString,
-                };
-                res.json(incorrectInputDict);
-            } else {
-                res.json(response);
-            }
+            year_type
+        );
+        if (isSafe.checkVar == false) {
+            incorrectInputDict = {
+                message: "One or more of the inputs are unsupported",
+                error: isSafe.errorString,
+            };
+            res.json(incorrectInputDict);
         }
-    );
+        else{
+            let sql = `CALL DMHPv1.getDistrictManasadhara (?,?,?,?,?,?,?,?,?)`;
+            /*
+                STORED PROCEDURE CALL
+            */
+            con.query(
+                sql,
+                [
+                    display,
+                    group_by,
+                    agg,
+                    district_list,
+                    status_list,
+                    start_date,
+                    end_date,
+                    timeperiod_type,
+                    year_type,
+                ],
+                function (err, response) {
+                    if (err) console.log(err);
+                    res.json(response);
+                }
+            );
+        }
+
+    
 });
 
 /*
@@ -384,41 +386,40 @@ app.post("/mnsallocation", authenticateToken, function (req, res) {
     let financial_year = req.body.financial_year;
 
     /*
-        STORED PROCEDURE CALL
+        VALIDATION
     */
 
-    let sql = `CALL DMHPv1.getMnsAlloAction (?,?,?,?,?,?)`;
+        let isSafe = validators.MnsValidator(
+            display,
+            group_by,
+            agg,
+            district_list,
+            quaterly_list,
+            financial_year
+        );
 
-    con.query(
-        sql,
-        [display, group_by, agg, district_list, quaterly_list, financial_year],
-        function (err, response) {
-            if (err) console.log(err);
-
-            /*
-                VALIDATION
-            */
-
-            let isSafe = validators.MnsValidator(
-                display,
-                group_by,
-                agg,
-                district_list,
-                quaterly_list,
-                financial_year
-            );
-
-            if (isSafe.checkVar == false) {
-                incorrectInputDict = {
-                    message: "One or more of the inputs are unsupported",
-                    error: isSafe.errorString,
-                };
-                res.json(incorrectInputDict);
-            } else {
-                res.json(response);
-            }
+        if (isSafe.checkVar == false) {
+            incorrectInputDict = {
+                message: "One or more of the inputs are unsupported",
+                error: isSafe.errorString,
+            };
+            res.json(incorrectInputDict);
         }
-    );
+
+        else{
+            let sql = `CALL DMHPv1.getMnsAlloAction (?,?,?,?,?,?)`;
+            /*
+                STORED PROCEDURE CALL
+            */
+            con.query(
+                sql,
+                [display, group_by, agg, district_list, quaterly_list, financial_year],
+                function (err, response) {
+                    if (err) console.log(err);
+                    res.json(response);
+                }
+            );
+        }
 });
 
 /*

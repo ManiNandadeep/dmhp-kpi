@@ -15,7 +15,7 @@ const tbl_HR_body = require("../sample-json-calls/call_hr_storedprocedure.json")
 
 module.exports = {
     bearerToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyNzQ1NTc1MSwiZXhwIjoxNjI3NDYyOTUxfQ.XrF0H75IJP6P9-1z3b7VQYEDKOKoJd_l-2ZZmL3P_K8",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyNzQ5MjAzOCwiZXhwIjoxNjI3NDk5MjM4fQ.t3C1tl1gr7zjS0K2P-vI_LmFWSNsqTLLVRO1FQbsX94",
     authBody: {
         username: "dmhp",
         password: process.env.AUTH_PASSWORD,
