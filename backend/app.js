@@ -10,6 +10,7 @@ const validators = require("./validation/validators");
 const mysqlConnector = require("./resources/db");
 const cors = require("cors");
 const users = require("./resources/users");
+const routes = require("./resources/routes");
 
 const app = express();
 const port = 3000;
@@ -78,7 +79,21 @@ Users that can use the app - roles to be added later.
 */
 
 var USERS = users.users();
-var excludedRoutes = ["/api/auth", "/"];
+
+/*
+    EXCLUDED ROUTES
+        All applicable routes require authentication by default.
+*/
+
+var excludedRoutes = null;
+if(process.env.RUN_AUTH === "no"){
+    excludedRoutes = routes.auth_no;
+}
+
+else{
+    excludedRoutes = routes.auth_yes;
+}
+
 
 app.use(
     expressJwt({
@@ -154,6 +169,7 @@ app.post("/training", authenticateToken, function (req, res) {
         ],
         function (err, response) {
             if (err) console.log(err);
+            console.log(response);
 
             /*
                 VALIDATION
