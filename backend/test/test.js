@@ -2,12 +2,37 @@
 
 const pactum = require("pactum");
 var expected = require("./expected");
-const bearerToken = expected.bearerToken;
+var bearerToken = expected.bearerToken;
 const helpers = require("../validation/helpers");
+const got = require('got');
+const dotenv = require("dotenv");
+dotenv.config({ path: "../../.env" });
+
+/*
+    Bearer Token Logic
+*/
+got('http://localhost:3000/api/auth', { json: 
+    {
+        username:"dmhp",
+        password: process.env.AUTH_PASSWORD
+    }
+
+}).then(response => {
+    bearerToken = response.body.token;
+}).catch(error => {
+  console.log(error.response.body);
+  bearerToken = expected.bearerToken;
+});
+
+
+
 
 /*
     Synchronous Check for Validators
 */
+
+
+
 
 // Date Safe Function
 if(helpers.returnDateSafeSQL("","2020-01-01") === false && helpers.returnDateSafeSQL("2020-01-01","2019-01-01") === false && helpers.returnDateSafeSQL("2020-01-01","2021-01-01") === true){
