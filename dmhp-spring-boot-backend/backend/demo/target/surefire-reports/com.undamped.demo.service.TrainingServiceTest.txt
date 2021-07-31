@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.undamped.demo.service.TrainingServiceTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.188 s - in com.undamped.demo.service.TrainingServiceTest
