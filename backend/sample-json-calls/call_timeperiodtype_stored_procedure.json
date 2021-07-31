@@ -1,0 +1,14 @@
+{
+	"display":"DistrictId",
+	"disease":"SMD,CMD,SuicideAttempts",
+	"start_date":"2017-08-01",
+	"end_date":"2018-08-01",
+	"visit_type":"",
+	"gender_string":"",
+	"facilitytype_list":"1,2,3,8",
+	"district_list":"3,43,45",
+	"taluka_list":"",
+	"group_by":"ReportingMonthyear,DistrictId",
+	"timeperiod_type":"annually",
+	"year_type":"c"
+}

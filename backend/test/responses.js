@@ -128,5 +128,62 @@ module.exports = {
         },
     ],
 
+    tbl_timeperiod_response : [
+        [
+          {
+            "DistrictId": 3,
+            "SUM(SMD)": 1259,
+            "SUM(CMD)": 3689,
+            "SUM(SuicideAttempts)": 91,
+            "TotalCases": 5039
+          },
+          {
+            "DistrictId": 45,
+            "SUM(SMD)": 299,
+            "SUM(CMD)": 1179,
+            "SUM(SuicideAttempts)": 17,
+            "TotalCases": 1495
+          },
+          {
+            "DistrictId": 43,
+            "SUM(SMD)": 3090,
+            "SUM(CMD)": 2973,
+            "SUM(SuicideAttempts)": 4,
+            "TotalCases": 6067
+          },
+          {
+            "DistrictId": 45,
+            "SUM(SMD)": 1981,
+            "SUM(CMD)": 4289,
+            "SUM(SuicideAttempts)": 156,
+            "TotalCases": 6426
+          },
+          {
+            "DistrictId": 43,
+            "SUM(SMD)": 4092,
+            "SUM(CMD)": 4676,
+            "SUM(SuicideAttempts)": 0,
+            "TotalCases": 8768
+          },
+          {
+            "DistrictId": 3,
+            "SUM(SMD)": 4453,
+            "SUM(CMD)": 11313,
+            "SUM(SuicideAttempts)": 194,
+            "TotalCases": 15960
+          }
+        ],
+        {
+          "fieldCount": 0,
+          "affectedRows": 0,
+          "insertId": 0,
+          "serverStatus": 34,
+          "warningCount": 0,
+          "message": "",
+          "protocol41": true,
+          "changedRows": 0
+        }
+      ]
+
 
 }

@@ -25,6 +25,12 @@ got('http://localhost:3000/api/auth', { json:
 });
 
 
+/*
+    Set Pactum Response Time
+
+*/
+// pactum.setDefaultExpectResponseTime(5000);
+
 
 
 /*
@@ -276,6 +282,42 @@ it("Check output for tbl_HR.", async () => {
         .post("http://localhost:3000/hr")
         .withHeaders("Authorization", `Bearer ${bearerToken}`)
         .withBody(HRBody)
+        .expectBody(responseBody);
+});
+
+/*
+    ReportData Table API Testing
+    http://localhost:3000/timeperiod
+*/
+
+it("ReportData only allows Authorised access.", async () => {
+    const DTBody = expected.reportData_body;
+    await pactum
+        .spec()
+        .post("http://localhost:3000/timeperiod")
+        .withBody(DTBody)
+        .expectStatus(401);
+});
+
+it("Check status code for ReportData.", async () => {
+    const DTBody = expected.reportData_body;
+    await pactum
+        .spec()
+        .post("http://localhost:3000/timeperiod")
+        .withHeaders("Authorization", `Bearer ${bearerToken}`)
+        .withBody(DTBody)
+        .expectStatus(200);
+});
+
+it("Check output for ReportData.", async () => {
+    const DTBody = expected.reportData_body;
+    const responseBody = expected.reportData_response;
+
+    await pactum
+        .spec()
+        .post("http://localhost:3000/timeperiod")
+        .withHeaders("Authorization", `Bearer ${bearerToken}`)
+        .withBody(DTBody)
         .expectBody(responseBody);
 });
 

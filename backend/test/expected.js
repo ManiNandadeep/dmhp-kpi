@@ -12,7 +12,7 @@ const tbl_districtExpense_body = require("../sample-json-calls/call_districtexpe
 const tbl_districtMNS_body = require("../sample-json-calls/call_get_district_manasadhara_stored_procedure.json");
 const tbl_MNSAllocation_body = require("../sample-json-calls/call_mnsalloaction_stored_procedure.json");
 const tbl_HR_body = require("../sample-json-calls/call_hr_storedprocedure.json");
-
+const tbl_ReportData_body = require("../sample-json-calls/call_timeperiodtype_stored_procedure.json");
 
 /*
 Loading in the JSON responses
@@ -22,7 +22,7 @@ const responses = require("./responses");
 module.exports = {
     // Default Bearer Token if the API call to /api/auth fails
     bearerToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyNzcwOTg3MSwiZXhwIjoxNjI3NzE3MDcxfQ.quPTeJKIsel7jodbdKDILtSPT9HhRTXc3HekmBUh96w",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyNzcyNTUyOSwiZXhwIjoxNjI3NzMyNzI5fQ.7skGu28DwAF64BA9kS6ESnTxKPkEWNyvxkMZg_ElNSI",
     authBody: {
         username: "dmhp",
         password: process.env.AUTH_PASSWORD,
@@ -41,5 +41,8 @@ module.exports = {
     tbl_MNSAllocation_response: responses.tbl_MNSAllocation_response,
 
     tbl_HR_body: tbl_HR_body,
-    tbl_HR_response: responses.tbl_HR_response
+    tbl_HR_response: responses.tbl_HR_response,
+
+    reportData_body: tbl_ReportData_body,
+    reportData_response: responses.tbl_timeperiod_response
 };
