@@ -3,7 +3,7 @@
 - getTraining: 1,02
 - getMnsAlloAction: 1,03
 - getDistrictManasadhara : 1,01
-- timeperiodtype : 1,01
+- timeperiodtype : 1,02 <!-- Spelling Fixes, Database Identifier>
 
 
 ## Note to contributors  

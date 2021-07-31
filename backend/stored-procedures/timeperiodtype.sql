@@ -1,5 +1,5 @@
 /*
-	VERSION : 1,01
+	VERSION : 1,02
 */
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `timeperiodtype`(
@@ -118,7 +118,7 @@ BEGIN
     
     
      IF(FIND_IN_SET('ReportingMonthyear',display))THEN
-		IF(timeperiod_type='quaterlly')THEN
+		IF(timeperiod_type='quarterly')THEN
 			IF (year_type='c') THEN
 				IF(@display_string is NULL)THEN
 					SET @display_string=CONCAT("YEAR(ReportingMonthyear),QUARTER(ReportingMonthyear)as Quarter");
@@ -160,7 +160,8 @@ BEGIN
     
     IF(FIND_IN_SET('DistrictId',group_by))THEN
 		IF(@group_by_string is NULL)THEN
-			SET @group_by_string=CONCAT("DistrictId");
+			SET @group_by_string=CONC
+			AT("DistrictId");
 		ELSE
 			SET @group_by_string=CONCAT(@group_by_string,",DistrictId");
 		END IF;
@@ -329,7 +330,7 @@ BEGIN
 	END IF;
 	
 	SET @s=CONCAT("select ",@display_string,",",@agg,",sum(",@disease_filter,") as TotalCases 
-			from ReportData where ",@gender_string_filter," and ",@visit_type_filter," and ",@facilitytype_id_string," and ",
+			from DMHPv1.ReportData where ",@gender_string_filter," and ",@visit_type_filter," and ",@facilitytype_id_string," and ",
             @district_id_string," and ",@taluka_id_string," and ReportingMonthyear BETWEEN '",start_date,"' and '",end_date,"' group by ",
             @group_by_string);
 	

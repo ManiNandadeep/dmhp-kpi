@@ -423,6 +423,83 @@ app.post("/mnsallocation", authenticateToken, function (req, res) {
 });
 
 /*
+    CALL THE timeperiodtype() stored procedure
+*/
+app.post("/timeperiod", authenticateToken, function (req, res) {
+    let display = req.body.display;
+    let disease = req.body.disease;
+    let start_date = req.body.start_date;
+    let end_date = req.body.end_date;
+    let visit_type = req.body.visit_type;
+    let gender_string = req.body.gender_string;
+    let facilitytype_list = req.body.facilitytype_list;
+    let district_list = req.body.district_list;
+    let taluka_list = req.body.taluka_list;
+    let group_by = req.body.group_by;
+    let timeperiod_type = req.body.timeperiod_type;
+    let year_type = req.body.year_type;
+
+        /*
+            Validation
+        */
+
+        let isSafe = validators.timePeriodValidator(
+            display,
+            disease,
+            start_date,
+            end_date,
+            visit_type,
+            gender_string,
+            facilitytype_list,
+            district_list,
+            taluka_list,
+            group_by,
+            timeperiod_type,
+            year_type
+        );
+
+        if (isSafe.checkVar == false) {
+            incorrectInputDict = {
+                message: "One or more of the inputs are unsupported",
+                error: isSafe.errorString,
+            };
+            res.json(incorrectInputDict);
+        }
+
+        else{
+            let sql = `CALL DMHPv1.timeperiodtype (?,?,?,?,?,?,?,?,?,?,?,?)`;
+            /*
+                STORED PROCEDURE CALL
+            */
+            con.query(
+                sql,
+                [
+                    display,
+                    disease,
+                    start_date,
+                    end_date,
+                    visit_type,
+                    gender_string,
+                    facilitytype_list,
+                    district_list,
+                    taluka_list,
+                    group_by,
+                    timeperiod_type,
+                    year_type
+                ],
+                function (err, response) {
+                    if (err) console.log(err);
+                    res.json(response);
+                }
+            );
+        }
+});
+
+
+
+
+
+/*
     Running the app
 */
 

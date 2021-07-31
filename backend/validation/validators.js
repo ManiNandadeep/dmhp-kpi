@@ -118,7 +118,6 @@ module.exports = {
         year_type,
     ){
         var errorString = "";
-    
         // Date
         let date_safe = true;
         date_safe = helpers.returnDateSafeSQL(start_date, end_date);
@@ -302,7 +301,7 @@ module.exports = {
                 if (helpers.includeObj(quarterly_list_arr[i],allowed_quarter_values) === false){
                     quarterly_list_safe = false;
                     errorString += 
-                        "quaterly_list should only have non-negative values, ";
+                        "quaterly_list should only be in [1,2,3,4], ";
                     break;
                 }
             }
@@ -333,11 +332,100 @@ module.exports = {
         };
     
         return returnDict;
+    },
+    
+
+    /*
+        Validation for the reportdata's stored procedure
+
+        start_date <= end_date 
+        visit_type should be in ['new','old','']
+        gender_string should be in ['M','F','O','']
+        district_list, taluka_list should have only non-negative values.
+        timeperiod_type should be in ['','annually','quarterly','monthly'].
+        year_type should be in ['','c','f'].
+
+
+    */
+
+    timePeriodValidator: function checkSafeTimePeriodCall(
+            display, 
+            disease, 
+            start_date, 
+            end_date, 
+            visit_type, 
+            gender_string, 
+            facilitytype_list, 
+            district_list, 
+            taluka_list, 
+            group_by, 
+            timeperiod_type, 
+            year_type 
+    ){
+
+            var errorString = "";
+    
+            // Date
+            let date_safe = true;
+            date_safe = helpers.returnDateSafeSQL(start_date, end_date);
+            if (date_safe == false) {
+                errorString += "end_date should not be before start_date ,";
+            }
+
+            // District List
+            let district_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(district_list,"district_list");
+            let district_list_safe = district_dict.flag;
+            errorString += district_dict.errorString;
+
+            // Taluka List
+            let taluka_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(taluka_list,"taluka_list");
+            let taluka_list_safe = taluka_dict.flag;
+            errorString += taluka_dict.errorString;
+
+            // Time Period Type
+            let time_period_arr = ["","annually","quarterly","monthly"];
+            let time_period_dict = helpers.checkObjInArrErrorString(timeperiod_type,time_period_arr,"time_period_type");
+            let time_period_safe = time_period_dict.flag;
+            errorString += time_period_dict.errorString;
+
+            // Year Type
+            let year_arr = ["","c","f"];
+            let year_dict = helpers.checkObjInArrErrorString(year_type,year_arr,"year_type");
+            let year_type_safe = year_dict.flag;
+            errorString += year_dict.errorString;
+
+            // Visit Type
+            let visit_arr = ["new","old",""];
+            let visit_dict = helpers.checkObjInArrErrorString(visit_type,visit_arr,"visit_type");
+            let visit_type_safe = visit_dict.flag;
+            errorString += visit_dict.errorString;
+
+            // Gender String
+            let gender_arr = ["M","F","O",""];
+            let gender_dict = helpers.checkObjInArrErrorString(gender_string,gender_arr,"gender_string");
+            let gender_type_safe = gender_dict.flag;
+            errorString += gender_dict.errorString;
+
+            // Facility List
+            let facility_dict = helpers.checkIfAllArrayElementsAreNonNegativeErrorString(facilitytype_list,"facilitytype_list");
+            let facility_safe = facility_dict.flag;
+            errorString += facility_dict.errorString;
+
+            var checkVar =
+            date_safe &&
+            district_list_safe &&
+            taluka_list_safe &&
+            time_period_safe &&
+            year_type_safe &&
+            visit_type_safe &&
+            gender_type_safe &&
+            facility_safe;
+            
+            var returnDict = {
+                checkVar,
+                errorString,
+            };
+        
+            return returnDict;
     }
-
-
-    
-    
-
-
 };  
