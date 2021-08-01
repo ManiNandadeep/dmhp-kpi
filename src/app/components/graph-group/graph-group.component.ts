@@ -7,6 +7,7 @@ import { DistrictControllerService } from "src/app/services/district-controller.
 import { DistrictExpenseControllerService } from "src/app/services/district-expense-controller.service";
 import { DistrictMNSControllerService } from "src/app/services/district-mns-controller.service";
 import { MnsAllocationControllerService } from "src/app/services/mns-allocation-controller.service";
+import { ReportDataControllerService } from "src/app/services/report-data-controller.service";
 import { TrainingControllerService } from "src/app/services/training-controller.service";
 
 @Component({
@@ -25,6 +26,8 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     DistrictMNSChart!: ApexCharts;
     DistrictMNSLastYearChart!: ApexCharts;
     DistrictMNSAllocationChart!: ApexCharts;
+    reportDataDistrictChart!: ApexCharts;
+    reportDataLastYearChart!: ApexCharts;
 
     // training corresponding to districts
     numberOfPatientsPerDistrict: Map<string, number> = new Map();
@@ -127,12 +130,49 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         financial_year: "",
     };
 
+    // Report data according to districts
+    reportDataPerDistrict: Map<string, number> = new Map();
+    reportDataDistrictBody = {
+        display: "DistrictId",
+        disease:
+            "SMD,CMD,SuicideAttempts,Epilepsy,AlcoholSubstanceAbuse,Dementia,DevelopmentalDisorders,BehaviouralDisorders,EmotionalDisorders,PsychiatricDisorders,Others,Referred",
+        start_date: this.todayLastYear.toISOString().slice(0, 10),
+        end_date: this.today.toISOString().slice(0, 10),
+        visit_type: "",
+        gender_string: "",
+        facilitytype_list: "",
+        district_list: "",
+        taluka_list: "",
+        group_by: "DistrictId",
+        timeperiod_type: "annually",
+        year_type: "c",
+    };
+
+    // Report Data according to time series
+    reportDataPerMonth: Map<string, number> = new Map();
+    reportDataMonthBody = {
+        display: "ReportingMonthyear",
+        disease:
+            "SMD,CMD,SuicideAttempts,Epilepsy,AlcoholSubstanceAbuse,Dementia,DevelopmentalDisorders,BehaviouralDisorders,EmotionalDisorders,PsychiatricDisorders,Others,Referred",
+        start_date: this.todayLastYear.toISOString().slice(0, 10),
+        end_date: this.today.toISOString().slice(0, 10),
+        visit_type: "",
+        gender_string: "",
+        facilitytype_list: "",
+        district_list: "",
+        taluka_list: "",
+        group_by: "ReportingMonthyear",
+        timeperiod_type: "monthly",
+        year_type: "c",
+    };
+
     constructor(
         public backendConnectorService: BackendConnectorService,
         public trainingControllerService: TrainingControllerService,
         public districtExpenseControllerService: DistrictExpenseControllerService,
         public districtMNSControllerService: DistrictMNSControllerService,
-        public MNSAllocationControllerService: MnsAllocationControllerService
+        public MNSAllocationControllerService: MnsAllocationControllerService,
+        public reportDataControllerService: ReportDataControllerService
     ) {}
 
     ngOnInit() {
@@ -260,7 +300,6 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
             .getMNSAllocation(this.MNSAllocationDistrictBody)
             .subscribe((data: any) => {
                 const MNSAllocationData: any = data[0];
-                console.log(MNSAllocationData);
 
                 this.MNSAllocationPerDistrict =
                     this.MNSAllocationControllerService.getDistrictMNSAllocationMap(
@@ -274,6 +313,47 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
                         "Manasadhara Allocation Per District (In Lakhs)"
                     ),
                     1
+                );
+            });
+
+        this.backendConnectorService
+            .getpatientReports(this.reportDataDistrictBody)
+            .subscribe((data: any) => {
+                const reportData = data[0];
+
+                this.reportDataPerDistrict =
+                    this.reportDataControllerService.getDistrictReportMap(
+                        reportData
+                    );
+
+                this.initReportDataCharts(
+                    this.reportDataDistrictChart,
+                    this.createReportDataChartOptions(
+                        this.reportDataPerDistrict,
+                        "Total Cases Per District"
+                    ),
+                    1
+                );
+            });
+
+        this.backendConnectorService
+            .getpatientReports(this.reportDataMonthBody)
+            .subscribe((data: any) => {
+                const reportData = data[0];
+                console.log(reportData);
+
+                this.reportDataPerMonth =
+                    this.reportDataControllerService.getMonthlyReportMap(
+                        reportData
+                    );
+
+                this.initReportDataCharts(
+                    this.reportDataLastYearChart,
+                    this.createReportDataChartOptions(
+                        this.reportDataPerMonth,
+                        "Total Cases Per Month"
+                    ),
+                    2
                 );
             });
     }
@@ -397,6 +477,33 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
         return chartOptions;
     }
 
+    createReportDataChartOptions(valueMap: Map<string, number>, title: string) {
+        const chartOptions = {
+            chart: {
+                type: "bar",
+                height: 400,
+            },
+            series: [
+                {
+                    name: "Total Patients",
+                    data: Array.from(valueMap.values()),
+                },
+            ],
+            dataLabels: {
+                enabled: false,
+            },
+            xaxis: {
+                //add district name array.
+                categories: Array.from(valueMap.keys()),
+            },
+            title: {
+                text: title,
+                align: "center",
+            },
+        };
+        return chartOptions;
+    }
+
     initTrainingCharts(
         chart: ApexCharts,
         chartOptions: any,
@@ -440,6 +547,18 @@ export class GraphGroupComponent implements OnInit, OnDestroy {
     ) {
         chart = new ApexCharts(
             document.querySelector(`#MNSAllocation${graphId}`),
+            chartOptions
+        );
+        chart.render();
+    }
+
+    initReportDataCharts(
+        chart: ApexCharts,
+        chartOptions: any,
+        graphId: number
+    ) {
+        chart = new ApexCharts(
+            document.querySelector(`#reportData${graphId}`),
             chartOptions
         );
         chart.render();

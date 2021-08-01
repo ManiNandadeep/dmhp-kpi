@@ -1,14 +1,10 @@
 // Contains a list of excluded routes that do not require a bearer token for access.
 
-
 module.exports = {
     // This is passed if the .env file has a yes flag for RUN_AUTH
-    auth_yes : [
-        "/api/auth",
-        "/"
-    ],
+    auth_yes: ["/api/auth", "/"],
     // This is passed if the .env file has a no flag for RUN_AUTH
-    auth_no : [
+    auth_no: [
         "/api/auth",
         "/",
         "/training",
@@ -16,5 +12,6 @@ module.exports = {
         "/hr",
         "/manasadhara",
         "/mnsallocation",
-    ]
-}
+        "/timeperiod",
+    ],
+};

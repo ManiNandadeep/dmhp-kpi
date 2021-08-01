@@ -58,4 +58,9 @@ export class BackendConnectorService {
         const HRDataInfoUrl: string = "http://localhost:3000/hr";
         return this.http.post(HRDataInfoUrl, bodyParams);
     }
+
+    getpatientReports(bodyParams: any) {
+        const patientReportsUrl: string = "http://localhost:3000/timeperiod";
+        return this.http.post(patientReportsUrl, bodyParams);
+    }
 }

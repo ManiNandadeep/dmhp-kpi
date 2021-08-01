@@ -86,14 +86,11 @@ var USERS = users.users();
 */
 
 var excludedRoutes = null;
-if(process.env.RUN_AUTH === "no"){
+if (process.env.RUN_AUTH === "no") {
     excludedRoutes = routes.auth_no;
-}
-
-else{
+} else {
     excludedRoutes = routes.auth_yes;
 }
-
 
 app.use(
     expressJwt({
@@ -134,7 +131,7 @@ app.get("/", function (req, res, next) {
     Call the getTraining() Stored Procedure 
 */
 
-app.post("/training", authenticateToken, function (req, res) {
+app.post("/training", function (req, res) {
     let display = req.body.display;
     let district_list = req.body.district_list;
     let event_list = req.body.event_list;
@@ -147,65 +144,63 @@ app.post("/training", authenticateToken, function (req, res) {
     let group_by = req.body.group_by;
     let facility_list = req.body.facility_list;
 
-        /*
+    /*
             Validation
         */
 
-        let isSafe = validators.trainingValidator(
-            display,
-            group_by,
-            district_list,
-            facility_list,
-            event_list,
-            target_group_list,
-            resource_list,
-            start_date,
-            end_date,
-            timeperiod_type,
-            year_type
-        );
+    let isSafe = validators.trainingValidator(
+        display,
+        group_by,
+        district_list,
+        facility_list,
+        event_list,
+        target_group_list,
+        resource_list,
+        start_date,
+        end_date,
+        timeperiod_type,
+        year_type
+    );
 
-        if (isSafe.checkVar == false) {
-            incorrectInputDict = {
-                message: "One or more of the inputs are unsupported",
-                error: isSafe.errorString,
-            };
-            res.json(incorrectInputDict);
-        }
-
-        else{
-            let sql = `CALL DMHPv1.getTraining (?,?,?,?,?,?,?,?,?,?,?)`;
-            /*
+    if (isSafe.checkVar == false) {
+        incorrectInputDict = {
+            message: "One or more of the inputs are unsupported",
+            error: isSafe.errorString,
+        };
+        res.json(incorrectInputDict);
+    } else {
+        let sql = `CALL DMHPv1.getTraining (?,?,?,?,?,?,?,?,?,?,?)`;
+        /*
                 STORED PROCEDURE CALL
             */
-            con.query(
-                sql,
-                [
-                    display,
-                    group_by,
-                    district_list,
-                    facility_list,
-                    event_list,
-                    target_group_list,
-                    resource_list,
-                    start_date,
-                    end_date,
-                    timeperiod_type,
-                    year_type,
-                ],
-                function (err, response) {
-                    if (err) console.log(err);
-                    res.json(response);
-                }
-            );
-        }
+        con.query(
+            sql,
+            [
+                display,
+                group_by,
+                district_list,
+                facility_list,
+                event_list,
+                target_group_list,
+                resource_list,
+                start_date,
+                end_date,
+                timeperiod_type,
+                year_type,
+            ],
+            function (err, response) {
+                if (err) console.log(err);
+                res.json(response);
+            }
+        );
+    }
 });
 
 /*
     Call the getDistrictExpense() stored procedure
 */
 
-app.post("/districtexpense", authenticateToken, function (req, res) {
+app.post("/districtexpense", function (req, res) {
     let display = req.body.display;
     let group_by = req.body.group_by;
     let agg = req.body.agg;
@@ -236,9 +231,7 @@ app.post("/districtexpense", authenticateToken, function (req, res) {
             error: isSafe.errorString,
         };
         res.json(incorrectInputDict);
-    }
-
-    else{
+    } else {
         let sql = `CALL DMHPv1.getDistrictExpense (?,?,?,?,?,?,?,?)`;
         /*
             STORED PROCEDURE CALL
@@ -267,7 +260,7 @@ app.post("/districtexpense", authenticateToken, function (req, res) {
     Call the getHRdata() stored procedure
 */
 
-app.post("/hr", authenticateToken, function (req, res) {
+app.post("/hr", function (req, res) {
     let district_list = req.body.district_list;
     let taluka_list = req.body.taluka_list;
     let start_date = req.body.start_date;
@@ -276,8 +269,6 @@ app.post("/hr", authenticateToken, function (req, res) {
     /*
         VALIDATION
     */
-
-    
 
     let isSafe = validators.HRValidator(
         district_list,
@@ -292,9 +283,7 @@ app.post("/hr", authenticateToken, function (req, res) {
             error: isSafe.errorString,
         };
         res.json(incorrectInputDict);
-    }
-
-    else{
+    } else {
         let sql = `CALL DMHPv1.getHRdata (?,?,?,?)`;
         /*
             STORED PROCEDURE CALL
@@ -313,7 +302,7 @@ app.post("/hr", authenticateToken, function (req, res) {
 /*
     CALL THE getDistrictManasadhara() stored procedure
 */
-app.post("/manasadhara", authenticateToken, function (req, res) {
+app.post("/manasadhara", function (req, res) {
     let display = req.body.display;
     let group_by = req.body.group_by;
     let agg = req.body.agg;
@@ -328,56 +317,53 @@ app.post("/manasadhara", authenticateToken, function (req, res) {
         VALIDATION
     */
 
-        let isSafe = validators.manasadharaValidator(
-            display,
-            group_by,
-            agg,
-            district_list,
-            status_list,
-            start_date,
-            end_date,
-            timeperiod_type,
-            year_type
-        );
-        if (isSafe.checkVar == false) {
-            incorrectInputDict = {
-                message: "One or more of the inputs are unsupported",
-                error: isSafe.errorString,
-            };
-            res.json(incorrectInputDict);
-        }
-        else{
-            let sql = `CALL DMHPv1.getDistrictManasadhara (?,?,?,?,?,?,?,?,?)`;
-            /*
+    let isSafe = validators.manasadharaValidator(
+        display,
+        group_by,
+        agg,
+        district_list,
+        status_list,
+        start_date,
+        end_date,
+        timeperiod_type,
+        year_type
+    );
+    if (isSafe.checkVar == false) {
+        incorrectInputDict = {
+            message: "One or more of the inputs are unsupported",
+            error: isSafe.errorString,
+        };
+        res.json(incorrectInputDict);
+    } else {
+        let sql = `CALL DMHPv1.getDistrictManasadhara (?,?,?,?,?,?,?,?,?)`;
+        /*
                 STORED PROCEDURE CALL
             */
-            con.query(
-                sql,
-                [
-                    display,
-                    group_by,
-                    agg,
-                    district_list,
-                    status_list,
-                    start_date,
-                    end_date,
-                    timeperiod_type,
-                    year_type,
-                ],
-                function (err, response) {
-                    if (err) console.log(err);
-                    res.json(response);
-                }
-            );
-        }
-
-    
+        con.query(
+            sql,
+            [
+                display,
+                group_by,
+                agg,
+                district_list,
+                status_list,
+                start_date,
+                end_date,
+                timeperiod_type,
+                year_type,
+            ],
+            function (err, response) {
+                if (err) console.log(err);
+                res.json(response);
+            }
+        );
+    }
 });
 
 /*
     CALL THE getMnsAlloAction() stored procedure
 */
-app.post("/mnsallocation", authenticateToken, function (req, res) {
+app.post("/mnsallocation", function (req, res) {
     let display = req.body.display;
     let group_by = req.body.group_by;
     let agg = req.body.agg;
@@ -389,43 +375,48 @@ app.post("/mnsallocation", authenticateToken, function (req, res) {
         VALIDATION
     */
 
-        let isSafe = validators.MnsValidator(
-            display,
-            group_by,
-            agg,
-            district_list,
-            quaterly_list,
-            financial_year
-        );
+    let isSafe = validators.MnsValidator(
+        display,
+        group_by,
+        agg,
+        district_list,
+        quaterly_list,
+        financial_year
+    );
 
-        if (isSafe.checkVar == false) {
-            incorrectInputDict = {
-                message: "One or more of the inputs are unsupported",
-                error: isSafe.errorString,
-            };
-            res.json(incorrectInputDict);
-        }
-
-        else{
-            let sql = `CALL DMHPv1.getMnsAlloAction (?,?,?,?,?,?)`;
-            /*
+    if (isSafe.checkVar == false) {
+        incorrectInputDict = {
+            message: "One or more of the inputs are unsupported",
+            error: isSafe.errorString,
+        };
+        res.json(incorrectInputDict);
+    } else {
+        let sql = `CALL DMHPv1.getMnsAlloAction (?,?,?,?,?,?)`;
+        /*
                 STORED PROCEDURE CALL
             */
-            con.query(
-                sql,
-                [display, group_by, agg, district_list, quaterly_list, financial_year],
-                function (err, response) {
-                    if (err) console.log(err);
-                    res.json(response);
-                }
-            );
-        }
+        con.query(
+            sql,
+            [
+                display,
+                group_by,
+                agg,
+                district_list,
+                quaterly_list,
+                financial_year,
+            ],
+            function (err, response) {
+                if (err) console.log(err);
+                res.json(response);
+            }
+        );
+    }
 });
 
 /*
     CALL THE timeperiodtype() stored procedure
 */
-app.post("/timeperiod", authenticateToken, function (req, res) {
+app.post("/timeperiod", function (req, res) {
     let display = req.body.display;
     let disease = req.body.disease;
     let start_date = req.body.start_date;
@@ -439,65 +430,59 @@ app.post("/timeperiod", authenticateToken, function (req, res) {
     let timeperiod_type = req.body.timeperiod_type;
     let year_type = req.body.year_type;
 
-        /*
+    /*
             Validation
         */
 
-        let isSafe = validators.timePeriodValidator(
-            display,
-            disease,
-            start_date,
-            end_date,
-            visit_type,
-            gender_string,
-            facilitytype_list,
-            district_list,
-            taluka_list,
-            group_by,
-            timeperiod_type,
-            year_type
-        );
+    let isSafe = validators.timePeriodValidator(
+        display,
+        disease,
+        start_date,
+        end_date,
+        visit_type,
+        gender_string,
+        facilitytype_list,
+        district_list,
+        taluka_list,
+        group_by,
+        timeperiod_type,
+        year_type
+    );
 
-        if (isSafe.checkVar == false) {
-            incorrectInputDict = {
-                message: "One or more of the inputs are unsupported",
-                error: isSafe.errorString,
-            };
-            res.json(incorrectInputDict);
-        }
-
-        else{
-            let sql = `CALL DMHPv1.timeperiodtype (?,?,?,?,?,?,?,?,?,?,?,?)`;
-            /*
+    if (isSafe.checkVar == false) {
+        incorrectInputDict = {
+            message: "One or more of the inputs are unsupported",
+            error: isSafe.errorString,
+        };
+        res.json(incorrectInputDict);
+    } else {
+        let sql = `CALL DMHPv1.timeperiodtype (?,?,?,?,?,?,?,?,?,?,?,?)`;
+        /*
                 STORED PROCEDURE CALL
             */
-            con.query(
-                sql,
-                [
-                    display,
-                    disease,
-                    start_date,
-                    end_date,
-                    visit_type,
-                    gender_string,
-                    facilitytype_list,
-                    district_list,
-                    taluka_list,
-                    group_by,
-                    timeperiod_type,
-                    year_type
-                ],
-                function (err, response) {
-                    if (err) console.log(err);
-                    res.json(response);
-                }
-            );
-        }
+        con.query(
+            sql,
+            [
+                display,
+                disease,
+                start_date,
+                end_date,
+                visit_type,
+                gender_string,
+                facilitytype_list,
+                district_list,
+                taluka_list,
+                group_by,
+                timeperiod_type,
+                year_type,
+            ],
+            function (err, response) {
+                if (err) console.log(err);
+                res.json(response);
+            }
+        );
+    }
 });
-
-
-
-
 
 /*
     Running the app
