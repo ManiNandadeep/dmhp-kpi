@@ -5,62 +5,62 @@ import { Injectable } from "@angular/core";
     providedIn: "root",
 })
 export class BackendConnectorService {
+    rootUrl: string = "http://localhost:3000";
+
     constructor(private http: HttpClient) {}
 
     getDistricts() {
-        const districtConfigUrl = "http://localhost:3000/district/";
+        const districtConfigUrl = `${this.rootUrl}/district/`;
         return this.http.get(districtConfigUrl);
     }
 
     getTalukas() {
-        const talukaConfigUrl: string = "http://localhost:3000/taluka/";
+        const talukaConfigUrl: string = `${this.rootUrl}/taluka/`;
         return this.http.get(talukaConfigUrl);
     }
 
     getbindEventsList() {
-        const eventBindListUrl: string = "http://localhost:3000/bindevent/";
+        const eventBindListUrl: string = `${this.rootUrl}/bindevent/`;
         return this.http.get(eventBindListUrl);
     }
 
     getbindTargetGroupList() {
-        const targetGroupListUrl: string =
-            "http://localhost:3000/bindtargetgroup/";
+        const targetGroupListUrl: string = `${this.rootUrl}/bindtargetgroup/`;
         return this.http.get(targetGroupListUrl);
     }
 
     getFacility() {
-        const facilityUrl: string = "http://localhost:3000/facility/";
+        const facilityUrl: string = `${this.rootUrl}/facility/`;
         return this.http.get(facilityUrl);
     }
 
     getTraining(bodyParams: any) {
-        const trainingUrl: string = "http://localhost:3000/training";
+        const trainingUrl: string = `${this.rootUrl}/training`;
         return this.http.post(trainingUrl, bodyParams);
     }
 
     getDistrictExpense(bodyParams: any) {
-        const districtExpenseUrl: string =
-            "http://localhost:3000/districtexpense";
+        const districtExpenseUrl: string = `${this.rootUrl}/districtexpense`;
         return this.http.post(districtExpenseUrl, bodyParams);
     }
 
     getDistrictManasadhara(bodyParams: any) {
-        const districtMnsUrl: string = "http://localhost:3000/manasadhara";
+        const districtMnsUrl: string = `${this.rootUrl}/manasadhara`;
         return this.http.post(districtMnsUrl, bodyParams);
     }
 
     getMNSAllocation(bodyParams: any) {
-        const MNSAllocationUrl: string = "http://localhost:3000/mnsallocation";
+        const MNSAllocationUrl: string = `${this.rootUrl}/mnsallocation`;
         return this.http.post(MNSAllocationUrl, bodyParams);
     }
 
     getHRData(bodyParams: any) {
-        const HRDataInfoUrl: string = "http://localhost:3000/hr";
+        const HRDataInfoUrl: string = `${this.rootUrl}/hr`;
         return this.http.post(HRDataInfoUrl, bodyParams);
     }
 
     getpatientReports(bodyParams: any) {
-        const patientReportsUrl: string = "http://localhost:3000/timeperiod";
+        const patientReportsUrl: string = `${this.rootUrl}/timeperiod`;
         return this.http.post(patientReportsUrl, bodyParams);
     }
 }
