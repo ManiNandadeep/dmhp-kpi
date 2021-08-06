@@ -434,9 +434,16 @@ module.exports = {
     */
     emailValidator : function checkEmail(email){
 
+        // Enquire about the presence of this.
+        const whitelistedEmails = [
+            "dmhp"
+        ];
+
+        let whiteListCheck = helpers.includeObj(email,whitelistedEmails);
+
         let emailChecker = helpers.emailRegexCheck();
         let emailCheck = emailChecker.test(email);
 
-        return emailCheck;
+        return whiteListCheck || emailCheck;
     }
 };  
