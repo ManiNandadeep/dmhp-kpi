@@ -9,7 +9,6 @@ const dotenv = require("dotenv");
 const validators = require("./validation/validators");
 const mysqlConnector = require("./resources/db");
 const cors = require("cors");
-const users = require("./resources/users");
 const routes = require("./resources/routes");
 
 const app = express();
@@ -78,7 +77,6 @@ function authenticateToken(req, res, next) {
 Users that can use the app - roles to be added later.
 */
 
-var USERS = users.users();
 
 /*
     EXCLUDED ROUTES
@@ -104,15 +102,47 @@ app.use(
 */
 
 app.post("/api/auth", (req, res) => {
-    const body = req.body;
-    const user = USERS.find((user) => user.username == body.username);
-    if (!user || body.password != process.env.AUTH_PASSWORD) {
+
+    // Get Username and Password
+    let email = req.body.email.toLowerCase();
+    let password = req.body.password;
+
+    // Validate Emails 
+    let emailSafe = validators.emailValidator(email);
+
+    // Validate Passwords 
+    let passwordSafe = (password.indexOf("--") === -1);
+
+    if(!emailSafe || !passwordSafe){
         return res.sendStatus(401);
     }
-    var token = jwt.sign({ userId: user.id }, process.env.TOKEN_SECRET, {
-        expiresIn: "2h",
-    });
-    res.send({ token });
+
+    // SQL Query
+    let sql = "select UserId,IsActive from tbl_users where LOWER(Email)= ? and Password = ?;"
+    con.query(
+        sql,
+            [
+                email,
+                password
+            ],
+            function (err, response) {
+                if (err) console.log(err);
+                let JSON_results = JSON.parse(JSON.stringify(response));
+
+                // Check for database match and IsActive
+                if(response.length === 0 || JSON_results[0].IsActive === 0){
+                    return res.sendStatus(401);
+                }
+
+                else{
+                    var token = jwt.sign({ userId: JSON_results[0].UserId }, process.env.TOKEN_SECRET, {
+                        expiresIn: process.env.AUTH_TIMEOUT,
+                    });
+                    res.send({ token });
+                }
+            }
+        );
+ 
 });
 
 /*

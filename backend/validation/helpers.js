@@ -116,5 +116,11 @@ module.exports = {
         };
     
         return returnDict;
+    },
+
+    // Function to check whether the email ID provided is valid
+    emailRegexCheck: function getEmailRegex(){
+        var emailCheck=/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i;
+        return emailCheck;
     }
 }

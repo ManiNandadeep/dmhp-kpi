@@ -427,5 +427,16 @@ module.exports = {
             };
         
             return returnDict;
+    },
+
+    /*
+     Email Validation
+    */
+    emailValidator : function checkEmail(email){
+
+        let emailChecker = helpers.emailRegexCheck();
+        let emailCheck = emailChecker.test(email);
+
+        return emailCheck;
     }
 };  
