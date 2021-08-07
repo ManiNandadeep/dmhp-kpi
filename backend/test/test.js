@@ -4,6 +4,7 @@ const pactum = require("pactum");
 var expected = require("./expected");
 var bearerToken = expected.bearerToken;
 const helpers = require("../validation/helpers");
+const validators = require("../validation/validators");
 const got = require('got');
 const dotenv = require("dotenv");
 dotenv.config({ path: "../../.env" });
@@ -13,8 +14,8 @@ dotenv.config({ path: "../../.env" });
 */
 got('http://localhost:3000/api/auth', { json: 
     {
-        username:"dmhp",
-        password: process.env.AUTH_PASSWORD
+        email:"dmhp",
+        password: "dmhp@2020"
     }
 
 }).then(response => {
@@ -67,6 +68,14 @@ else{
     console.log("❌ Check if object in array function.");
 }
 
+// Check email regex function
+if(validators.emailValidator("abc@def.com") === true && validators.emailValidator("abd@def@cde.com") === false && validators.emailValidator("dmhp") === true){
+    console.log("✔️ Check if email is valid function, with whitelists.")
+}
+else{
+    console.log("❌ Check if email is valid function.")
+}
+
 
 /*
     Sanity check to see if Pactum is running properly
@@ -89,6 +98,10 @@ it("Auth route returns 401 status code if no password is sent.", async () => {
     await pactum
         .spec()
         .post("http://localhost:3000/api/auth")
+        .withBody({
+            email:"wrong@gmail.com",
+            password:""
+        })
         .expectStatus(401);
 });
 

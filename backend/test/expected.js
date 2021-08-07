@@ -22,10 +22,10 @@ const responses = require("./responses");
 module.exports = {
     // Default Bearer Token if the API call to /api/auth fails
     bearerToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyNzcyNTUyOSwiZXhwIjoxNjI3NzMyNzI5fQ.7skGu28DwAF64BA9kS6ESnTxKPkEWNyvxkMZg_ElNSI",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyODMxNjE4NSwiZXhwIjoxNjI4MzIzMzg1fQ.dNeqtPDeyKnjGmkdJor47y_iHnxMwbrTPIFWte7pZDs",
     authBody: {
-        username: "dmhp",
-        password: process.env.AUTH_PASSWORD,
+        email: "dmhp",
+        password: "dmhp@2020",
     },
 
     tbl_training_body: tbl_training_body,
