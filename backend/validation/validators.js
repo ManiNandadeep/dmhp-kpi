@@ -445,5 +445,15 @@ module.exports = {
         let emailCheck = emailChecker.test(email);
 
         return whiteListCheck || emailCheck;
+    },
+
+    /*
+    Password Validation
+    */
+    passwordValidator : function passwordValidator(password){
+        let commentCheck1 = password.indexOf("--") === -1;
+        let commentCheck2 = password.indexOf("/*") === -1;
+
+        return commentCheck1 && commentCheck2;
     }
 };  

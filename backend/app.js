@@ -111,7 +111,7 @@ app.post("/api/auth", (req, res) => {
     let emailSafe = validators.emailValidator(email);
 
     // Validate Passwords 
-    let passwordSafe = (password.indexOf("--") === -1);
+    let passwordSafe = validators.passwordValidator(password);
 
     if(!emailSafe || !passwordSafe){
         return res.sendStatus(401);
@@ -202,7 +202,7 @@ app.post("/training", function (req, res) {
         let sql = `CALL DMHPv1.getTraining (?,?,?,?,?,?,?,?,?,?,?)`;
         /*
                 STORED PROCEDURE CALL
-            */
+        */
         con.query(
             sql,
             [
