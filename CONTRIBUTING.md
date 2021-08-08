@@ -9,3 +9,7 @@
 - If the commit involves documentation work (Markdown, Versioning, LaTeX, JSON), the commit must start with [DOCUMENTATION]
 
 
+**Before making a PR, please make an `issue` about the same**
+
+- The issue will be resolved through the PR
+- This is to add a level of abstraction and simplicity when it comes to tracking features and bug (fixes).
