@@ -10,6 +10,7 @@ const validators = require("./validation/validators");
 const mysqlConnector = require("./resources/db");
 const cors = require("cors");
 const routes = require("./resources/routes");
+const compression = require("compression");
 
 const app = express();
 const port = 3000;
@@ -42,6 +43,22 @@ app.use(function (req, res, next) {
     );
     next();
 });
+
+/*
+    SET GZIP COMPRESSION OF RESPONSES
+*/
+
+const shouldCompress = (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+};
+
+app.use(compression({
+    filter: shouldCompress,
+    threshold: 0
+}));
 
 /*
 CONNECT TO MYSQL DATABASE
