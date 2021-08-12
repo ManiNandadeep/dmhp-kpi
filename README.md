@@ -50,7 +50,8 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 - `cd backend/test`
 -  Change the bearer token in `expected.js` by copying and pasting the value attained by accessing the `/api/auth` route.
 - `npx mocha test.js` (Note: If `mocha` is installed globally,  `mocha test.js` will suffice.)
--  Note: You can increase the test timeout by adding the `--timeout`` flag to the command.
+-  Note: You can increase the test timeout by adding the `--timeout` flag to the command.
+-  To include code coverage metrics, run `npx nyc mocha test.js`
 
 
 ## MySQL Setup  
