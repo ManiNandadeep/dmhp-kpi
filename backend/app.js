@@ -1,16 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
-const jsonGroupBy = require("json-groupby");
 const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
-const { convertCompilerOptionsFromJson } = require("typescript");
 const dotenv = require("dotenv");
 const validators = require("./validation/validators");
 const mysqlConnector = require("./resources/db");
 const cors = require("cors");
 const routes = require("./resources/routes");
 const compression = require("compression");
+const threads = require("./resources/threads");
 
 const app = express();
 const port = 3000;
@@ -43,6 +42,17 @@ app.use(function (req, res, next) {
     );
     next();
 });
+
+/*
+    SET NUMBER OF LOGICAL CORES USED BY THE APPLICATION
+*/
+var coresFlag = process.env.ENABLE_THREADING;
+if(coresFlag !== "no"){
+    let numCores = Math.floor(threads.fractionOfLogicalCoresUsed*threads.numberOfLogicalCores);
+    process.env.UV_THREADPOOL_SIZE = numCores;
+    console.log(numCores);
+}
+
 
 /*
     SET GZIP COMPRESSION OF RESPONSES
