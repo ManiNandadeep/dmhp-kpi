@@ -41,7 +41,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ## Steps to run this project:
 
 - Install all maven dependencies 
-- Configure `application.properties`
+- Configure `application.properties` and `application.yaml`
 - Populate the tables and stored procedures
 - Build, and run the project on IntelliJ for Java EE Developers
 
@@ -52,6 +52,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 - `npx mocha test.js` (Note: If `mocha` is installed globally,  `mocha test.js` will suffice.)
 -  Note: You can increase the test timeout by adding the `--timeout` flag to the command.
 -  To include code coverage metrics, run `npx nyc mocha test.js`
+-  To run the `autocannon` blast tests, run `dmhp_autocannon_tests.sh`. Instructions to do so are given in the `/backend/stress-testing` folder.
 
 
 ## MySQL Setup  
