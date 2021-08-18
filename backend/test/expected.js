@@ -22,7 +22,7 @@ const responses = require("./responses");
 module.exports = {
     // Default Bearer Token if the API call to /api/auth fails
     bearerToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyODk4OTUzNSwiZXhwIjoxNjI4OTk2NzM1fQ.bHKjmf9LWUsqzSz8IPyaMf3wJGVUJqXyt4AmZY-SWwg",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyOTMwNDU2NywiZXhwIjoxNjI5MzExNzY3fQ.E0TXtZ9AhF0644yRcBUHZb_qQqosZOfg_waDM9evM9c",
     authBody: {
         email: "dmhp",
         password: "dmhp@2020",

@@ -50,7 +50,6 @@ var coresFlag = process.env.ENABLE_THREADING;
 if(coresFlag !== "no"){
     let numCores = Math.floor(threads.fractionOfLogicalCoresUsed*threads.numberOfLogicalCores);
     process.env.UV_THREADPOOL_SIZE = numCores;
-    console.log(numCores);
 }
 
 
@@ -58,17 +57,26 @@ if(coresFlag !== "no"){
     SET GZIP COMPRESSION OF RESPONSES
 */
 
-const shouldCompress = (req, res) => {
-    if (req.headers['x-no-compression']) {
-      return false;
-    }
-    return compression.filter(req, res);
-};
 
-app.use(compression({
-    filter: shouldCompress,
-    threshold: 0
-}));
+/*
+    Check if ENABLE_GZIP is set or not
+*/
+
+if(process.env.ENABLE_GZIP !== "no"){
+    const shouldCompress = (req, res) => {
+        if (req.headers['x-no-compression']) {
+          return false;
+        }
+        return compression.filter(req, res);
+    };
+    
+
+    app.use(compression({
+        filter: shouldCompress,
+        threshold: 0
+    }));   
+}
+
 
 /*
 CONNECT TO MYSQL DATABASE
